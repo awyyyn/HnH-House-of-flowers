@@ -16,18 +16,15 @@ export const StickyScroll = ({
 
 	return (
 		<motion.div
-			className="h-fulls max-h-[50dvh] h-[50dvh] overflow-y-auto flex justify-center relative  flex-col-reverse md:flex-row  items-start md:justify-around  rounded-md"
+			className="  md:max-h-[50dvh] h-[80dvh]    justify-evenly overflow-y-auto md:flex   relative   md:flex-row flex flex-col-reverse rounded-md"
 			ref={ref}>
-			<div className=" w-full max-w-sm">{leftContent}</div>
+			<div className=" w-full    max-w-sm">{leftContent}</div>
 			<div
 				className={cn(
-					"  rounded-md  sticky top-0 md:top-10  overflow-hidden",
+					"  rounded-md  bg-white   sticky pb-10 min-h-[400px] md:min-h-fit top-0 md:top-10  overflow-hidden  ",
 					contentClassName
 				)}>
-				<div
-					className="absolute left-5 top-5
-				"></div>
-				{rightContent}
+				<div className="scale-75 sm:scale-80 md:scale-100">{rightContent}</div>
 			</div>
 		</motion.div>
 	);
