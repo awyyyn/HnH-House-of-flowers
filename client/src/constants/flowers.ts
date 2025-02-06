@@ -26,6 +26,12 @@ import layeredWrapper from "../assets/flowers/hand-wrappers/Style=Layered wrappe
 import classicWrapper from "../assets/flowers/hand-wrappers/Style=Classic wrapper.svg";
 import angularrWrapper from "../assets/flowers/hand-wrappers/Style=Angular wrapper.svg";
 
+// WRAPPERS IMG
+import wrapper1 from "@/assets/flowers/themes/Group 1.png";
+import wrapper2 from "@/assets/flowers/themes/Group 2.png";
+import wrapper3 from "@/assets/flowers/themes/Group 3.png";
+import wrapper4 from "@/assets/flowers/themes/Group 4.png";
+
 export const backWrappers = [
 	{
 		id: "wrapper-4",
@@ -138,5 +144,28 @@ export const handWraps = [
 		id: "wrapper-3",
 		title: "layered wrapper",
 		svg: layeredWrapper,
+	},
+];
+
+export const wrappers = [
+	{
+		id: "wrapper-1",
+		image: wrapper1,
+		name: "Wrapper 1",
+	},
+	{
+		id: "wrapper-2",
+		image: wrapper2,
+		name: "Wrapper 2",
+	},
+	{
+		id: "wrapper-3",
+		image: wrapper3,
+		name: "Wrapper 3",
+	},
+	{
+		id: "wrapper-4",
+		image: wrapper4,
+		name: "Wrapper 4",
 	},
 ];

@@ -5,3 +5,6 @@ export * from "./ui/stepper";
 export * from "./ui/step";
 export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
+export * from "./aceternity/sparkle";
+export * from "./aceternity/aurora";
+export * from "./ui/toggle-group";
