@@ -60,6 +60,11 @@
 	}
 }
 
-.scrollbar-hidden::-webkit-scrollbar {
+:root::-webkit-scrollbar {
 	display: none;
+}
+
+:root {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
 }

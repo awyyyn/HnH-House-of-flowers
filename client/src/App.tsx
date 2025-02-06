@@ -1,14 +1,13 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Customize from "./app/user/customize";
+import { Route, Routes } from "react-router-dom";
+import Home from "./app/home";
+import { UserLayout } from "./layouts";
 
 export default function App() {
 	return (
-		<div>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<Customize />} />
-				</Routes>
-			</BrowserRouter>
-		</div>
+		<Routes>
+			<Route element={<UserLayout />}>
+				<Route path="/" element={<Home />} />
+			</Route>
+		</Routes>
 	);
 }
