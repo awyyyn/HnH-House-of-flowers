@@ -1,0 +1,101 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  username String @unique
+  firstName String?
+  lastName String?
+  middleName String?
+  password String
+  mfaSecret String?
+  phoneNumber String?
+  birthDate DateTime?
+  mfaEnabled Boolean @default(false) 
+  // address address 
+  role SystemUserRole
+  status SystemUserStatus @default(UNVERIFIED)
+
+  orders Order[]
+
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum SystemUserStatus {
+  VERIFIED
+  UNVERIFIED
+  DELETED
+}
+
+enum SystemUserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+model Customize { 
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Order {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerID String @db.ObjectId 
+  customer User @relation(fields: [customerID], references: [id]) 
+  status OrderStatus @default(PENDING) 
+  totalPrice Float 
+
+  orderItems OrderItem[]
+
+  // TimeStamps
+  orderDate DateTime @default(now())
+  preOrderData DateTime?
+  deliveryDate  DateTime? 
+}
+
+model OrderItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderID String @db.ObjectId
+  order Order @relation(fields: [orderID], references: [id])
+  price Float
+  quantity Int
+
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+ 
+model Flower { 
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  description String?
+  price Float?
+  image String
+  stock Int
+ 
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("flowers")
+
+}

@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "es2016",
+		"module": "NodeNext",
+		"rootDir": "./src",
+		"rootDirs": ["./src"],
+		"outDir": "./dist",
+		// "allowImportingTsExtensions": true,
+		// "composite": true,
+		// "emitDeclarationOnly": true,
+		"removeComments": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		"skipLibCheck": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true
+	}
+}

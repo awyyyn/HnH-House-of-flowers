@@ -1,5 +1,3 @@
-import React from "react";
-
 interface BouquetProps {
 	wrapper: string;
 	overWrapper: string;

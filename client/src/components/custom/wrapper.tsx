@@ -29,8 +29,8 @@ const AngularOver = ({ color = "#B1A2C0" }: { color?: string }) => {
 
 const AngularUnder = ({
 	color = "#B1A2C0",
-	color2,
-}: {
+}: // color2,
+{
 	color?: string;
 	color2?: string;
 }) => {
@@ -236,8 +236,8 @@ const ClassicUnder = ({
 };
 const ClassicOver = ({
 	color = "#ECB8D7",
-	color2 = "#738D6F",
-}: {
+}: // color2 = "#738D6F",
+{
 	color?: string;
 	color2?: string;
 }) => {

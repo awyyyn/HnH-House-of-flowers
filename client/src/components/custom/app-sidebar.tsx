@@ -1,17 +1,17 @@
 import * as React from "react";
 import {
+	Bell,
 	BookOpen,
-	Bot,
-	Command,
 	Flower,
-	Flower2,
 	Frame,
+	LayoutDashboard,
 	LifeBuoy,
 	Map,
+	Package,
 	PieChart,
 	Send,
 	Settings2,
-	SquareTerminal,
+	Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/custom/nav-main";
@@ -36,66 +36,45 @@ const data = {
 	},
 	navMain: [
 		{
-			title: "Playground",
-			url: "#",
-			icon: SquareTerminal,
+			title: "Dashboard",
+			url: "/dashboard",
+			icon: LayoutDashboard,
 			isActive: true,
+		},
+		{
+			title: "Flowers",
+			url: "#",
+			icon: Flower,
 			items: [
 				{
-					title: "History",
-					url: "#",
+					title: "Add",
+					url: "/products/add",
 				},
 				{
-					title: "Starred",
-					url: "#",
-				},
-				{
-					title: "Settings",
-					url: "#",
+					title: "List",
+					url: "/products",
 				},
 			],
 		},
 		{
-			title: "Models",
-			url: "#",
-			icon: Bot,
-			items: [
-				{
-					title: "Genesis",
-					url: "#",
-				},
-				{
-					title: "Explorer",
-					url: "#",
-				},
-				{
-					title: "Quantum",
-					url: "#",
-				},
-			],
+			title: "Users",
+			url: "/users",
+			icon: Users,
 		},
 		{
-			title: "Documentation",
-			url: "#",
+			title: "Pre-Orders",
+			url: "/pre-orders",
 			icon: BookOpen,
-			items: [
-				{
-					title: "Introduction",
-					url: "#",
-				},
-				{
-					title: "Get Started",
-					url: "#",
-				},
-				{
-					title: "Tutorials",
-					url: "#",
-				},
-				{
-					title: "Changelog",
-					url: "#",
-				},
-			],
+		},
+		{
+			title: "Orders",
+			url: "/orders",
+			icon: Package,
+		},
+		{
+			title: "Notifications",
+			url: "/notifications",
+			icon: Bell,
 		},
 		{
 			title: "Settings",
@@ -133,23 +112,23 @@ const data = {
 			icon: Send,
 		},
 	],
-	projects: [
-		{
-			name: "Design Engineering",
-			url: "#",
-			icon: Frame,
-		},
-		{
-			name: "Sales & Marketing",
-			url: "#",
-			icon: PieChart,
-		},
-		{
-			name: "Travel",
-			url: "#",
-			icon: Map,
-		},
-	],
+	// projects: [
+	// 	{
+	// 		name: "Design Engineering",
+	// 		url: "#",
+	// 		icon: Frame,
+	// 	},
+	// 	{
+	// 		name: "Sales & Marketing",
+	// 		url: "#",
+	// 		icon: PieChart,
+	// 	},
+	// 	{
+	// 		name: "Travel",
+	// 		url: "#",
+	// 		icon: Map,
+	// 	},
+	// ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -174,7 +153,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavProjects projects={data.projects} />
+				{/* <NavProjects projects={data.projects} /> */}
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>

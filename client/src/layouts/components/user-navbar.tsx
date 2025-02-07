@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { IconPlant2, IconShoppingBag } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { Keyboard, LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
