@@ -42,3 +42,7 @@ export * from "./custom/nav-main";
 export * from "./custom/nav-user";
 export * from "./custom/nav-projects";
 export * from "./custom/nav-secondary";
+export * from "./aceternity/starts-background";
+export * from "./aceternity/hover-border-gradient";
+export * from "./aceternity/glowing-effect";
+export * from "./custom/flexible-input";
