@@ -1,16 +1,16 @@
 import { prisma } from "@/services/prisma.js";
-import { Token } from "@/types/token.js";
+import otpGenerator from "otp-generator";
 
-export const createToken = async (email: string): Promise<Token> => {
-	const generatedToken = Math.random()
-		.toString(36)
-		.substring(2)
-		.toUpperCase()
-		.substring(0, 6);
+export const createToken = async (email: string) => {
+	// Generate OTP
+	const otp = otpGenerator.generate(6, {
+		upperCaseAlphabets: true,
+		digits: true,
+	});
 
 	const token = await prisma.token.create({
 		data: {
-			token: generatedToken,
+			token: otp,
 			email,
 			time: new Date(),
 		},
@@ -19,7 +19,5 @@ export const createToken = async (email: string): Promise<Token> => {
 	return token;
 };
 
-export const readToken = async (email: string): Promise<Token | null> => {
-	const token = await prisma.token.findUnique({ where: { email } });
-	return token;
-};
+export const readToken = async (email: string) =>
+	await prisma.token.findUnique({ where: { email } });

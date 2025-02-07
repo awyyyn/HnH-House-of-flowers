@@ -1,7 +1,5 @@
 import { verifyToken } from "../services/index.js";
 import { NextFunction, Request, Response } from "express";
-import { GraphQLError } from "graphql";
-import { AppContext } from "@/types/index.js";
 
 export const authMiddleware = async (
 	req: Request,
@@ -24,24 +22,4 @@ export const authMiddleware = async (
 	req.body = { ...req.body, ...data };
 
 	next();
-};
-
-export const contextMiddleware = async ({
-	req,
-}: {
-	req: Request;
-}): Promise<AppContext> => {
-	const token = req.headers.authorization?.split(" ")[1];
-
-	if (!token) {
-		throw new GraphQLError("UnAuthorized");
-	}
-
-	const data = verifyToken(token);
-
-	if (!data) {
-		throw new GraphQLError("UnAuthorized");
-	}
-
-	return { id: data.id, email: data.email };
 };

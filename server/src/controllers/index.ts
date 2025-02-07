@@ -1,2 +1,1 @@
-export * from "./admin-auth-controller.js";
-export * from "./student-auth-controller.js";
+export * from "./auth-controllers.js";
