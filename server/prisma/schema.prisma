@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,20 +8,19 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  username String @unique
-  firstName String?
-  lastName String?
-  middleName String?
-  password String
-  mfaSecret String?
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  email       String     @unique
+  firstName   String?
+  lastName    String?
+  middleName  String?
+  password    String
   phoneNumber String?
-  birthDate DateTime?
-  mfaEnabled Boolean @default(false) 
+  birthDate   DateTime?
+  // mfaSecret String?
+  // mfaEnabled Boolean @default(false) 
   // address address 
-  role SystemUserRole
-  status SystemUserStatus @default(UNVERIFIED)
+  role        UserRole
+  status      UserStatus @default(UNVERIFIED)
 
   orders Order[]
 
@@ -33,44 +31,62 @@ model User {
   @@map("users")
 }
 
-enum SystemUserStatus {
+enum UserStatus {
   VERIFIED
   UNVERIFIED
   DELETED
 }
 
-enum SystemUserRole {
+enum UserRole {
   SUPER_ADMIN
   ADMIN
   USER
 }
 
-model Customize { 
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-}
-
 model Order {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  customerID String @db.ObjectId 
-  customer User @relation(fields: [customerID], references: [id]) 
-  status OrderStatus @default(PENDING) 
-  totalPrice Float 
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  customerID String      @db.ObjectId
+  customer   User        @relation(fields: [customerID], references: [id])
+  status     OrderStatus @default(PENDING)
+  totalPrice Float
 
   orderItems OrderItem[]
 
   // TimeStamps
-  orderDate DateTime @default(now())
+  orderDate    DateTime  @default(now())
   preOrderData DateTime?
-  deliveryDate  DateTime? 
+  deliveryDate DateTime?
+
+  @@map("orders")
+}
+
+model Customize {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float?
+
+  orderItem OrderItem?
+
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customizes")
 }
 
 model OrderItem {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderID String @db.ObjectId
-  order Order @relation(fields: [orderID], references: [id])
-  price Float
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId  String @db.ObjectId
+  order    Order  @relation(fields: [orderId], references: [id])
+  price    Float
   quantity Int
 
+  productId   String?    @unique @db.ObjectId
+  product     Product?   @relation(fields: [productId], references: [id])
+  isCustomize Boolean    @default(false)
+  customizeId String?    @unique @db.ObjectId
+  customize   Customize? @relation(fields: [customizeId], references: [id])
 
   @@map("order_items")
 }
@@ -81,21 +97,49 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+  READY_FOR_PICKUP
 }
 
- 
-model Flower { 
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  description String?
-  price Float?
-  image String
-  stock Int
- 
+model Product {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String @default("")
+  price       Float  @default(0.00)
+  image       String
+  stock       Int    @default(1)
+
+  status   ProductStatus   @default(IN_STOCK)
+  category ProductCategory @default(FLOWER)
+
+  orderItem OrderItem[]
+
   // TimeStamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("flowers")
+  @@map("products")
+}
 
+enum ProductStatus {
+  PRE_ORDER
+  DISCONTINUED
+  IN_STOCK
+  OUT_OF_STOCK
+}
+
+enum ProductCategory {
+  FLOWER
+  BOUQUET
+  CHOCOLATE
+  GIFT
+}
+
+
+model token {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  token String
+  time DateTime
+
+  @@map("tokens")
 }

@@ -1,8 +1,5 @@
 import { prisma } from "@/services/prisma.js";
-
-export * from "./system-user.js";
-export * from "./student.js";
-export * from "./token.js";
+import { UserRole } from "./user.js";
 
 export interface PaginationResult<T> {
 	count: number;
@@ -13,6 +10,6 @@ export interface PaginationResult<T> {
 export type AppContext = {
 	id: string;
 	email: string;
-	role: "SUPER_ADMIN" | "ADMIN" | "STUDENT";
+	role: UserRole;
 	prisma: typeof prisma;
 };
