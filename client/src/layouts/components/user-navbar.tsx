@@ -1,7 +1,5 @@
 import { useState } from "react";
 import {
-	Avatar,
-	AvatarImage,
 	Button,
 	HoveredLink,
 	Menu,
@@ -11,30 +9,39 @@ import {
 	DropdownMenu,
 	DropdownMenuTrigger,
 	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuGroup,
-	DropdownMenuSeparator,
 	DropdownMenuItem,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { IconPlant2, IconShoppingBag } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
-import { AvatarFallback } from "@radix-ui/react-avatar";
-import { LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { UserDrawer } from "./user-drawer";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
+	const { isAuthenticated } = useAuth();
+
 	return (
-		<div className="container -translate-x-[50%] left-[50%] fixed top-5 flex items-center px-2 justify-between z-50 w-full  ">
-			<div className="flex items-center gap-2 backdrop-blur-lg bg-white/80 py-3 px-4 rounded-full">
-				<Button className="block text-3xl md:hidden">
-					<IconPlant2 size={30} />
-				</Button>
-				<TextGenerateEffect
-					className="text-lg hidden md:block"
-					words="House of Flowers"
-				/>
-				<TextGenerateEffect className="text-md block md:hidden" words="H&H" />
+		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
+			<div className="flex   items-center gap-2 justify-between  w-full md:w-auto backdrop-blur-lg bg-white/80 py-3 px-4 rounded-full">
+				<div className="flex items-center gap-2">
+					<div className={`${!isAuthenticated ? "block md:hidden" : "hidden"}`}>
+						<UserDrawer />
+					</div>
+					<TextGenerateEffect className="text-lg  " words="House of Flowers" />
+				</div>
+				{!isAuthenticated && (
+					<div className="flex items-center gap-1">
+						<Button size="sm" className="block md:hidden ">
+							Sign In
+						</Button>
+						<Button
+							size="sm"
+							className="block md:hidden  transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
+							variant="outline">
+							Sign Up
+						</Button>
+					</div>
+				)}
 			</div>
 			<div
 				className={cn(
@@ -90,44 +97,38 @@ export function Navbar({ className }: { className?: string }) {
 					</MenuItem>
 				</Menu>
 			</div>
-			<div className="flex items-center gap-2 p-1 px-3 rounded-full backdrop-blur-lg bg-white/80">
+			<div className="hidden md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
 				{/* <Button>Sign In</Button>
 				<Button
 					className="transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
 					variant="outline">
 					Sign Up
 				</Button> */}
-				<Link
-					to="/cart"
-					// variant="ghost"
-					// size="icon"
-					className="text-3xl   hover:bg-white/30 rounded-full  cursor-pointer">
-					<IconShoppingBag className="p-2 text-2xl" size={45} />
-				</Link>
+
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Avatar className="bg-primary/80 flex items-center justify-center">
+						<Button variant="ghost" className="hover:bg-transparent">
+							Account
+							<ChevronDown />
+						</Button>
+						{/* <Avatar className="bg-primary/80 flex items-center justify-center">
 							<AvatarImage src="https://github.com/shadcn.pngs" alt="avatar" />
 							<AvatarFallback className="text-white">U</AvatarFallback>
-						</Avatar>
+						</Avatar> */}
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className="">
-						<DropdownMenuLabel>My Account</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<User />
-								<span>Profile</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Settings />
-								<span>Settings</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<LogOut />
-								<span>Log out</span>
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
+					<DropdownMenuContent className="mr-5 mt-2">
+						<DropdownMenuItem>
+							<User />
+							<span>Profile</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Settings />
+							<span>Settings</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<LogOut />
+							<span>Log out</span>
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>

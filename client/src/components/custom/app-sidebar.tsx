@@ -3,19 +3,16 @@ import {
 	Bell,
 	BookOpen,
 	Flower,
-	Frame,
 	LayoutDashboard,
 	LifeBuoy,
-	Map,
 	Package,
-	PieChart,
 	Send,
 	Settings2,
 	Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/custom/nav-main";
-import { NavProjects } from "@/components/custom/nav-projects";
+
 import { NavSecondary } from "@/components/custom/nav-secondary";
 import { NavUser } from "@/components/custom/nav-user";
 import {

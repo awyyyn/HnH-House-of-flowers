@@ -19,6 +19,7 @@ export * from "./ui/calendar";
 export * from "./ui/tooltip";
 export * from "./ui/dialog";
 export * from "./ui/separator";
+export * from "./ui/sheet";
 export * from "./ui/drawer";
 export * from "./ui/form";
 export * from "./ui/input";
