@@ -6,12 +6,11 @@
 		"rootDirs": ["./src"],
 		"outDir": "./dist",
 		// "allowImportingTsExtensions": true,
-		// "composite": true,
 		// "emitDeclarationOnly": true,
 		"removeComments": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-
+		"baseUrl": ".",
 		"skipLibCheck": true,
 		"paths": {
 			"@/*": ["./src/*"]
