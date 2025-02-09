@@ -1,4 +1,4 @@
-import { environment } from "@/environments/environment.js";
+import { environment } from "../environments/environment.js";
 import * as bcrypt from "bcrypt";
 
 export const hashPassword = async (plainPassword: string) => {
