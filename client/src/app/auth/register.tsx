@@ -9,12 +9,13 @@ import {
 	Form,
 	InputWithIcon,
 } from "@/components";
+import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Flower, Loader } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { z } from "zod";
 
@@ -27,7 +28,7 @@ const formSchema = z
 			.min(8, "Password must be at least 8 characters"),
 		confirmPassword: z
 			.string()
-			.min(1, "Password is required")
+			.min(1, "Confirm Password is required")
 			.min(8, "Password must be at least 8 characters"),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
@@ -36,6 +37,8 @@ const formSchema = z
 	});
 
 export default function Register() {
+	const navigate = useNavigate();
+	const { login } = useAuth();
 	const [showPassword, setShowPassword] = useState(false);
 	const { toast } = useToast();
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -43,12 +46,13 @@ export default function Register() {
 		defaultValues: {
 			email: "",
 			password: "",
+			confirmPassword: "",
 		},
 	});
 
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			const response = await fetch("http://localhost:4000/api/auth/login", {
+			const response = await fetch("http://localhost:4000/api/auth/register", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -62,6 +66,12 @@ export default function Register() {
 				throw new Error(data.message ?? "An error occurred");
 			}
 
+			login(data.data.accessToken);
+			if (data.data.user.role === "USER") {
+				navigate("/");
+			} else {
+				navigate("/dashboard");
+			}
 			toast({
 				title: "Logged in successfully",
 				description: "You have successfully logged in",
@@ -70,8 +80,8 @@ export default function Register() {
 			});
 		} catch (err) {
 			toast({
-				title: "An error occurred",
-				description: (err as Error).message,
+				title: (err as Error).message,
+				description: "An error occurred",
 				variant: "destructive",
 			});
 		}

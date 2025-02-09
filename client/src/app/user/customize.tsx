@@ -57,7 +57,7 @@ export default function Customize() {
 	};
 
 	return (
-		<div className="sm:h-screen md:w-screen grid place-content-center gap-2 p-5">
+		<div className="sm:h-scrseen md:w-scrseen grid place-content-center gap-2 p-5">
 			<div className="flex min-w-[95dvw]   sm:min-w-[100dvw] md:min-w-fit   flex-col">
 				<Stepper activeStep={activeStep} items={steps}></Stepper>
 			</div>

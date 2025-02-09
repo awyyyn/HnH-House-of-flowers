@@ -10,12 +10,13 @@ import {
 	FormDescription,
 	InputWithIcon,
 } from "@/components";
+import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Flower, Loader } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { z } from "zod";
 
@@ -28,6 +29,8 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+	const { login } = useAuth();
+	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = useState(false);
 	const { toast } = useToast();
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -54,6 +57,12 @@ export default function Login() {
 				throw new Error(data.message ?? "An error occurred");
 			}
 
+			login(data.data.accessToken);
+			if (data.data.user.role === "USER") {
+				navigate("/");
+			} else {
+				navigate("/dashboard");
+			}
 			toast({
 				title: "Logged in successfully",
 				description: "You have successfully logged in",
