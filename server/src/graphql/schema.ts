@@ -2,140 +2,103 @@ import { gql } from "graphql-tag";
 
 export const typeDefs = gql`
 	type Query {
-		generateTOTPSecret: GeneratedOTPResult
-		systemUsers(
+		user(filter: String!): User
+		users(
+			role: UserRole
 			filter: String
+			status: UserStatus
 			pagination: PaginationInput
-			status: String
-		): SystemUsersResult
-		systemUser(id: String!): SystemUser
-		students(
-			filter: String
-			pagination: PaginationInput
-			status: String
-		): StudentsResult
-		student(id: String!): Student
+		): UsersPaginationResult
 	}
 
 	type Mutation {
-		verifyTOTP(secret: String!, token: String!): Boolean
-		updateSystemUser(values: updateSystemUserInput): SystemUser
-		deleteSystemUser(id: String!): SystemUser
-		sendSystemUserRegistrationEmail(
-			email: String!
-			role: SystemUserRole!
-		): SendEmailResult
-		sendStudentRegistrationEmail(email: String!): SendEmailResult
-	}
-
-	type SendEmailResult {
-		message: String
-	}
-
-	input AddressInput {
-		street: String
-		city: String
-	}
-
-	type GeneratedOTPResult {
-		secret: String!
-		otpauthurl: String!
-	}
-
-	input updateSystemUserInput {
-		id: String!
-		email: String
-		firstName: String
-		lastName: String
-		middleName: String
-		displayName: String
-		password: String
-		mfaSecret: String
-		phoneNumber: String
-		birthDate: String
-		mfaEnabled: Boolean
-		address: AddressInput
-		role: SystemUserRole
-		status: SystemUserStatus
+		createAdmin(email: String!, password: String!): User
+		blockUser(id: ID!, reason: String!, role: UserRole!): User
+		unblockUser(id: ID!, role: UserRole!): User
 	}
 
 	input PaginationInput {
-		take: Int!
 		page: Int!
+		limit: Int!
 	}
 
-	type SystemUsersResult {
-		data: [SystemUser]
-		hasMore: Boolean
-		count: Int
+	type UsersPaginationResult {
+		total: Int!
+		users: [User]
+		hasNextPage: Boolean!
 	}
 
-	type StudentsResult {
-		data: [SystemUser]
-		hasMore: Boolean
-		count: Int
-	}
+	"""
+	User type
+	"""
+	type User {
+		id: ID!
+		email: String!
+		role: UserRole!
+		status: UserStatus!
 
-	type SystemUser {
-		id: String
-		email: String
 		firstName: String
 		lastName: String
 		middleName: String
-		displayName: String
 		password: String
-		mfaSecret: String
-		phoneNumber: String
 		birthDate: String
-		mfaEnabled: Boolean
-		address: Address
-		role: SystemUserRole
-		status: SystemUserStatus
 
-		createdAt: String
-		updatedAt: String
+		orders: [Order]
+
+		createdAt: String!
+		updatedAt: String!
 	}
 
-	type Student {
-		id: String
-		studentId: String
-		email: String
-		firstName: String
-		lastName: String
-		middleName: String
-		address: Address
-		phoneNumber: String
-		status: StudentStatus
-		mfaSecret: String
-		mfaEnabled: Boolean
-		yearLevel: Int
-		schoolName: String
-
-		createdAt: String
-		updatedAt: String
-	}
-
-	enum StudentStatus {
-		REQUESTING
-		SCHOLAR
-		GRADUATED
-		DISQUALIFIED
-		ARCHIVED
-	}
-
-	type Address {
-		street: String
-		city: String
-	}
-
-	enum SystemUserRole {
+	enum UserRole {
 		SUPER_ADMIN
 		ADMIN
+		USER
 	}
 
-	enum SystemUserStatus {
+	enum UserStatus {
 		VERIFIED
 		UNVERIFIED
 		DELETED
+	}
+
+	type OrderItem {
+		id: ID!
+		order: Order!
+		price: Float!
+		quantity: Int!
+		isCustomize: Boolean!
+		customize: Customize
+	}
+
+	type Order {
+		id: ID!
+		customer: User!
+		status: OrderStatus!
+		totalPrice: Float!
+
+		orderItems: [OrderItem]
+
+		orderDate: String!
+		preOrderDate: String
+		deliveryDate: String
+	}
+
+	enum OrderStatus {
+		PENDING
+		PROCESSING
+		SHIPPED
+		DELIVERED
+		CANCELLED
+		READY_FOR_PICKUP
+	}
+
+	type Customize {
+		id: ID!
+		name: String!
+		description: String
+		price: String
+		orderItem: OrderItem
+		createdAt: String!
+		updatedAt: String!
 	}
 `;

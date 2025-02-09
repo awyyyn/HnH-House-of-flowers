@@ -1,13 +1,20 @@
 import {
-	twoFactorAuthResolver,
-	verifyTOTPResolver,
+	blockUserResolver,
+	createAdminResolver,
+	unblockUserResolver,
+	userResolver,
+	usersResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
 	Query: {
-		generateTOTPSecret: twoFactorAuthResolver,
+		user: userResolver,
+		users: usersResolver,
 	},
 	Mutation: {
-		verifyTOTP: verifyTOTPResolver,
+		createAdmin: createAdminResolver,
+		blockUser: blockUserResolver,
+		unblockUser: unblockUserResolver,
 	},
+	// Mutation: {},
 };
