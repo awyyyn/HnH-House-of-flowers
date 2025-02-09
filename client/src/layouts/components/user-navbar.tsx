@@ -15,18 +15,22 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated, logout, role } = useAuth();
 
 	return (
 		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
 			<div className="flex   items-center gap-2 justify-between  w-full md:w-auto backdrop-blur-lg bg-white/80 py-3 px-4 rounded-full">
 				<div className="flex items-center gap-2">
-					<div className={`${!isAuthenticated ? "block md:hidden" : "hidden"}`}>
-						<UserDrawer />
-					</div>
+					{role === "USER" && (
+						<div
+							className={`${isAuthenticated ? "block md:hidden" : "hidden"}`}>
+							<UserDrawer />
+						</div>
+					)}
 					<TextGenerateEffect className="text-lg  " words="House of Flowers" />
 				</div>
 				{!isAuthenticated && (
@@ -98,39 +102,52 @@ export function Navbar({ className }: { className?: string }) {
 				</Menu>
 			</div>
 			<div className="hidden md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
-				{/* <Button>Sign In</Button>
-				<Button
-					className="transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
-					variant="outline">
-					Sign Up
-				</Button> */}
+				{!isAuthenticated ? (
+					<div className="md:flex gap-2 px-4 items-center hidden ">
+						<Link to="/auth/login">
+							<Button>Sign In</Button>
+						</Link>
 
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="hover:bg-transparent">
-							Account
-							<ChevronDown />
-						</Button>
-						{/* <Avatar className="bg-primary/80 flex items-center justify-center">
+						<Link to="/auth/register">
+							<Button
+								className="transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
+								variant="outline">
+								Sign Up
+							</Button>
+						</Link>
+					</div>
+				) : role === "USER" ? (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="hover:bg-transparent">
+								Account
+								<ChevronDown />
+							</Button>
+							{/* <Avatar className="bg-primary/80 flex items-center justify-center">
 							<AvatarImage src="https://github.com/shadcn.pngs" alt="avatar" />
 							<AvatarFallback className="text-white">U</AvatarFallback>
 						</Avatar> */}
-					</DropdownMenuTrigger>
-					<DropdownMenuContent className="mr-5 mt-2">
-						<DropdownMenuItem>
-							<User />
-							<span>Profile</span>
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Settings />
-							<span>Settings</span>
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<LogOut />
-							<span>Log out</span>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent className="mr-5 mt-2">
+							<DropdownMenuItem>
+								<User />
+								<span>Profile</span>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Settings />
+								<span>Settings</span>
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={logout}>
+								<LogOut />
+								<span>Log out</span>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				) : (
+					<Link to="/dashboard">
+						<Button>Dashboard</Button>
+					</Link>
+				)}
 			</div>
 		</div>
 	);

@@ -1,13 +1,12 @@
 import * as React from "react";
 import {
-	Bell,
 	BookOpen,
 	Flower,
 	LayoutDashboard,
 	LifeBuoy,
 	Package,
 	Send,
-	Settings2,
+	UserCog,
 	Users,
 } from "lucide-react";
 
@@ -24,13 +23,9 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts";
 
 const data = {
-	user: {
-		name: "shadcn",
-		email: "m@example.com",
-		avatar: "/avatars/shadcn.jpg",
-	},
 	navMain: [
 		{
 			title: "Dashboard",
@@ -69,33 +64,49 @@ const data = {
 			icon: Package,
 		},
 		{
-			title: "Notifications",
-			url: "/notifications",
-			icon: Bell,
-		},
-		{
-			title: "Settings",
+			title: "Admins",
 			url: "#",
-			icon: Settings2,
+			icon: UserCog,
+			isSuperAdmin: true,
 			items: [
 				{
-					title: "General",
-					url: "#",
+					title: "Add",
+					url: "/admins/add-admin",
 				},
 				{
-					title: "Team",
-					url: "#",
-				},
-				{
-					title: "Billing",
-					url: "#",
-				},
-				{
-					title: "Limits",
-					url: "#",
+					title: "List",
+					url: "/admins",
 				},
 			],
 		},
+		// {
+		// 	title: "Notifications",
+		// 	url: "/notifications",
+		// 	icon: Bell,
+		// },
+		// {
+		// 	title: "Settings",
+		// 	url: "#",
+		// 	icon: Settings2,
+		// 	items: [
+		// 		{
+		// 			title: "General",
+		// 			url: "#",
+		// 		},
+		// 		{
+		// 			title: "Team",
+		// 			url: "#",
+		// 		},
+		// 		{
+		// 			title: "Billing",
+		// 			url: "#",
+		// 		},
+		// 		{
+		// 			title: "Limits",
+		// 			url: "#",
+		// 		},
+		// 	],
+		// },
 	],
 	navSecondary: [
 		{
@@ -129,6 +140,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const { role } = useAuth();
+
 	return (
 		<Sidebar variant="inset" {...props}>
 			<SidebarHeader>
@@ -136,7 +149,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
 							<a href="#">
-								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+								<div className="flex aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 									<Flower className="size-4" />
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
@@ -149,12 +162,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={data.navMain} />
+				<NavMain role={role} items={data.navMain} />
 				{/* <NavProjects projects={data.projects} /> */}
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={data.user} />
+				<NavUser />
 			</SidebarFooter>
 		</Sidebar>
 	);

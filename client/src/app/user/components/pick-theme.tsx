@@ -9,7 +9,7 @@ interface PickThemeProps {
 export default function PickTheme({ handleSelect, selected }: PickThemeProps) {
 	return (
 		<ScrollArea className="  md:min-h-[60dvh]  md:min-w-[50%] xl:min-w-[50dvw] min-w-screen min-h-[50dvh]  overflow-y-auto  border p-5s scroll-p-5 rounded-lg">
-			<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 auto-auto-flow p-5">
+			<div className="grid grid-cols-2  gap-2 sm:grid-cols-3 md:grid-cols-4 auto-auto-flow p-5">
 				{wrappers.map((wrapper, index) => (
 					<div
 						onClick={() => handleSelect(wrapper.id)}
