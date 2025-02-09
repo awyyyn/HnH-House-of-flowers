@@ -15,6 +15,7 @@ export interface User {
 	orders: Order[];
 
 	createdAt: Date;
+	updatedAt: Date;
 }
 
 export type UserRole = "SUPER_ADMIN" | "ADMIN" | "USER";

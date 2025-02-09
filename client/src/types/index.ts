@@ -2,9 +2,10 @@ export * from "./user.js";
 export * from "./customize.js";
 export * from "./order.js";
 
-import { SVGProps } from "react";
-import { User, UserRole } from "./user.js";
+import { Dispatch, SetStateAction, SVGProps } from "react";
+import { UserRole } from "./user.js";
 import { JwtPayload } from "jwt-decode";
+import { ColumnDef } from "@tanstack/react-table";
 
 export interface CustomizationValues {
 	wrapper: string;
@@ -37,3 +38,17 @@ export type JWTDecoded = {
 	email: string;
 	role: UserRole;
 } & JwtPayload;
+
+type DataTablePagination = {
+	pageIndex: number;
+	pageSize: number;
+};
+
+export interface DataTableProps<TData, TValue> {
+	columns: ColumnDef<TData, TValue>[];
+	data: TData[];
+	rowCount: number;
+	loading?: boolean;
+	pagination: DataTablePagination;
+	setPagination: Dispatch<SetStateAction<DataTablePagination>>;
+}
