@@ -4,13 +4,14 @@ import {
 	updateUser,
 	createToken,
 	readToken,
-} from "@/models/index.js";
+} from "../models/index.js";
 import {
 	comparePassword,
 	hashPassword,
 	generateAccessToken,
-} from "@/services/index.js";
+} from "../services/index.js";
 import { Request, Response } from "express";
+import { differenceInMinutes, differenceInSeconds } from "date-fns";
 
 export const loginController = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
@@ -124,13 +125,28 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 			return;
 		}
 
-		const token = await createToken(user.email);
+		const isTokenExists = await readToken(email);
 
-		if (!token) {
-			throw new Error("Token creation failed");
+		if (isTokenExists) {
+			const min = differenceInMinutes(new Date(), isTokenExists?.time);
+			const minutesLeft = 5 - min;
+			const seconds = differenceInSeconds(new Date(), isTokenExists?.time);
+
+			res.status(400).json({
+				message: `Token already sent. Please wait for ${
+					!minutesLeft ? seconds : minutesLeft
+				} ${!minutesLeft ? "second(s)" : "minute(s)"}`,
+
+				// "Please wait for " + minutesLeft < 1
+				// ? seconds
+				// : minutesLeft + " minutes",
+			});
+			return;
 		}
 
-		await res.status(200).json({
+		await createToken(user.email);
+
+		res.status(200).json({
 			message: "OTP sent to email",
 		});
 	} catch (err) {
@@ -170,7 +186,18 @@ export const verifyTokenController = async (req: Request, res: Response) => {
 			return;
 		}
 
-		res.status(200).json({ message: "Token verified" });
+		const accessToken = await generateAccessToken({
+			email: user.email,
+			id: user.id,
+			role: user.role,
+		});
+
+		res.status(200).json({
+			message: "Token verified",
+			data: {
+				accessToken,
+			},
+		});
 	} catch (err) {
 		console.error("VERIFY_TOKEN_ERR", err);
 		res.status(500).json({ message: "Internal server error" });

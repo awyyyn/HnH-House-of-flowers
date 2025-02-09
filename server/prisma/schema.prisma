@@ -143,3 +143,13 @@ model token {
 
   @@map("tokens")
 }
+
+model BlockedUser {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId @unique 
+  email       String @unique  
+  reason String
+  blockedAt DateTime @default(now())
+
+  @@map("blocked_users")
+}

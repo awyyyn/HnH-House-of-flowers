@@ -28,6 +28,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		isAuthenticated: false,
 		role: "USER",
 	});
+
 	const [loading, setLoading] = useState(true);
 	// const [user, setUser] = useState<User>(null!);
 	const { toast } = useToast();
@@ -75,8 +76,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	};
 
 	const logout = () => {
-		localStorage.clear();
-
+		localStorage.removeItem("accessToken");
 		setValues({ isAuthenticated: false, role: "USER" });
 		setLoading(false);
 	};

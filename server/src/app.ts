@@ -10,6 +10,9 @@ import dotenv from "dotenv";
 import { environment } from "./environments/environment.js";
 import { AppContext } from "./types/index.js";
 import { routes } from "./routes/index.js";
+import { verifyToken } from "./services/jwt.js";
+import { prisma } from "./services/prisma.js";
+import { GraphQLError } from "graphql";
 
 // Initialize an app and an httpServer
 dotenv.config();
@@ -63,22 +66,22 @@ app.use("/api", routes);
 		"/graphql",
 		// @ts-ignore
 		expressMiddleware(server, {
-			// context: async ({ req }): Promise<AppContext> => {
-			// 	const token = req.headers.authorization?.split(" ")[1];
-			// 	if (!token) {
-			// 		throw new GraphQLError("UnAuthorized");
-			// 	}
-			// 	const data = verifyToken(token);
-			// 	if (!data) {
-			// 		throw new GraphQLError("UnAuthorized");
-			// 	}
-			// 	return {
-			// 		id: data.id,
-			// 		email: data.email,
-			// 		role: data.role,
-			// 		prisma: prisma,
-			// 	};
-			// },
+			context: async ({ req }): Promise<AppContext> => {
+				const token = req.headers.authorization?.split(" ")[1];
+				if (!token) {
+					throw new GraphQLError("UnAuthorized");
+				}
+				const data = verifyToken(token);
+				if (!data) {
+					throw new GraphQLError("UnAuthorized");
+				}
+				return {
+					id: data.id,
+					email: data.email,
+					role: data.role,
+					prisma: prisma,
+				};
+			},
 		})
 	);
 
