@@ -1,6 +1,5 @@
-import { hashPassword } from "@/services/bcrypt.js";
-import { prisma } from "@/services/prisma.js";
-import { User, UserRole, UserStatus } from "@/types/user.js";
+import { prisma, hashPassword } from "../services/index.js";
+import { User, UserRole, UserStatus } from "../types/index.js";
 import { Prisma } from "@prisma/client";
 
 export const createUser = async (values: {
@@ -55,7 +54,7 @@ export const readUsers = async ({
 
 	if (filter) {
 		where.OR = [
-			{ email: filter },
+			{ email: { contains: filter } },
 			{ firstName: { contains: filter } },
 			{ lastName: { contains: filter } },
 		];
@@ -71,16 +70,16 @@ export const readUsers = async ({
 
 	const users = await prisma.user.findMany({
 		where,
-		skip: pagination ? pagination.limit * (pagination?.page - 1) : undefined,
+		skip: pagination ? pagination.limit * pagination?.page : undefined,
 		take: pagination ? pagination.limit : undefined,
 	});
 
-	const count = await prisma.user.count({ where });
+	const total = await prisma.user.count({ where });
 
 	return {
-		data: users,
-		hasMore: users.length === pagination?.limit,
-		count,
+		users,
+		hasNextPage: users.length === pagination?.limit,
+		total,
 	};
 };
 

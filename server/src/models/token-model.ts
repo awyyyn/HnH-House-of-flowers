@@ -1,4 +1,4 @@
-import { prisma } from "@/services/prisma.js";
+import { prisma } from "../services/prisma.js";
 import otpGenerator from "otp-generator";
 
 export const createToken = async (email: string) => {
