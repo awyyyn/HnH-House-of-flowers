@@ -28,6 +28,7 @@ export * from "./ui/input";
 export * from "./ui/input-otp";
 export * from "./ui/label";
 export * from "./ui/popover";
+export * from "./ui/tabs";
 export * from "./ui/scroll-area";
 export * from "./ui/step";
 export * from "./ui/stepper";

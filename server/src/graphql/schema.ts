@@ -15,6 +15,14 @@ export const typeDefs = gql`
 		createAdmin(email: String!, password: String!): User
 		blockUser(id: ID!, reason: String!, role: UserRole!): User
 		unblockUser(id: ID!, role: UserRole!): User
+		resetPassword(oldPassword: String!, newPassword: String!): User
+		sendChangeEmailOTP(newEmail: String!): String
+		updateEmail(newEmail: String!, otp: String!): UpdateUserResult
+	}
+
+	type UpdateUserResult {
+		accessToken: String!
+		data: User
 	}
 
 	input PaginationInput {
