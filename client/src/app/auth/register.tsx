@@ -69,7 +69,7 @@ export default function Register() {
 				throw new Error(data.message ?? "An error occurred");
 			}
 
-			login(data.data.accessToken);
+			login(data.data.accessToken, data.data.user);
 			if (data.data.user.role === "USER") {
 				navigate("/");
 			} else {

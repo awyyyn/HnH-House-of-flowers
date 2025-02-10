@@ -12,7 +12,11 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-export default function AdminLayout() {
+export default function AdminLayout({
+	children,
+}: {
+	children?: React.ReactNode;
+}) {
 	const { pathname } = useLocation();
 
 	const paths = pathname
@@ -66,9 +70,7 @@ export default function AdminLayout() {
 						</Breadcrumb>
 					</div>
 				</header>
-				<div className="p-2 md:p-4">
-					<Outlet />
-				</div>
+				<div className="p-2 md:p-4  ">{children ? children : <Outlet />}</div>
 			</main>
 		</SidebarProvider>
 	);
