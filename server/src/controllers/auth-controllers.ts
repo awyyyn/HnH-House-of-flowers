@@ -29,14 +29,6 @@ export const loginController = async (req: Request, res: Response) => {
 				.json({ message: "User not registered. Please register first." });
 			return;
 		}
-		// Check if email is verified
-		// const isEmailVerified = user.status === "VERIFIED";
-		// if (!isEmailVerified) {
-		// 	res
-		// 		.status(403)
-		// 		.json({ message: "Email not verified. Please verify your email." });
-		// 	return;
-		// }
 
 		// Check if password is correct
 		const isPasswordCorrect = await comparePassword(password, user.password);
