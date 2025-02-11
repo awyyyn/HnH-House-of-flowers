@@ -94,7 +94,9 @@ export const updateUser = async (id: string, values: Partial<User>) => {
 			password: values?.password,
 			middleName: values?.middleName,
 			phoneNumber: values?.phoneNumber,
+			address: values?.address,
 			status: values?.status,
+			photo: values?.photo,
 			role: values?.role,
 		},
 	});
