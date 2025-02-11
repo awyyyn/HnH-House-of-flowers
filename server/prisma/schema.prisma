@@ -14,11 +14,11 @@ model User {
   lastName    String?
   middleName  String?
   password    String
+  photo      String @default("https://clipart-library.com/newhp/94-948284_purple-flower-clip-art-6-petal-flower-clipart.png")
   phoneNumber String?
   birthDate   DateTime?
-  // mfaSecret String?
-  // mfaEnabled Boolean @default(false) 
-  // address address 
+  verifiedAt DateTime?
+  address address?
   role        UserRole
   status      UserStatus @default(UNVERIFIED)
 
@@ -29,6 +29,13 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+type address {
+  zone String
+  street String
+  city String
+  province String
 }
 
 enum UserStatus {
