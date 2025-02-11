@@ -15,6 +15,8 @@ import PreOrders from "./app/admin/pre-orders";
 import AddAdmin from "./app/admin/add-admin";
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
+import VerifyAccount from "./app/verify-account";
+import SetUpAccount from "./app/set-up-account";
 
 export default function App() {
 	const publicRoutes = [
@@ -114,21 +116,33 @@ export default function App() {
 		],
 	};
 
-	const sharedRoutes = {
-		element: <ProtectedRoute allowedRoles={["USER", "ADMIN", "SUPER_ADMIN"]} />,
-		children: [
-			{
-				path: "account",
-				element: <Account />,
-			},
-		],
-	};
+	const sharedRoutes = [
+		{
+			element: (
+				<ProtectedRoute allowedRoles={["USER", "ADMIN", "SUPER_ADMIN"]} />
+			),
+			children: [
+				{
+					path: "account",
+					element: <Account />,
+				},
+			],
+		},
+		{
+			path: "verify-account",
+			element: <VerifyAccount />,
+		},
+		{
+			path: "set-up-account",
+			element: <SetUpAccount />,
+		},
+	];
 
 	return useRoutes([
 		adminRoutes,
 		userRoutes,
 		authRoutes,
 		...publicRoutes,
-		sharedRoutes,
+		...sharedRoutes,
 	]);
 }

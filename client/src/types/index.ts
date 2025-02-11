@@ -32,6 +32,12 @@ export interface AuthContextProps {
 	logout: () => void;
 	isAuthenticated: boolean;
 	setUser: Dispatch<SetStateAction<User>>;
+	setValues: Dispatch<
+		SetStateAction<{
+			isAuthenticated: boolean;
+			role: UserRole | null;
+		}>
+	>;
 }
 
 export type JWTDecoded = {

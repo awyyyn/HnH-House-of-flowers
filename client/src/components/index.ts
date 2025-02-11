@@ -52,3 +52,4 @@ export * from "./custom/flexible-input";
 export * from "./custom/protected-route";
 export * from "./ui/card";
 export * from "./custom/file-upload";
+export * from "./ui/command";

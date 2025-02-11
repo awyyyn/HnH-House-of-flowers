@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
-	const { isAuthenticated, role, loading } = useAuth();
+	const { isAuthenticated, role, loading, user } = useAuth();
 
 	if (loading) return <div>Loading...</div>;
 
@@ -16,6 +16,14 @@ export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 
 	if (role !== null && !allowedRoles.includes(role)) {
 		return <Navigate to="/unauthorized" />;
+	}
+
+	if (role !== null && user.status === "UNVERIFIED") {
+		return <Navigate to="/verify-account" />;
+	}
+
+	if (role !== null && (user.phoneNumber === null || !user.phoneNumber)) {
+		return <Navigate to="/set-up-account" />;
 	}
 
 	return <Outlet />;
