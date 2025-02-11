@@ -10,7 +10,12 @@ import {
 	readToken,
 	createToken,
 } from "../../models/index.js";
-import { AppContext, PaginationArgs, UserRole } from "../../types/index.js";
+import {
+	AppContext,
+	PaginationArgs,
+	UpdateUserInput,
+	UserRole,
+} from "../../types/index.js";
 import { GraphQLError } from "graphql";
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { generateAccessToken } from "@/services/jwt.js";
@@ -204,4 +209,21 @@ export const updateEmailResolver = async (
 	} catch (err) {
 		throw new GraphQLError((err as GraphQLError).message);
 	}
+};
+
+export const updateUserResolver = async (
+	_: never,
+	{ data }: { data: UpdateUserInput },
+	app: AppContext
+) => {
+	const user = await updateUser(app.id, {
+		...data,
+		birthDate: data?.birthDate ? new Date(data.birthDate) : null,
+	});
+
+	if (!user) {
+		throw new GraphQLError("Failed to update user");
+	}
+
+	return user;
 };

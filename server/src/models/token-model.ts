@@ -6,6 +6,8 @@ export const createToken = async (email: string) => {
 	const otp = otpGenerator.generate(6, {
 		upperCaseAlphabets: true,
 		digits: true,
+		lowerCaseAlphabets: false,
+		specialChars: false,
 	});
 
 	const token = await prisma.token.create({

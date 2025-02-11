@@ -18,6 +18,19 @@ export const typeDefs = gql`
 		resetPassword(oldPassword: String!, newPassword: String!): User
 		sendChangeEmailOTP(newEmail: String!): String
 		updateEmail(newEmail: String!, otp: String!): UpdateUserResult
+		updateUser(data: UpdateUserInput): User
+	}
+
+	input UpdateUserInput {
+		firstName: String
+		lastName: String
+		middleName: String
+		photo: String
+		phoneNumber: String
+		verifiedAt: String
+		status: UserStatus
+		birthDate: String
+		address: AddressInput
 	}
 
 	type UpdateUserResult {
@@ -49,12 +62,30 @@ export const typeDefs = gql`
 		lastName: String
 		middleName: String
 		password: String
+		photo: String
+		phoneNumber: String
 		birthDate: String
+		verifiedAt: String
+		address: Address
 
 		orders: [Order]
 
 		createdAt: String!
 		updatedAt: String!
+	}
+
+	type Address {
+		zone: String
+		street: String
+		city: String
+		province: String
+	}
+
+	input AddressInput {
+		zone: String
+		street: String
+		city: String
+		province: String
 	}
 
 	enum UserRole {

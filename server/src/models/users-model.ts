@@ -84,6 +84,8 @@ export const readUsers = async ({
 };
 
 export const updateUser = async (id: string, values: Partial<User>) => {
+	console.log(values, "qqq");
+
 	const user = await prisma.user.update({
 		where: { id },
 		data: {
@@ -93,6 +95,7 @@ export const updateUser = async (id: string, values: Partial<User>) => {
 			lastName: values?.lastName,
 			password: values?.password,
 			middleName: values?.middleName,
+			verifiedAt: values?.verifiedAt,
 			phoneNumber: values?.phoneNumber,
 			address: values?.address,
 			status: values?.status,

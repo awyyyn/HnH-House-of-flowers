@@ -4,6 +4,7 @@ import {
 	updateUser,
 	createToken,
 	readToken,
+	sendAccountVerificationOTP,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -35,6 +36,11 @@ export const loginController = async (req: Request, res: Response) => {
 		if (!isPasswordCorrect) {
 			res.status(401).json({ message: "Incorrect password" });
 			return;
+		}
+
+		if (user.verifiedAt === null) {
+			const otp = await createToken(user.email);
+			await sendAccountVerificationOTP({ email: user.email, otp: otp.token });
 		}
 
 		// Generate token
@@ -88,6 +94,9 @@ export const registerController = async (req: Request, res: Response) => {
 			role: newUser.role,
 			id: newUser.id,
 		});
+
+		const otp = await createToken(newUser.email);
+		await sendAccountVerificationOTP({ email: newUser.email, otp: otp.token });
 
 		res.status(200).json({
 			message: "Register successful",

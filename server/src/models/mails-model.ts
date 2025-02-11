@@ -48,3 +48,47 @@ export const sendAdminLoginCredentials = async ({
 
 	await transporter.sendMail(mailOptions);
 };
+
+export const sendAccountVerificationOTP = async ({
+	email,
+	otp,
+}: RegistrationLink) => {
+	const link = `${environment.CLIENT_URL}/auth/login`;
+
+	const mailOptions = {
+		from: environment.EMAIL,
+		sender: {
+			name: "H&H - House of Flowers",
+			address: environment.EMAIL!,
+		},
+		to: email,
+		subject: "Account Verification OTP",
+		html: `
+            <h1 style={h1}>Verify Your Email Address</h1>
+            <p style={text}>Hello,</p>
+            <p style={text}>Thank you for registering with us. Please use the following OTP to verify your email address:</p>
+            <section style={codeContainer}>
+                <p>
+                OTP: <span style="font-weight: bold">${otp}</span>
+                </p>
+            </section>
+            <p >Please follow these steps to verify your account:</p>
+            <p >
+                1. Visit the verification page:{" "}
+                <a href="${link}" style="">
+                Verify here
+                </a>
+                <br />
+                2. Enter your email and the OTP provided above.
+                <br />
+                3. Complete the verification process.
+            </p>
+            <hr   />
+            <p style={footer}>
+                If you didn't request this verification or have any questions, please contact our support team immediately.
+            </p>
+        `,
+	};
+
+	await transporter.sendMail(mailOptions);
+};

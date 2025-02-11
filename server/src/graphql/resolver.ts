@@ -7,6 +7,7 @@ import {
 	resetPasswordResolver,
 	sendChangeEmailOTPResolver,
 	updateEmailResolver,
+	updateUserResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -21,6 +22,7 @@ export const resolvers = {
 		resetPassword: resetPasswordResolver,
 		sendChangeEmailOTP: sendChangeEmailOTPResolver,
 		updateEmail: updateEmailResolver,
+		updateUser: updateUserResolver,
 	},
 	// Mutation: {},
 };
