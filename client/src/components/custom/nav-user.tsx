@@ -26,6 +26,8 @@ export function NavUser() {
 	const { logout, user } = useAuth();
 	const navigate = useNavigate();
 
+	console.log(user);
+
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -34,8 +36,8 @@ export function NavUser() {
 						<SidebarMenuButton
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={""} alt={"user profile"} />
+							<Avatar className="h-8 w-8 rounded-full">
+								<AvatarImage src={user?.photo ?? ""} alt={"user profile"} />
 								<AvatarFallback className="rounded-lg uppercase">
 									{user?.firstName && user?.lastName
 										? `${user.firstName[0]} ${user.lastName[0]}`
@@ -60,8 +62,8 @@ export function NavUser() {
 						sideOffset={4}>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={""} alt={"user profile"} />
+								<Avatar className="h-8 w-8 rounded-full">
+									<AvatarImage src={user?.photo ?? ""} alt={"user profile"} />
 									<AvatarFallback className="rounded-lg">AD</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">

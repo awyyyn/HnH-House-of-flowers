@@ -25,17 +25,17 @@ export function AccountForm() {
 			</TabsList>
 			<TabsContent
 				value="account"
-				className="my-auto min-h-[calc(100dvh-20dvh)] pt-[10vh]  ">
+				className="my-auto min-h-[calc(1s00dvh-20dvh)] pt-[10vsh]  ">
 				<AccountInformation />
 			</TabsContent>
 			<TabsContent
 				value="email"
-				className="my-auto min-h-[calc(100dvh-20dvh)] pt-[10vh]  ">
+				className="my-auto min-h-[calc(100dvsh-20dvh)] pt-[10vh]  ">
 				<ChangeEmail />
 			</TabsContent>
 			<TabsContent
 				value="password"
-				className="my-auto min-h-[calc(100dvh-20dvh)] pt-[10vh]  ">
+				className="my-auto min-h-[calc(100sdvh-20dvh)] pt-[10vh]  ">
 				<ChangePassword />
 			</TabsContent>
 		</Tabs>

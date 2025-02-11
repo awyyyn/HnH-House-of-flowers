@@ -9,6 +9,7 @@ export interface User {
 	password: string;
 	phoneNumber: string | null;
 	birthDate: Date | null;
+	photo: string;
 	role: UserRole;
 	status: UserStatus;
 

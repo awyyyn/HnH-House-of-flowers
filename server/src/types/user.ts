@@ -8,6 +8,7 @@ export interface User {
 	middleName: string | null;
 	password: string;
 	phoneNumber: string | null;
+	photo: string;
 	birthDate: Date | null;
 	role: UserRole;
 	status: UserStatus;
