@@ -21,7 +21,7 @@ export interface User {
 }
 
 export interface UserAddress {
-	zone: string;
+	zone: string | null;
 	street: string;
 	city: string;
 	province: string;
