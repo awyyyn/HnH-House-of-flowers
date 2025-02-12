@@ -54,6 +54,7 @@ export default function AccountInformation({
 }) {
 	const [setupAccount] = useMutation(UPDATE_USER_MUTATION);
 	const [isEditing, setIsEditing] = useState(setUp);
+	const [uploading, setUploading] = useState(false);
 	const { user, setUser } = useAuth();
 	const form = useForm<z.infer<typeof accountInformationSchema>>({
 		resolver: zodResolver(accountInformationSchema),
@@ -147,7 +148,7 @@ export default function AccountInformation({
 
 						{isEditing && (
 							<Button
-								disabled={form.formState.isSubmitting}
+								disabled={form.formState.isSubmitting || uploading}
 								type="submit"
 								className="ml-2">
 								{form.formState.isSubmitting ? (
@@ -161,19 +162,58 @@ export default function AccountInformation({
 
 					<div className="grid grid-cols-1 gap-5 w-full gap md:grid-cols-2">
 						<div
-							className={`rounded-full border-dashed ${
+							className={`rounded-full ${
+								uploading ? "border-transparent " : "border-dashed shadow-md"
+							} ${
 								!isEditing && "border-transparent"
-							} group border-2  relative overflow-hidden h-[200px] w-[200px]  mx-auto   `}>
+							} group border-2 group relative overflow-hidden h-[200px] w-[200px]  mx-auto   `}>
+							{uploading && (
+								<div className="h-full w-full flex justify-center items-center bg-white object-cover absolute z-[99] transition-all">
+									<Loader className="animate-spin" />
+								</div>
+							)}
 							{isEditing && (
-								<div className="z-50 h-full w-full absolute ">
-									<FileUpload onFileUpload={(files) => console.log(files)} />
+								<div className="group-hover:z-[56] z-50 h-full w-full absolute ">
+									<FileUpload
+										onFileUpload={(files) => {
+											const url = `https://api.cloudinary.com/v1_1/${
+												import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+											}/upload`;
+											const fd = new FormData();
+											// fd.append("upload_preset", unsignedUploadPreset);
+											fd.append("upload_preset", "avatars");
+											fd.append("tags", "user-avatar"); // Optional - add tags for image admin in Cloudinary
+											fd.append("tags", "browser-upload"); // Optional - add tags for image admin in Cloudinary
+											fd.append("file", files[0]);
+											setUploading(true);
+											fetch(url, {
+												method: "POST",
+												body: fd,
+											})
+												.then((response) => response.json())
+												.then((data) => {
+													form.setValue("photo", data.url);
+												})
+												.catch((error) => {
+													console.error("Error uploading the file:", error);
+													toast({
+														title: "Error",
+														description: "Error uploading the file",
+														variant: "destructive",
+													});
+												})
+												.finally(() => {
+													setUploading(false);
+												});
+										}}
+									/>
 								</div>
 							)}
 							{user?.photo && (
 								<img
-									src={user?.photo}
+									src={form.getValues("photo") ?? user.photo}
 									alt="profile"
-									className={`h-full w-full object-cover absolute z-50 transition-all ${
+									className={`h-full w-full bg-white object-cover absolute z-50 transition-all ${
 										isEditing ? "group-hover:opacity-5" : " "
 									}`}
 								/>
@@ -190,7 +230,9 @@ export default function AccountInformation({
 										</FormLabel>
 										<FormControl>
 											<Input
-												readOnly={form.formState.isSubmitting || !isEditing}
+												readOnly={
+													form.formState.isSubmitting || !isEditing || uploading
+												}
 												placeholder={`${
 													user?.firstName
 														? ""
@@ -220,7 +262,9 @@ export default function AccountInformation({
 										</FormLabel>
 										<FormControl>
 											<Input
-												readOnly={form.formState.isSubmitting || !isEditing}
+												readOnly={
+													form.formState.isSubmitting || !isEditing || uploading
+												}
 												placeholder={`${
 													user?.firstName
 														? ""
@@ -250,7 +294,9 @@ export default function AccountInformation({
 										</FormLabel>
 										<FormControl>
 											<Input
-												readOnly={form.formState.isSubmitting || !isEditing}
+												readOnly={
+													form.formState.isSubmitting || !isEditing || uploading
+												}
 												placeholder={`${
 													user?.firstName
 														? ""
@@ -492,7 +538,9 @@ export default function AccountInformation({
 									</FormLabel>
 									<FormControl>
 										<Input
-											readOnly={form.formState.isSubmitting || !isEditing}
+											readOnly={
+												form.formState.isSubmitting || !isEditing || uploading
+											}
 											placeholder={`${
 												user?.address?.zone ? "" : isEditing ? "" : "No data"
 											}`}

@@ -24,7 +24,7 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
 					? "border-primary bg-primary/10"
 					: "border-muted-foreground/25 hover:border-primary"
 			}`}>
-			<input {...getInputProps()} />
+			<input {...getInputProps()} accept="image/*" />
 			<Upload className="w-10 h-10 text-muted-foreground mb-2" />
 			{isDragActive ? (
 				<p className="text-sm text-muted-foreground">Drop the files here ...</p>
