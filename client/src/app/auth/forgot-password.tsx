@@ -208,11 +208,8 @@ export default function ForgotPassword() {
 				throw new Error(data.message ?? "Something went wrong!");
 			}
 
-			console.log(data, "qqq");
-
 			setStep((p) => p + 1);
 		} catch (err) {
-			console.log(err, "err qqq");
 			const error = err as Error;
 			toast({
 				title: error.message,

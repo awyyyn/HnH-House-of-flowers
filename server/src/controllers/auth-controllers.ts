@@ -4,6 +4,7 @@ import {
 	updateUser,
 	createToken,
 	readToken,
+	sendAccountVerificationOTP,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -35,6 +36,11 @@ export const loginController = async (req: Request, res: Response) => {
 		if (!isPasswordCorrect) {
 			res.status(401).json({ message: "Incorrect password" });
 			return;
+		}
+
+		if (user.verifiedAt === null) {
+			const otp = await createToken(user.email);
+			await sendAccountVerificationOTP({ email: user.email, otp: otp.token });
 		}
 
 		// Generate token
@@ -88,6 +94,9 @@ export const registerController = async (req: Request, res: Response) => {
 			role: newUser.role,
 			id: newUser.id,
 		});
+
+		const otp = await createToken(newUser.email);
+		await sendAccountVerificationOTP({ email: newUser.email, otp: otp.token });
 
 		res.status(200).json({
 			message: "Register successful",
@@ -219,6 +228,35 @@ export const resetPasswordController = async (req: Request, res: Response) => {
 		await updateUser(user.id, { password: hashedPassword });
 
 		res.status(200).json({ message: "Password reset successful" });
+	} catch (err) {
+		console.error("RESET_PASSWORD_ERR", err);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+export const meController = async (req: Request, res: Response) => {
+	try {
+		const user = await readUser(req.body.email);
+
+		if (!user) {
+			res.status(404).json({ message: "User not found" });
+			return;
+		}
+
+		// Generate token
+		const accessToken = await generateAccessToken({
+			email: user.email,
+			role: user.role,
+			id: user.id,
+		});
+
+		res.status(200).json({
+			message: "Login successful",
+			data: {
+				accessToken,
+				user,
+			},
+		});
 	} catch (err) {
 		console.error("RESET_PASSWORD_ERR", err);
 		res.status(500).json({ message: "Internal server error" });

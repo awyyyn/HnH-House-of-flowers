@@ -10,6 +10,16 @@ export const userFragment = gql`
 		lastName
 		middleName
 		birthDate
+		photo
+		phoneNumber
+		verifiedAt
+		birthDate
+		address {
+			city
+			province
+			street
+			zone
+		}
 		createdAt
 		updatedAt
 	}

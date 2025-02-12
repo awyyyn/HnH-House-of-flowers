@@ -54,10 +54,7 @@ export default function DeleteUserModal({
 			if (!unblock) {
 				variables.reason = input;
 			}
-			console.log(variables);
-			const data = await mutate({ variables });
-
-			console.log(data, "qq");
+			await mutate({ variables });
 		} catch (err) {
 			toast({
 				title: "Something went wrong!",

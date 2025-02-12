@@ -49,7 +49,6 @@ export default function AddAdmin() {
 			uppercase: true,
 			lowercase: true,
 		});
-		console.log(generatedPassword, "qqqq");
 		form.setValue("password", generatedPassword);
 	};
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {

@@ -93,6 +93,7 @@ export const updateUser = async (id: string, values: Partial<User>) => {
 			lastName: values?.lastName,
 			password: values?.password,
 			middleName: values?.middleName,
+			verifiedAt: values?.verifiedAt,
 			phoneNumber: values?.phoneNumber,
 			address: values?.address,
 			status: values?.status,

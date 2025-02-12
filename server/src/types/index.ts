@@ -27,5 +27,21 @@ export interface PaginationArgs {
 
 export interface RegistrationLink {
 	email: string;
-	role: UserRole;
+	role?: UserRole;
+	otp?: string;
+}
+
+export interface UpdateUserInput {
+	firstName: string | null;
+	lastName: string | null;
+	middleName: string | null;
+	photo?: string;
+	phoneNumber: string | null;
+	birthDate: string | null;
+	address: {
+		zone: string;
+		city: string;
+		province: string;
+		street: string;
+	} | null;
 }

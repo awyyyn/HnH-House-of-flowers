@@ -32,7 +32,7 @@ model User {
 }
 
 type address {
-  zone String
+  zone String?
   street String
   city String
   province String

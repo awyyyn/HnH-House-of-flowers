@@ -3,7 +3,7 @@ export * from "./customize.js";
 export * from "./order.js";
 
 import { Dispatch, SetStateAction, SVGProps } from "react";
-import { UserRole } from "./user.js";
+import { User, UserRole } from "./user.js";
 import { JwtPayload } from "jwt-decode";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -25,12 +25,19 @@ export interface PaginationResult<T> {
 	hasMore: boolean;
 }
 export interface AuthContextProps {
-	// user: User;
+	user: User;
 	role: UserRole | null;
 	loading: boolean;
-	login: (token: string) => void;
+	login: (token: string, loggedInUser: User) => void;
 	logout: () => void;
 	isAuthenticated: boolean;
+	setUser: Dispatch<SetStateAction<User>>;
+	setValues: Dispatch<
+		SetStateAction<{
+			isAuthenticated: boolean;
+			role: UserRole | null;
+		}>
+	>;
 }
 
 export type JWTDecoded = {

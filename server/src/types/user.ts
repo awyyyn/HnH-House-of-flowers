@@ -7,8 +7,8 @@ export interface User {
 	lastName: string | null;
 	middleName: string | null;
 	password: string;
-	photo: string;
 	phoneNumber: string | null;
+	photo: string;
 	birthDate: Date | null;
 	verifiedAt: Date | null;
 	address: UserAddress | null;

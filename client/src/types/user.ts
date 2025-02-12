@@ -8,7 +8,10 @@ export interface User {
 	middleName: string | null;
 	password: string;
 	phoneNumber: string | null;
-	birthDate: Date | null;
+	photo: string;
+	birthDate: string | null;
+	verifiedAt: Date | null;
+	address: UserAddress | null;
 	role: UserRole;
 	status: UserStatus;
 
@@ -16,6 +19,12 @@ export interface User {
 
 	createdAt: Date;
 	updatedAt: Date;
+}
+export interface UserAddress {
+	zone: string;
+	street: string;
+	city: string;
+	province: string;
 }
 
 export type UserRole = "SUPER_ADMIN" | "ADMIN" | "USER";

@@ -143,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { role } = useAuth();
 
 	return (
-		<Sidebar variant="inset" {...props}>
+		<Sidebar variant="inset" {...props} className="z-[99] ">
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>

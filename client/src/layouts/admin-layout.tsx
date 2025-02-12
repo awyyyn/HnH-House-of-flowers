@@ -12,21 +12,24 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-export default function AdminLayout() {
+export default function AdminLayout({
+	children,
+}: {
+	children?: React.ReactNode;
+}) {
 	const { pathname } = useLocation();
 
 	const paths = pathname
 		.split("/")
 		.filter((path) => path !== "/" && path !== "");
-	console.log(paths);
 
 	return (
 		<SidebarProvider>
 			<Suspense fallback={<h1>loading...</h1>}>
 				<AppSidebar />
 			</Suspense>
-			<main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100dvh] h-screen ">
-				<header className="flex shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
+			<main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100dvh] h-[100dvh] ">
+				<header className="flex z-[99] shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="md:hidden block -ml-1" />
 						<Separator
@@ -66,9 +69,7 @@ export default function AdminLayout() {
 						</Breadcrumb>
 					</div>
 				</header>
-				<div className="p-2 md:p-4">
-					<Outlet />
-				</div>
+				<div className="p-2 md:p-4  ">{children ? children : <Outlet />}</div>
 			</main>
 		</SidebarProvider>
 	);
