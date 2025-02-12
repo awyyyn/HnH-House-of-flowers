@@ -210,7 +210,6 @@ export default function ForgotPassword() {
 
 			setStep((p) => p + 1);
 		} catch (err) {
-			console.log(err, "err qqq");
 			const error = err as Error;
 			toast({
 				title: error.message,

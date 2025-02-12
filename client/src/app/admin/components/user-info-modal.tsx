@@ -70,7 +70,7 @@ export default function UserInfoModal({
 					<div className="">
 						<Label>Birth Date</Label>
 						<p>
-							{user.birthDate?.toDateString() ?? (
+							{user?.birthDate ?? (
 								<span style={{ fontStyle: "italic", color: "gray" }}>
 									No Data
 								</span>

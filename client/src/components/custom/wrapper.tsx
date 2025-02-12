@@ -273,7 +273,6 @@ const ClassicOver = ({
 };
 
 export const Wrapper = ({ color, id }: { color?: string; id: string }) => {
-	console.log(id);
 	switch (id) {
 		case "wrapper-1":
 			return (
