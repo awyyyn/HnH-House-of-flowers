@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { FileUpload } from "./file-upload";
 import { useAuth } from "@/contexts";
 import { Button } from "../ui/button";
-import { provinces as allProvinces, barangays, municipalities } from "psgc";
+import { provinces as allProvinces, barangays } from "psgc";
 import {
 	Form,
 	FormControl,
@@ -16,14 +16,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { InputWithIcon } from "./flexible-input";
-import { Mail } from "lucide-react";
+import { Loader, Mail } from "lucide-react";
 import { DatePicker } from "./date-picker";
 import { Combobox } from "./combobox";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_MUTATION } from "@/queries";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const accountInformationSchema = z.object({
 	firstName: z.string().nonempty(),
 	lastName: z.string().nonempty(),
-	middleName: z.string(),
+	middleName: z.string().optional(),
 	email: z.string().email(),
 	phoneNumber: z
 		.string()
@@ -48,8 +52,9 @@ export default function AccountInformation({
 }: {
 	setUp?: boolean;
 }) {
+	const [setupAccount] = useMutation(UPDATE_USER_MUTATION);
 	const [isEditing, setIsEditing] = useState(setUp);
-	const { user } = useAuth();
+	const { user, setUser } = useAuth();
 	const form = useForm<z.infer<typeof accountInformationSchema>>({
 		resolver: zodResolver(accountInformationSchema),
 		defaultValues: {
@@ -57,12 +62,18 @@ export default function AccountInformation({
 			lastName: user?.lastName ?? "",
 			email: user?.email ?? "",
 			phoneNumber: user?.phoneNumber ?? "",
-			birthDate: user?.birthDate?.toISOString() ?? "",
+			birthDate: user?.birthDate ?? "",
 			photo: user?.photo ?? "",
+			city: user?.address?.city ?? "",
+			province: user?.address?.province ?? "",
+			street: user?.address?.street ?? "",
+			zone: user?.address?.zone ?? "",
 		},
 	});
+	const navigate = useNavigate();
 	const [cities, setCities] = useState<Choices[]>([]);
 	const [streets, setStreets] = useState<Choices[]>([]);
+	const { toast } = useToast();
 
 	const provinces = useMemo(
 		() =>
@@ -75,26 +86,56 @@ export default function AccountInformation({
 		[]
 	);
 
-	console.log(
-		// barangays.all().filter((f) => f.citymun.toLowerCase() === "camalig"),
-		municipalities.find("Legazpi"),
-		"qqq"
-	);
-
-	const handleSubmit = async () => {
+	const handleSubmit = async (
+		values: z.infer<typeof accountInformationSchema>
+	) => {
 		try {
-			//
+			const { data } = await setupAccount({
+				variables: {
+					data: {
+						firstName: values.firstName,
+						middleName: values.middleName,
+						lastName: values.lastName,
+						phoneNumber: values.phoneNumber,
+						birthDate: values.birthDate,
+						photo: values.photo,
+						address: {
+							province: values.province,
+							city: values.city,
+							street: values.street,
+							zone: values.zone,
+						},
+					},
+				},
+			});
+			setUser(data.user);
+			if (setUp) {
+				navigate(data.user.role === "USER" ? "/" : "/dashboard", {
+					replace: true,
+				});
+			} else {
+				setIsEditing(false);
+			}
+			toast({
+				title: "Success",
+				description: "Account information updated",
+				variant: "success",
+			});
 		} catch (err) {
-			//
+			toast({
+				title: "Error",
+				description: (err as Error).message,
+				variant: "destructive",
+			});
 		}
 	};
 
 	return (
-		<div className="mx-auto  sm:max-w-[80%]">
+		<div className="mx-auto  md:max-w-[80%]">
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(handleSubmit)}>
-					{!setUp && (
-						<div className="flex justify-end mb-5">
+					<div className="flex justify-end mb-5">
+						{!setUp && (
 							<Button
 								type="button"
 								variant={isEditing ? "ghost" : "default"}
@@ -102,14 +143,23 @@ export default function AccountInformation({
 								onClick={() => setIsEditing((p) => !p)}>
 								{isEditing ? "Cancel" : "Edit"}{" "}
 							</Button>
-							{isEditing && (
-								<Button type="submit" className="ml-2">
-									Save
-								</Button>
-							)}
-						</div>
-					)}
-					<div className="grid grid-cols-1 gap-5 w-full gap sm:grid-cols-2">
+						)}
+
+						{isEditing && (
+							<Button
+								disabled={form.formState.isSubmitting}
+								type="submit"
+								className="ml-2">
+								{form.formState.isSubmitting ? (
+									<Loader className="animate-spin" />
+								) : (
+									"Save"
+								)}
+							</Button>
+						)}
+					</div>
+
+					<div className="grid grid-cols-1 gap-5 w-full gap md:grid-cols-2">
 						<div
 							className={`rounded-full border-dashed ${
 								!isEditing && "border-transparent"
@@ -284,15 +334,24 @@ export default function AccountInformation({
 
 						<FormField
 							control={form.control}
-							name="phoneNumber"
-							render={({ field }) => (
+							name="birthDate"
+							render={() => (
 								<FormItem className="flex flex-col items-start">
 									<FormLabel className="text-black dark:text-white ">
 										Birth Date
 									</FormLabel>
 									<FormControl>
 										<div className="w-full">
-											<DatePicker defaultValue={new Date()} />
+											<DatePicker
+												handleChangeValue={(v) => {
+													form.setValue("birthDate", v.toISOString());
+													form.clearErrors("birthDate");
+												}}
+												readonly={!isEditing || form.formState.isSubmitting}
+												defaultValue={
+													user?.birthDate ? new Date(user.birthDate) : undefined
+												}
+											/>
 										</div>
 									</FormControl>
 									<FormMessage className="dark:text-primary" />
@@ -302,33 +361,39 @@ export default function AccountInformation({
 
 						<FormField
 							control={form.control}
-							name="phoneNumber"
-							render={({ field }) => (
+							name="province"
+							render={() => (
 								<FormItem className="flex flex-col items-start">
 									<FormLabel className="text-black dark:text-white ">
 										Province
 									</FormLabel>
 									<FormControl>
 										<div className="w-full">
-											<Combobox
-												name="province"
-												handleSelect={(value) => {
-													form.setValue("province", value);
-													form.setValue("city", "");
-													form.setValue("street", "");
-													const cities = provinces.find(
-														(p) => p.value === value
-													);
-													setCities(
-														cities?.cities.map((c) => ({
-															value: c,
-															id: c,
-															label: c,
-														})) ?? []
-													);
-												}}
-												choices={provinces}
-											/>
+											{isEditing ? (
+												<Combobox
+													name="province"
+													handleSelect={(value) => {
+														form.setValue("province", value);
+														form.setValue("city", "");
+														form.setValue("street", "");
+														const cities = provinces.find(
+															(p) => p.value === value
+														);
+														form.clearErrors("province");
+														setCities(
+															cities?.cities.map((c) => ({
+																value: c,
+																id: c,
+																label: c,
+															})) ?? []
+														);
+													}}
+													readonly={!isEditing || form.formState.isSubmitting}
+													choices={provinces}
+												/>
+											) : (
+												<Input readOnly value={user?.address?.province} />
+											)}
 										</div>
 									</FormControl>
 									<FormMessage className="dark:text-primary" />
@@ -338,37 +403,45 @@ export default function AccountInformation({
 						<FormField
 							control={form.control}
 							name="street"
-							render={({ field }) => (
+							render={() => (
 								<FormItem className="flex flex-col items-start">
 									<FormLabel className="text-black dark:text-white ">
 										City / Municipality
 									</FormLabel>
 									<FormControl>
 										<div className="w-full">
-											<Combobox
-												readonly={
-													!form.getValues("province") ||
-													form.formState.isSubmitting
-												}
-												handleSelect={(value) => {
-													form.setValue("city", value);
-													setStreets(
-														barangays
-															.all()
-															.filter(
-																(f) =>
-																	f.citymun.toLowerCase() ===
-																	value.toLowerCase()
-															)
-															.map((b) => ({
-																value: b.name,
-																id: b.name,
-																label: b.name,
-															})) ?? []
-													);
-												}}
-												choices={cities}
-											/>
+											{isEditing ? (
+												<Combobox
+													name="city or municipality"
+													readonly={
+														!form.getValues("province") ||
+														!isEditing ||
+														form.formState.isSubmitting
+													}
+													handleSelect={(value) => {
+														form.setValue("city", value);
+														form.setValue("street", "");
+														form.clearErrors("city");
+														setStreets(
+															barangays
+																.all()
+																.filter(
+																	(f) =>
+																		f.citymun.toLowerCase() ===
+																		value.toLowerCase()
+																)
+																.map((b) => ({
+																	value: b.name,
+																	id: b.name,
+																	label: b.name,
+																})) ?? []
+														);
+													}}
+													choices={cities}
+												/>
+											) : (
+												<Input readOnly value={user?.address?.city} />
+											)}
 										</div>
 									</FormControl>
 									<FormMessage className="dark:text-primary" />
@@ -377,24 +450,59 @@ export default function AccountInformation({
 						/>
 						<FormField
 							control={form.control}
-							name="phoneNumber"
-							render={({ field }) => (
+							name="street"
+							render={() => (
 								<FormItem className="flex flex-col items-start">
 									<FormLabel className="text-black dark:text-white ">
 										Barangay / Street
 									</FormLabel>
 									<FormControl>
 										<div className="w-full">
-											<Combobox
-												readonly={
-													form.formState.isSubmitting || !form.getValues("city")
-												}
-												handleSelect={(value) => {
-													form.setValue("street", value);
-												}}
-												choices={streets}
-											/>
+											{isEditing ? (
+												<Combobox
+													name="street"
+													readonly={
+														form.formState.isSubmitting ||
+														!form.getValues("city") ||
+														!isEditing
+													}
+													handleSelect={(value) => {
+														form.setValue("street", value);
+														form.clearErrors("street");
+													}}
+													choices={streets}
+												/>
+											) : (
+												<Input readOnly value={user?.address?.street} />
+											)}
 										</div>
+									</FormControl>
+									<FormMessage className="dark:text-primary" />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="zone"
+							render={({ field }) => (
+								<FormItem className="flex flex-col items-start">
+									<FormLabel className="text-black dark:text-white ">
+										Purok / Zone
+									</FormLabel>
+									<FormControl>
+										<Input
+											readOnly={form.formState.isSubmitting || !isEditing}
+											placeholder={`${
+												user?.address?.zone ? "" : isEditing ? "" : "No data"
+											}`}
+											className={`${
+												isEditing
+													? "dark:border-primary/50"
+													: "dark:border-transparent border-transparent  focus:outline-transparent"
+											} placeholder:italic`}
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage className="dark:text-primary" />
 								</FormItem>

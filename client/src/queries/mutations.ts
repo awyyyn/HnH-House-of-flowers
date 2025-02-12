@@ -58,7 +58,7 @@ export const UPDATE_EMAIL_MUTATION = gql`
 export const UPDATE_USER_MUTATION = gql`
 	${userFragment}
 	mutation ($data: UpdateUserInput) {
-		updateUser(data: $data) {
+		user: updateUser(data: $data) {
 			...UserFragment
 		}
 	}

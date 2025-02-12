@@ -13,7 +13,15 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePicker({ defaultValue }: { defaultValue?: Date }) {
+export function DatePicker({
+	defaultValue,
+	handleChangeValue,
+	readonly = false,
+}: {
+	defaultValue?: Date;
+	readonly?: boolean;
+	handleChangeValue: (value: Date) => void;
+}) {
 	const [date, setDate] = React.useState<Date | undefined>(
 		defaultValue ?? undefined
 	);
@@ -22,6 +30,7 @@ export function DatePicker({ defaultValue }: { defaultValue?: Date }) {
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button
+					disabled={readonly}
 					variant={"outline"}
 					className={cn(
 						"w-full  justify-start text-left font-normal",
@@ -35,12 +44,12 @@ export function DatePicker({ defaultValue }: { defaultValue?: Date }) {
 				<Calendar
 					mode="single"
 					selected={date}
-					// onSelect={(date) => {
-					// 	if (date) {
-					// 		setDate(date);
-					// 	}
-					// }}
-					onSelect={setDate}
+					onSelect={(date) => {
+						if (date) {
+							setDate(date);
+							handleChangeValue(date);
+						}
+					}}
 					initialFocus
 				/>
 			</PopoverContent>

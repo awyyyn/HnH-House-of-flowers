@@ -8,8 +8,8 @@ export default function SetUpAccount() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="">
-			<header className="fixed top-0 left-0 w-screen flex pt-5 px-2 sm:px-5 justify-end">
+		<div className="min-h-screens pb-20 overscroll-y-auto">
+			<header className=" w-screen flex pt-5 px-2 sm:px-5 justify-end">
 				<Button
 					onClick={() => {
 						logout();
@@ -18,7 +18,7 @@ export default function SetUpAccount() {
 					Logout
 				</Button>
 			</header>
-			<main className="h-screen px-2 w-screen flex justify-center items-center">
+			<main className="mt-10  px-2  flex justify-center items-center">
 				<div className="w-full  sm:max-w-[400px] md:min-w-[80%]">
 					<AccountInformation setUp />
 				</div>
