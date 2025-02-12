@@ -225,5 +225,10 @@ export const updateUserResolver = async (
 		throw new GraphQLError("Failed to update user");
 	}
 
-	return user;
+	return {
+		...user,
+		birthDate: user.birthDate?.toISOString(),
+		createdAt: user.createdAt.toISOString(),
+		updatedAt: user.updatedAt.toISOString(),
+	};
 };

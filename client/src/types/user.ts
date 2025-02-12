@@ -9,7 +9,7 @@ export interface User {
 	password: string;
 	phoneNumber: string | null;
 	photo: string;
-	birthDate: Date | null;
+	birthDate: string | null;
 	verifiedAt: Date | null;
 	address: UserAddress | null;
 	role: UserRole;
