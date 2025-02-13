@@ -7,7 +7,7 @@ export default function UserLayout({
 	children?: React.ReactNode;
 }) {
 	return (
-		<div>
+		<div className="dark:bg-zinc-900">
 			<Navbar className="" />
 			<main className="container px-2 pt-[4.5rem] md:pt-28   w-full mx-auto  ">
 				{children ? children : <Outlet />}

@@ -45,8 +45,14 @@ export const RichTextEditor = ({
 				},
 			}),
 		],
+		editorProps: {
+			attributes: {
+				class:
+					"prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none",
+			},
+		},
 		editable: editable,
-		injectCSS: true,
+		// injectCSS: true,
 		content: isEditing
 			? `${generateHTML(JSON.parse(String(content)), [
 					UnderlineExe,
@@ -66,14 +72,16 @@ export const RichTextEditor = ({
 	return (
 		<div
 			className={`${
-				editable && "bg-blue-50/50   border border-stone-200 "
+				editable &&
+				"bg-blue-50/50   border dark:bg-zinc-900  dark:border-transparent border-stone-200 "
 			}  rounded-lg overflow-hidden w-full`}>
 			{editable && (
-				<div className="space-x-0.5  p-1.5 bg-white border-b pb-1.5 flex items-center">
+				<div className="space-x-0.5  p-1.5 dark:bg-zinc-900 dark:border-zinc-950  bg-white border-b pb-1.5 flex items-center">
 					<Button
 						type="button"
 						variant={"ghost"}
 						size="icon"
+						className="dark:bg-zinc-900"
 						disabled={!editor?.can().undo()}
 						onClick={() => editor?.commands.undo()}>
 						<Undo />
@@ -82,6 +90,7 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
+						className="dark:bg-zinc-900"
 						disabled={!editor?.can().redo()}
 						onClick={() => editor?.commands.redo()}>
 						<Redo />
@@ -93,7 +102,9 @@ export const RichTextEditor = ({
 						variant={"ghost"}
 						size="icon"
 						className={
-							editor?.isActive("heading", { level: 1 }) ? "bg-gray-100" : ""
+							editor?.isActive("heading", { level: 1 })
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
 						}
 						onClick={() =>
 							editor?.chain().focus().toggleHeading({ level: 1 }).run()
@@ -105,7 +116,9 @@ export const RichTextEditor = ({
 						variant={"ghost"}
 						size="icon"
 						className={
-							editor?.isActive("heading", { level: 2 }) ? "bg-gray-100" : ""
+							editor?.isActive("heading", { level: 2 })
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
 						}
 						onClick={() =>
 							editor?.chain().focus().toggleHeading({ level: 2 }).run()
@@ -117,7 +130,9 @@ export const RichTextEditor = ({
 						variant={"ghost"}
 						size="icon"
 						className={
-							editor?.isActive("heading", { level: 3 }) ? "bg-gray-100" : ""
+							editor?.isActive("heading", { level: 3 })
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
 						}
 						onClick={() =>
 							editor?.chain().focus().toggleHeading({ level: 3 }).run()
@@ -129,7 +144,9 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("bold") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("bold") ? "bg-gray-100 dark:bg-primary/50" : ""
+						}
 						onClick={() => editor?.chain().focus().toggleBold().run()}>
 						<Bold />
 					</Button>
@@ -137,7 +154,9 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("italic") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("italic") ? "bg-gray-100 dark:bg-primary/50" : ""
+						}
 						onClick={() => editor?.chain().focus().toggleItalic().run()}>
 						<Italic />
 					</Button>
@@ -145,7 +164,11 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("underline") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("underline")
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
+						}
 						onClick={() => editor?.chain().focus().toggleUnderline().run()}>
 						<Underline />
 					</Button>
@@ -153,7 +176,9 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("strike") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("strike") ? "bg-gray-100 dark:bg-primary/50" : ""
+						}
 						onClick={() => editor?.chain().focus().toggleStrike().run()}>
 						<Strikethrough />
 					</Button>
@@ -162,7 +187,11 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("bulletList") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("bulletList")
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
+						}
 						onClick={() => editor?.chain().focus().toggleBulletList().run()}>
 						<List />
 					</Button>
@@ -170,7 +199,11 @@ export const RichTextEditor = ({
 						type="button"
 						variant={"ghost"}
 						size="icon"
-						className={editor?.isActive("orderedList") ? "bg-gray-100" : ""}
+						className={
+							editor?.isActive("orderedList")
+								? "bg-gray-100 dark:bg-primary/50"
+								: ""
+						}
 						onClick={() => {
 							editor?.chain().focus().toggleOrderedList().run();
 						}}>
