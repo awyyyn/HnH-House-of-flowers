@@ -68,7 +68,6 @@ export default function ProductsPage() {
 			header: "Status",
 			enableHiding: true,
 			cell: ({ row }) => {
-				console.log(productStatusColorMap[row.original.status], "ss");
 				return (
 					<Badge
 						variant={productStatusColorMap[row.original.status]}
@@ -83,7 +82,6 @@ export default function ProductsPage() {
 			header: "Category",
 			enableHiding: true,
 			cell: ({ row }) => {
-				console.log(productStatusColorMap[row.original.status], "ss");
 				return (
 					<p className="capitalize">
 						{row.original.category[0]}

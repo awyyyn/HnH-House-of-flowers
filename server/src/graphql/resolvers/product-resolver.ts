@@ -3,12 +3,12 @@ import {
 	readProduct,
 	readProducts,
 	updateProduct,
-} from "@/models/product-model.js";
+} from "../../models/product-model.js";
 import {
 	AppContext,
 	ProductInput,
 	ProductsPaginationArgs,
-} from "@/types/index.js";
+} from "../../types/index.js";
 
 import { GraphQLError } from "graphql";
 
@@ -65,8 +65,6 @@ export const updateProductResolver = async (
 
 export const productResolver = async (_: never, { id }: { id: string }) => {
 	try {
-		console.log(id);
-
 		const product = await readProduct(id);
 
 		if (!product) {
@@ -75,7 +73,6 @@ export const productResolver = async (_: never, { id }: { id: string }) => {
 
 		return product;
 	} catch (error) {
-		console.log(error);
 		throw new GraphQLError((error as GraphQLError).message);
 	}
 };

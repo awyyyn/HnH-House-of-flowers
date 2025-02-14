@@ -31,8 +31,8 @@ export const RichTextEditor = ({
 	handleValue,
 	editable = false,
 	content,
-	isEditing = false,
-}: RichTextEditorProps) => {
+}: // isEditing = false,
+RichTextEditorProps) => {
 	const editor = useEditor({
 		autofocus: false,
 		extensions: [
