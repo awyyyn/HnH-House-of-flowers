@@ -18,7 +18,7 @@ export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 		return <Navigate to="/unauthorized" />;
 	}
 
-	if (role !== null && user.status === "UNVERIFIED") {
+	if (role !== null && (user.status === "UNVERIFIED" || !user.verifiedAt)) {
 		return <Navigate to="/verify-account" />;
 	}
 

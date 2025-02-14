@@ -36,6 +36,7 @@ export default function DataTable<TData, TValue>({
 	rowCount,
 	pagination,
 	setPagination,
+	handleRefresh,
 	loading = false,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -88,8 +89,9 @@ export default function DataTable<TData, TValue>({
 							// table.resetPagination();
 							table.resetPageSize();
 							table.resetPageIndex();
+							if (handleRefresh) handleRefresh();
 						}}>
-						<RefreshCcw />
+						<RefreshCcw className={`${loading ? "animate-spin" : ""} `} />
 					</Button>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>

@@ -53,7 +53,7 @@ export const RichTextEditor = ({
 		},
 		editable: editable,
 		// injectCSS: true,
-		content: isEditing
+		content: content
 			? `${generateHTML(JSON.parse(String(content)), [
 					UnderlineExe,
 					BulletExe,
