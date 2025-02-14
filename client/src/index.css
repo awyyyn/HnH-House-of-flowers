@@ -9,6 +9,15 @@
 	background-size: 60px 60px;
 }
 
+@layer components {
+	.img-card-sm {
+		@apply min-h-[100px] dark:bg-zinc-900 dark:border-transparent max-h-[100px] relative min-w-[100px] border border-gray-300 shadow-md rounded-md w-[100px];
+	}
+	.img {
+		@apply object-contain  w-full h-full;
+	}
+}
+
 @layer base {
 	:root {
 		--background: 342 100% 100%;

@@ -19,6 +19,8 @@ import VerifyAccount from "./app/verify-account";
 import SetUpAccount from "./app/set-up-account";
 import Products from "./app/admin/products";
 import AddProduct from "./app/admin/add-product";
+import EditProduct from "./app/admin/edit-product";
+import ProductInfo from "./app/admin/product-info";
 
 export default function App() {
 	const publicRoutes = [
@@ -70,6 +72,14 @@ export default function App() {
 							{
 								path: "add-product",
 								element: <AddProduct />,
+							},
+							{
+								path: "edit/:id",
+								element: <EditProduct />,
+							},
+							{
+								path: ":productId/info",
+								element: <ProductInfo />,
 							},
 						],
 					},
