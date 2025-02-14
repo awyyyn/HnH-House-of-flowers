@@ -24,3 +24,18 @@ export const userFragment = gql`
 		updatedAt
 	}
 `;
+
+export const productFragment = gql`
+	fragment ProductFragment on Product {
+		id
+		name
+		description
+		price
+		images
+		stock
+		status
+		category
+		createdAt
+		updatedAt
+	}
+`;
