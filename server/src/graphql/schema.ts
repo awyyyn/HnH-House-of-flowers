@@ -9,6 +9,13 @@ export const typeDefs = gql`
 			status: UserStatus
 			pagination: PaginationInput
 		): UsersPaginationResult
+		products(
+			role: UserRole
+			filter: String
+			status: UserStatus
+			pagination: PaginationInput
+		): ProductPaginationResult
+		product(id: ID!): Product
 	}
 
 	type Mutation {
@@ -19,6 +26,16 @@ export const typeDefs = gql`
 		sendChangeEmailOTP(newEmail: String!): String
 		updateEmail(newEmail: String!, otp: String!): UpdateUserResult
 		updateUser(data: UpdateUserInput): User
+		createProduct(
+			name: String!
+			description: String
+			price: Float!
+			images: [String]
+			stock: Int!
+			status: ProductStatus!
+			category: ProductCategory!
+		): Product
+		updateProduct(id: ID!, data: ProductInput!): Product
 	}
 
 	input UpdateUserInput {
@@ -46,6 +63,12 @@ export const typeDefs = gql`
 	type UsersPaginationResult {
 		total: Int!
 		users: [User]
+		hasNextPage: Boolean!
+	}
+
+	type ProductPaginationResult {
+		total: Int!
+		products: [Product]
 		hasNextPage: Boolean!
 	}
 
@@ -129,6 +152,44 @@ export const typeDefs = gql`
 		DELIVERED
 		CANCELLED
 		READY_FOR_PICKUP
+	}
+
+	type Product {
+		id: ID!
+		name: String!
+		description: String
+		price: Float!
+		images: [String]
+		stock: Int!
+		status: ProductStatus!
+		category: ProductCategory!
+
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	input ProductInput {
+		name: String!
+		description: String
+		price: Float!
+		images: [String]
+		stock: Int!
+		status: ProductStatus!
+		category: ProductCategory!
+	}
+
+	enum ProductStatus {
+		PRE_ORDER
+		DISCONTINUED
+		IN_STOCK
+		OUT_OF_STOCK
+	}
+
+	enum ProductCategory {
+		FLOWER
+		BOUQUET
+		CHOCOLATE
+		GIFT
 	}
 
 	type Customize {

@@ -1,5 +1,5 @@
 import { prisma, hashPassword } from "../services/index.js";
-import { User, UserRole, UserStatus } from "../types/index.js";
+import { UserFilter, User, UserRole } from "../types/index.js";
 import { Prisma } from "@prisma/client";
 
 export const createUser = async (values: {
@@ -36,22 +36,12 @@ export const readUser = async (filter: string) => {
 	return user;
 };
 
-interface Filter {
-	filter?: string;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
-	status?: UserStatus;
-	role?: UserRole;
-}
-
 export const readUsers = async ({
 	filter,
 	pagination,
 	role,
 	status,
-}: Filter = {}) => {
+}: UserFilter = {}) => {
 	const where: Prisma.UserWhereInput = {};
 
 	if (filter) {

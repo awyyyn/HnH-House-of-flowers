@@ -12,7 +12,7 @@ import {
 } from "../../models/index.js";
 import {
 	AppContext,
-	PaginationArgs,
+	UserPaginationArgs,
 	UpdateUserInput,
 	UserRole,
 } from "../../types/index.js";
@@ -34,7 +34,7 @@ export const userResolver = async (
 
 export const usersResolver = async (
 	_: never,
-	{ filter, pagination, role, status }: PaginationArgs
+	{ filter, pagination, role, status }: UserPaginationArgs
 ) => {
 	console.log(pagination);
 	try {
