@@ -112,8 +112,10 @@ model Product {
   name        String
   description String @default("")
   price       Float  @default(0.00)
-  image       String
+  images       String[]
+  // tags        String[]
   stock       Int    @default(1)
+
 
   status   ProductStatus   @default(IN_STOCK)
   category ProductCategory @default(FLOWER)

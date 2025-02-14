@@ -1,6 +1,7 @@
 export * from "./user.js";
 export * from "./customize.js";
 export * from "./order.js";
+export * from "./product.js";
 
 import { Dispatch, SetStateAction, SVGProps } from "react";
 import { User, UserRole } from "./user.js";
@@ -56,6 +57,7 @@ export interface DataTableProps<TData, TValue> {
 	data: TData[];
 	rowCount: number;
 	loading?: boolean;
+	handleRefresh?: VoidFunction;
 	pagination: DataTablePagination;
 	setPagination: Dispatch<SetStateAction<DataTablePagination>>;
 }

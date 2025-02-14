@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { userFragment } from "./fragments";
+import { productFragment, userFragment } from "./fragments";
 
 export const CREATE_ADMIN_MUTATION = gql`
 	${userFragment}
@@ -60,6 +60,41 @@ export const UPDATE_USER_MUTATION = gql`
 	mutation ($data: UpdateUserInput) {
 		user: updateUser(data: $data) {
 			...UserFragment
+		}
+	}
+`;
+
+export const CREATE_PRODUCT_MUTATION = gql`
+	${productFragment}
+
+	mutation (
+		$name: String!
+		$price: Float!
+		$stock: Int!
+		$status: ProductStatus!
+		$category: ProductCategory!
+		$images: [String]
+		$description: String
+	) {
+		product: createProduct(
+			name: $name
+			price: $price
+			stock: $stock
+			status: $status
+			category: $category
+			images: $images
+			description: $description
+		) {
+			...ProductFragment
+		}
+	}
+`;
+
+export const UPDATE_PRODUCT_MUTATION = gql`
+	${productFragment}
+	mutation ($id: ID!, $data: ProductInput!) {
+		product: updateProduct(id: $id, data: $data) {
+			...ProductFragment
 		}
 	}
 `;

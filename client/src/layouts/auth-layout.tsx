@@ -11,7 +11,7 @@ export default function AuthLayout() {
 
 	return (
 		<div className="h-screen w-screen flex dark:bg-zinc-950 justify-center items-center">
-			<HoverBorderGradient className="w-full border shadow-md shadow-primary/10 rounded-xl border-primary/30 cursor-default p-5 bg-white dark:bg-neutral-950 sm:min-w-[380px]   max-w-[380px]">
+			<HoverBorderGradient className="w-full border shadow-md shadow-primary/10 rounded-xl border-primary/30 cursor-default p-5 bg-white dark:bg-zinc-900 sm:min-w-[380px]   max-w-[380px]">
 				<Outlet />
 			</HoverBorderGradient>
 			<StarsBackground isDarkMode={!!(theme === "dark")} />

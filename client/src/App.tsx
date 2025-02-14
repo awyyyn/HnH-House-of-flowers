@@ -17,6 +17,10 @@ import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
 import VerifyAccount from "./app/verify-account";
 import SetUpAccount from "./app/set-up-account";
+import Products from "./app/admin/products";
+import AddProduct from "./app/admin/add-product";
+import EditProduct from "./app/admin/edit-product";
+import ProductInfo from "./app/admin/product-info";
 
 export default function App() {
 	const publicRoutes = [
@@ -57,6 +61,27 @@ export default function App() {
 					{
 						path: "pre-orders",
 						element: <PreOrders />,
+					},
+					{
+						path: "products",
+						children: [
+							{
+								index: true,
+								element: <Products />,
+							},
+							{
+								path: "add-product",
+								element: <AddProduct />,
+							},
+							{
+								path: "edit/:id",
+								element: <EditProduct />,
+							},
+							{
+								path: ":productId/info",
+								element: <ProductInfo />,
+							},
+						],
 					},
 				],
 			},

@@ -38,7 +38,7 @@ export const loginController = async (req: Request, res: Response) => {
 			return;
 		}
 
-		if (user.verifiedAt === null) {
+		if (user.verifiedAt === null || !user.verifiedAt) {
 			const otp = await createToken(user.email);
 			await sendAccountVerificationOTP({ email: user.email, otp: otp.token });
 		}

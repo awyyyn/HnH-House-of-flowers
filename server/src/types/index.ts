@@ -1,6 +1,27 @@
 import { prisma } from "../services/prisma.js";
+import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
 export * from "./user.js";
+export * from "./product.js";
+
+export interface UserFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	status?: UserStatus;
+	role?: UserRole;
+}
+export interface ProductFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	status?: ProductStatus;
+	category?: ProductCategory;
+}
 
 export interface PaginationResult<T> {
 	count: number;
@@ -15,10 +36,20 @@ export type AppContext = {
 	prisma: typeof prisma;
 };
 
-export interface PaginationArgs {
+export interface UserPaginationArgs {
 	filter?: string;
 	status?: UserStatus;
 	role?: UserRole;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+}
+
+export interface ProductsPaginationArgs {
+	filter?: string;
+	status?: ProductStatus;
+	category?: ProductCategory;
 	pagination?: {
 		page: number;
 		limit: number;

@@ -60,7 +60,7 @@ export function NavSecondary({
 								</SidebarMenuButton>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent
-								className="w-[--radix-dropdown-menu-trigger-width] min-w-56 p-2 rounded-lg"
+								className="w-[--radix-dropdown-menu-trigger-width] min-w-56 p-2 rounded-lg z-[99]"
 								side={isMobile ? "bottom" : "right"}
 								align="end"
 								sideOffset={4}>

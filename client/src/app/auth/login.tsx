@@ -61,11 +61,13 @@ export default function Login() {
 			}
 
 			login(data.data.accessToken, data.data.user);
+
 			if (data.data.user.role === "USER") {
 				navigate("/");
 			} else {
 				navigate("/dashboard");
 			}
+
 			toast({
 				title: "Logged in successfully",
 				description: "You have successfully logged in",

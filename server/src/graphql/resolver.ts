@@ -8,12 +8,18 @@ import {
 	sendChangeEmailOTPResolver,
 	updateEmailResolver,
 	updateUserResolver,
+	productsResolver,
+	updateProductResolver,
+	createProductResolver,
+	productResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
 	Query: {
 		user: userResolver,
 		users: usersResolver,
+		product: productResolver,
+		products: productsResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
@@ -23,6 +29,8 @@ export const resolvers = {
 		sendChangeEmailOTP: sendChangeEmailOTPResolver,
 		updateEmail: updateEmailResolver,
 		updateUser: updateUserResolver,
+		createProduct: createProductResolver,
+		updateProduct: updateProductResolver,
 	},
 	// Mutation: {},
 };

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { userFragment } from "./fragments";
+import { productFragment, userFragment } from "./fragments";
 
 export const getUserQuery = gql`
 	${userFragment}
@@ -29,6 +29,38 @@ export const getUsersQuery = gql`
 			users {
 				...UserFragment
 			}
+		}
+	}
+`;
+
+export const GET_PRODUCTS_QUERY = gql`
+	${productFragment}
+	query (
+		$pagination: PaginationInput
+		$role: UserRole
+		$filter: String
+		$status: UserStatus
+	) {
+		products(
+			pagination: $pagination
+			role: $role
+			filter: $filter
+			status: $status
+		) {
+			products {
+				...ProductFragment
+			}
+			hasNextPage
+			total
+		}
+	}
+`;
+
+export const GET_PRODUCT_QUERY = gql`
+	${productFragment}
+	query ($id: ID!) {
+		product(id: $id) {
+			...ProductFragment
 		}
 	}
 `;

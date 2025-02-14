@@ -175,6 +175,7 @@ export default function AccountInformation({
 							{isEditing && (
 								<div className="group-hover:z-[56] z-50 h-full w-full absolute ">
 									<FileUpload
+										showText
 										onFileUpload={(files) => {
 											const url = `https://api.cloudinary.com/v1_1/${
 												import.meta.env.VITE_CLOUDINARY_CLOUD_NAME

@@ -1,4 +1,4 @@
-import { comparePassword } from "@/services/bcrypt.js";
+import { comparePassword } from "../../services/bcrypt.js";
 import {
 	createUser,
 	readUser,
@@ -12,13 +12,13 @@ import {
 } from "../../models/index.js";
 import {
 	AppContext,
-	PaginationArgs,
+	UserPaginationArgs,
 	UpdateUserInput,
 	UserRole,
 } from "../../types/index.js";
 import { GraphQLError } from "graphql";
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
-import { generateAccessToken } from "@/services/jwt.js";
+import { generateAccessToken } from "../../services/jwt.js";
 
 export const userResolver = async (
 	_: never,
@@ -34,9 +34,8 @@ export const userResolver = async (
 
 export const usersResolver = async (
 	_: never,
-	{ filter, pagination, role, status }: PaginationArgs
+	{ filter, pagination, role, status }: UserPaginationArgs
 ) => {
-	console.log(pagination);
 	try {
 		return await readUsers({ filter, pagination, role, status });
 	} catch (error) {
@@ -138,7 +137,6 @@ export const sendChangeEmailOTPResolver = async (
 ) => {
 	try {
 		if (newEmail === app.email) {
-			console.log("asds");
 			throw new GraphQLError("New email must not be the same as the old email");
 		}
 
