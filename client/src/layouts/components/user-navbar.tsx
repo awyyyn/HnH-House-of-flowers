@@ -23,7 +23,7 @@ export function Navbar({ className }: { className?: string }) {
 
 	return (
 		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
-			<div className="flex   items-center gap-2 justify-between  w-full md:w-auto backdrop-blur-lg bg-white/80 py-3 px-4 rounded-full">
+			<div className="flex   items-center gap-2 dark:bg-black dark:border dark:border-zinc-800 justify-between  w-full md:w-auto backdrop-blur-lg bg-white/80 py-3 px-4 rounded-full">
 				<div className="flex items-center gap-2">
 					{role === "USER" && (
 						<div
@@ -101,7 +101,7 @@ export function Navbar({ className }: { className?: string }) {
 					</MenuItem>
 				</Menu>
 			</div>
-			<div className="hidden md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
+			<div className="hidden dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
 				{!isAuthenticated ? (
 					<div className="md:flex gap-2 px-4 items-center hidden ">
 						<Link to="/auth/login">
@@ -110,7 +110,7 @@ export function Navbar({ className }: { className?: string }) {
 
 						<Link to="/auth/register">
 							<Button
-								className="transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
+								className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
 								variant="outline">
 								Sign Up
 							</Button>

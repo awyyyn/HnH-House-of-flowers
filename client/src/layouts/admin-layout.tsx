@@ -29,7 +29,7 @@ export default function AdminLayout({
 				<AppSidebar />
 			</Suspense>
 			<main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100sdvh] h-auto ">
-				<header className="flex z-[99] shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
+				<header className="flex z-[99]  shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="md:hidden block -ml-1" />
 						<Separator
