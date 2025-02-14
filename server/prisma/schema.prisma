@@ -112,8 +112,8 @@ model Product {
   name        String
   description String @default("")
   price       Float  @default(0.00)
-  image       String[]
-  tags        String[]
+  images       String[]
+  // tags        String[]
   stock       Int    @default(1)
 
 
