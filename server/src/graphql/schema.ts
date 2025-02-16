@@ -10,9 +10,9 @@ export const typeDefs = gql`
 			pagination: PaginationInput
 		): UsersPaginationResult
 		products(
-			role: UserRole
+			category: ProductCategory
 			filter: String
-			status: UserStatus
+			status: ProductStatus
 			pagination: PaginationInput
 		): ProductPaginationResult
 		product(id: ID!): Product
@@ -62,13 +62,13 @@ export const typeDefs = gql`
 
 	type UsersPaginationResult {
 		total: Int!
-		users: [User]
+		data: [User]
 		hasNextPage: Boolean!
 	}
 
 	type ProductPaginationResult {
 		total: Int!
-		products: [Product]
+		data: [Product]
 		hasNextPage: Boolean!
 	}
 
