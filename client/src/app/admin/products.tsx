@@ -144,7 +144,7 @@ export default function ProductsPage() {
 				pagination={pagination}
 				setPagination={setPagination}
 				columns={columns}
-				data={data?.products.products ?? []}
+				data={data?.products.data ?? []}
 				rowCount={data?.products.total ?? 0}
 			/>
 		</>

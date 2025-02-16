@@ -150,7 +150,7 @@ export default function UsersPage() {
 				pagination={pagination}
 				setPagination={setPagination}
 				columns={columns}
-				data={data?.users.users ?? []}
+				data={data?.users.data ?? []}
 				rowCount={data?.users.total ?? 0}
 			/>
 			{selectedUser?.id && (
