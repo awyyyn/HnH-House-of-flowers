@@ -69,7 +69,7 @@ export const readUsers = async ({
 	const total = await prisma.user.count({ where });
 
 	return {
-		users,
+		data: users,
 		hasNextPage: users.length === pagination?.limit,
 		total,
 	};

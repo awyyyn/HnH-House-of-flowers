@@ -64,7 +64,7 @@ export const readProducts = async ({
 	const total = await prisma.product.count({ where });
 
 	return {
-		products,
+		data: products,
 		hasNextPage: products.length === pagination?.limit,
 		total,
 	};
