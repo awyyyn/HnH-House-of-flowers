@@ -26,7 +26,7 @@ export const getUsersQuery = gql`
 		) {
 			total
 			hasNextPage
-			users {
+			data {
 				...UserFragment
 			}
 		}
@@ -37,17 +37,17 @@ export const GET_PRODUCTS_QUERY = gql`
 	${productFragment}
 	query (
 		$pagination: PaginationInput
-		$role: UserRole
+		$category: ProductCategory
 		$filter: String
-		$status: UserStatus
+		$status: ProductStatus
 	) {
 		products(
 			pagination: $pagination
-			role: $role
+			category: $category
 			filter: $filter
 			status: $status
 		) {
-			products {
+			data {
 				...ProductFragment
 			}
 			hasNextPage

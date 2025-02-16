@@ -21,6 +21,11 @@ import Products from "./app/admin/products";
 import AddProduct from "./app/admin/add-product";
 import EditProduct from "./app/admin/edit-product";
 import ProductInfo from "./app/admin/product-info";
+import Chocolates from "./app/user/chocolates";
+import Flowers from "./app/user/flowers";
+import Gifts from "./app/user/gifts";
+import Bouquets from "./app/user/bouquets";
+import ProductDetails from "./app/user/product";
 
 export default function App() {
 	const publicRoutes = [
@@ -135,6 +140,58 @@ export default function App() {
 					{
 						path: "customize",
 						element: <Customize />,
+					},
+					{
+						path: "chocolates",
+						children: [
+							{
+								index: true,
+								element: <Chocolates />,
+							},
+							{
+								path: ":productId",
+								element: <ProductDetails />,
+							},
+						],
+					},
+					{
+						path: "flowers",
+						children: [
+							{
+								index: true,
+								element: <Flowers />,
+							},
+							{
+								path: ":productId",
+								element: <ProductDetails />,
+							},
+						],
+					},
+					{
+						path: "gifts",
+						children: [
+							{
+								index: true,
+								element: <Gifts />,
+							},
+							{
+								path: ":productId",
+								element: <ProductDetails />,
+							},
+						],
+					},
+					{
+						path: "bouquets",
+						children: [
+							{
+								index: true,
+								element: <Bouquets />,
+							},
+							{
+								path: ":productId",
+								element: <ProductDetails />,
+							},
+						],
 					},
 				],
 			},
