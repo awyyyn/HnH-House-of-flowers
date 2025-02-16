@@ -27,7 +27,7 @@ export default function ProductsPage() {
 	});
 
 	const { data, loading, refetch } = useQuery<{
-		products: { products: Product[]; hasNextPage: boolean; total: number };
+		products: { data: Product[]; hasNextPage: boolean; total: number };
 	}>(GET_PRODUCTS_QUERY, {
 		variables: {
 			pagination: {

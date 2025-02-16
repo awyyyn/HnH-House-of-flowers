@@ -30,7 +30,7 @@ export default function UsersPage() {
 		pageSize: 10, //default page size
 	});
 	const { data, loading } = useQuery<{
-		users: { users: User[]; hasNextPage: boolean; total: number };
+		users: { data: User[]; hasNextPage: boolean; total: number };
 	}>(getUsersQuery, {
 		variables: {
 			role: "ADMIN",
