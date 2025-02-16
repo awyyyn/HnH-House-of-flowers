@@ -12,10 +12,11 @@ import {
 	DropdownMenuItem,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
+import ThemeSwitcher from "@/components/custom/theme-switcher";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
@@ -34,16 +35,19 @@ export function Navbar({ className }: { className?: string }) {
 					<TextGenerateEffect className="text-lg  " words="House of Flowers" />
 				</div>
 				{!isAuthenticated && (
-					<div className="flex items-center gap-1">
-						<Button size="sm" className="block md:hidden ">
-							Sign In
-						</Button>
-						<Button
-							size="sm"
-							className="block md:hidden  transition-all duration-300 text-primary border-primary hover:bg-primary hover:text-white"
-							variant="outline">
-							Sign Up
-						</Button>
+					<div className="flex md:hidden items-center gap-1">
+						<Link to="/auth/login">
+							<Button size="sm">Sign In</Button>
+						</Link>
+
+						<Link to="/auth/register">
+							<Button
+								size="sm"
+								className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
+								variant="outline">
+								Sign Up
+							</Button>
+						</Link>
 					</div>
 				)}
 			</div>
@@ -53,7 +57,13 @@ export function Navbar({ className }: { className?: string }) {
 					className
 				)}>
 				<Menu setActive={setActive}>
-					<MenuItem setActive={setActive} active={active} item="Services">
+					<Link to={"/"}>
+						<MenuItem setActive={setActive} active={null} item="Home" />
+					</Link>
+					<Link to={"/customize"}>
+						<MenuItem setActive={setActive} active={null} item="Customize" />
+					</Link>
+					{/* <MenuItem setActive={setActive} active={active} item="Services">
 						<div className="flex flex-col space-y-4 text-sm">
 							<HoveredLink href="/web-dev">Web Development</HoveredLink>
 							<HoveredLink href="/interface-design">
@@ -62,46 +72,39 @@ export function Navbar({ className }: { className?: string }) {
 							<HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
 							<HoveredLink href="/branding">Branding</HoveredLink>
 						</div>
-					</MenuItem>
+					</MenuItem> */}
 					<MenuItem setActive={setActive} active={active} item="Products">
-						<div className="  text-sm grid grid-cols-2 gap-10 p-4">
+						<div className="text-sm grid grid-cols-2 gap-10 p-4 z-[101]">
 							<ProductItem
-								title="Algochurn"
-								href="https://algochurn.com"
-								src="https://assets.aceternity.com/demos/algochurn.webp"
-								description="Prepare for tech interviews like never before."
+								title="Flowers"
+								href="/flowers"
+								src="https://images.pexels.com/photos/697259/pexels-photo-697259.jpeg?cs=srgb&dl=pexels-hieu-697259.jpg&fm=jpg"
+								description="Browse our fresh and beautiful flowers for every occasion."
 							/>
 							<ProductItem
-								title="Tailwind Master Kit"
-								href="https://tailwindmasterkit.com"
-								src="https://assets.aceternity.com/demos/tailwindmasterkit.webp"
-								description="Production ready Tailwind css components for your next project"
+								title="Bouquets"
+								href="/bouquets"
+								src="https://www.floretflowers.com/wp-content/uploads/2016/02/Floret_Market-Bouquets-14.jpg"
+								description="Discover our artfully arranged bouquets perfect for gifts and celebrations."
 							/>
 							<ProductItem
-								title="Moonbeam"
-								href="https://gomoonbeam.com"
-								src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.51.31%E2%80%AFPM.png"
-								description="Never write from scratch again. Go from idea to blog in minutes."
+								title="Chocolates"
+								href="/chocolates"
+								src="https://www.thespruceeats.com/thmb/FhHcgQni8lgV0griUeDJMTAszxI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chocolate_hero1-d62e5444a8734f8d8fe91f5631d51ca5.jpg"
+								description="Indulge in our premium quality chocolates, a sweet treat for any moment."
 							/>
 							<ProductItem
-								title="Rogue"
-								href="https://userogue.com"
-								src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.47.07%E2%80%AFPM.png"
-								description="Respond to government RFPs, RFIs and RFQs 10x faster using AI"
+								title="Gifts"
+								href="/gifts"
+								src="https://www.realsimple.com/thmb/1nO0GmEuF87RSxFBmTWtfo6TZW0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/the-best-gift-giver-GettyImages-1706575747-2089a300e6594496b7f558585a4baefb.jpg"
+								description="Shop unique and thoughtful gifts to make every celebration memorable."
 							/>
-						</div>
-					</MenuItem>
-					<MenuItem setActive={setActive} active={active} item="Pricing">
-						<div className="flex flex-col space-y-4 text-sm">
-							<HoveredLink href="/hobby">Hobby</HoveredLink>
-							<HoveredLink href="/individual">Individual</HoveredLink>
-							<HoveredLink href="/team">Team</HoveredLink>
-							<HoveredLink href="/enterprise">Enterprise</HoveredLink>
 						</div>
 					</MenuItem>
 				</Menu>
 			</div>
-			<div className="hidden dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
+			<div className="hidden pl-5 dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
+				<ThemeSwitcher />
 				{!isAuthenticated ? (
 					<div className="md:flex gap-2 px-4 items-center hidden ">
 						<Link to="/auth/login">
@@ -129,13 +132,11 @@ export function Navbar({ className }: { className?: string }) {
 						</Avatar> */}
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="mr-5 mt-2">
-							<DropdownMenuItem>
-								<User />
-								<span>Profile</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Settings />
-								<span>Settings</span>
+							<DropdownMenuItem asChild>
+								<Link to="/account">
+									<User />
+									<span>Profile</span>
+								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={logout}>
 								<LogOut />

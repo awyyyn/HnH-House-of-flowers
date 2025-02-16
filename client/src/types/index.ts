@@ -21,9 +21,9 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 };
 
 export interface PaginationResult<T> {
-	count: number;
+	total: number;
 	data: T[];
-	hasMore: boolean;
+	hasNextPage: boolean;
 }
 export interface AuthContextProps {
 	user: User;
