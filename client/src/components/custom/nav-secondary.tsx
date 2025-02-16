@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Moon, Sun, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 
 import {
 	SidebarGroup,
@@ -9,18 +9,8 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuSeparator,
-} from "../ui/dropdown-menu";
-import {
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { useTheme } from "@/contexts";
+
+import ThemeSwitcher from "./theme-switcher";
 
 export function NavSecondary({
 	items,
@@ -33,7 +23,6 @@ export function NavSecondary({
 	}[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
 	const { isMobile } = useSidebar();
-	const { setTheme, theme } = useTheme();
 
 	return (
 		<SidebarGroup {...props}>
@@ -50,40 +39,7 @@ export function NavSecondary({
 						</SidebarMenuItem>
 					))}
 					<SidebarMenuItem>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton
-									size="sm"
-									className="capitalize data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-									{theme === "dark" ? <Moon /> : <Sun />}
-									{theme === "dark" ? "Dark" : "Light"} mode
-								</SidebarMenuButton>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								className="w-[--radix-dropdown-menu-trigger-width] min-w-56 p-2 rounded-lg z-[99]"
-								side={isMobile ? "bottom" : "right"}
-								align="end"
-								sideOffset={4}>
-								<DropdownMenuLabel className="p-0 font-normal text-sm">
-									Theme
-								</DropdownMenuLabel>
-								<DropdownMenuSeparator />
-								<DropdownMenuGroup>
-									<DropdownMenuItem
-										onClick={() => setTheme("light")}
-										className="text-sm  flex items-center gap-2 cursor-pointer dark:hover:bg-primary/10 p-2">
-										<Sun className="h-4 w-4" />
-										Light
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={() => setTheme("dark")}
-										className="text-sm  flex items-center gap-2 cursor-pointer dark:hover:bg-primary/10 p-2">
-										<Moon className="h-4 w-4" />
-										Dark
-									</DropdownMenuItem>
-								</DropdownMenuGroup>
-							</DropdownMenuContent>
-						</DropdownMenu>
+						<ThemeSwitcher isAdmin showLabel isMobile={isMobile} />
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarGroupContent>

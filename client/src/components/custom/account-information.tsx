@@ -214,7 +214,7 @@ export default function AccountInformation({
 								<img
 									src={form.getValues("photo") ?? user.photo}
 									alt="profile"
-									className={`h-full w-full bg-white object-cover absolute z-50 transition-all ${
+									className={`h-full w-full bg-white object-cover absolute z-10 transition-all ${
 										isEditing ? "group-hover:opacity-5" : " "
 									}`}
 								/>

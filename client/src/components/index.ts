@@ -4,6 +4,7 @@ export * from "./ui/scroll-area";
 export * from "./ui/stepper";
 export * from "./ui/checkbox";
 export * from "./ui/step";
+export * from "./ui/pagination";
 export * from "./ui/select";
 export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
@@ -39,6 +40,7 @@ export * from "./ui/toaster";
 export * from "./ui/toggle";
 export * from "./ui/toggle-group";
 export * from "./ui/dropdown-menu";
+export * from "./ui/skeleton";
 export * from "./custom/app-sidebar";
 
 export * from "./custom/nav-main";
