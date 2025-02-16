@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
 	Button,
-	HoveredLink,
 	Menu,
 	MenuItem,
 	ProductItem,
