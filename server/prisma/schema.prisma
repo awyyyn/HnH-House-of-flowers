@@ -23,6 +23,10 @@ model User {
   status      UserStatus @default(UNVERIFIED)
 
   orders Order[]
+  cart Cart?
+
+  messagesSent     Message[] @relation(name: "SentMessages")
+  messagesReceived Message[] @relation(name: "ReceivedMessages")
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -121,6 +125,7 @@ model Product {
   category ProductCategory @default(FLOWER)
 
   orderItem OrderItem[]
+  cartItem CartItem[]
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -162,3 +167,43 @@ model BlockedUser {
 
   @@map("blocked_users")
 }
+
+
+model Cart {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Unique cart ID
+  userId     String   @db.ObjectId @unique
+  user       User     @relation(fields: [userId], references: [id])
+  items      CartItem[]   // List of items in the cart
+  createdAt  DateTime @default(now()) // Timestamp of when the cart was created
+  updatedAt  DateTime @updatedAt // Timestamp of when the cart was last updated
+
+}
+
+model CartItem {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Unique item ID
+  cartId     String  @db.ObjectId  // Cart ID (foreign key to Cart model)
+  cart       Cart     @relation(fields: [cartId], references: [id])
+  productId  String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int      // Quantity of the product in the cart
+
+  price      Float    // Price of the item
+
+}
+
+model Message {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  senderId     String   @db.ObjectId // The user who sent the message
+  receiverId   String    @db.ObjectId// The user who received the message
+  content      String?   // The message content (can be null for media messages)
+  mediaUrl     String?   // URL for media (optional, for images, videos)
+  // messageType  MessageType // Type of the message (text, image, video, etc.)
+  // status       MessageStatus // Status of the message (sent, delivered, read)
+  createdAt    DateTime @default(now()) // Timestamp of when the message was sent
+  updatedAt    DateTime @updatedAt     // Timestamp of last update
+
+  sender       User     @relation(name: "SentMessages", fields: [senderId], references: [id])
+  receiver     User     @relation(name: "ReceivedMessages", fields: [receiverId], references: [id])
+}
+ 
+ 
