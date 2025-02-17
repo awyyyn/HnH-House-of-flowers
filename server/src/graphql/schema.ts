@@ -16,6 +16,7 @@ export const typeDefs = gql`
 			pagination: PaginationInput
 		): ProductPaginationResult
 		product(id: ID!): Product
+		readMessages(userId: ID!): [Message]
 	}
 
 	type Mutation {
@@ -36,6 +37,15 @@ export const typeDefs = gql`
 			category: ProductCategory!
 		): Product
 		updateProduct(id: ID!, data: ProductInput!): Product
+		addToCart(
+			price: Float!
+			quantity: Int!
+			productId: String!
+			cartId: String!
+		): CartItem
+		updateCartItem(id: ID!, price: Float!, quantity: Int!): CartItem
+		removeToCart(id: ID!): CartItem
+		sendMessage(receiverId: String!, content: String!): Message
 	}
 
 	input UpdateUserInput {
@@ -200,5 +210,38 @@ export const typeDefs = gql`
 		orderItem: OrderItem
 		createdAt: String!
 		updatedAt: String!
+	}
+
+	type Message {
+		id: ID!
+		senderId: String!
+		receiverId: String!
+		sender: User!
+		receiver: User!
+
+		content: String
+		createdAt: String
+		updatedAt: String
+	}
+
+	type Cart {
+		id: ID!
+		userId: String!
+		user: User!
+		items: [CartItem]
+
+		updatedAt: String
+		createdAt: String
+	}
+
+	type CartItem {
+		id: ID!
+		product: Product!
+		productId: String!
+		quantity: Int!
+		cartId: String!
+		cart: Cart!
+
+		price: Float!
 	}
 `;

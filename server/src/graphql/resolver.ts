@@ -12,6 +12,9 @@ import {
 	updateProductResolver,
 	createProductResolver,
 	productResolver,
+	readMessagesResolver,
+	removeToCartResolver,
+	sendMessageResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -20,6 +23,7 @@ export const resolvers = {
 		users: usersResolver,
 		product: productResolver,
 		products: productsResolver,
+		readMessages: readMessagesResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
@@ -31,6 +35,8 @@ export const resolvers = {
 		updateUser: updateUserResolver,
 		createProduct: createProductResolver,
 		updateProduct: updateProductResolver,
+		removeToCart: removeToCartResolver,
+		sendMessage: sendMessageResolver,
 	},
 	// Mutation: {},
 };
