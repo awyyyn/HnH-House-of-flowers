@@ -7,6 +7,7 @@ type Props = {
 	inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 	startIcon?: ReactElement;
 	endIcon?: ReactElement;
+	hasPadding?: boolean;
 };
 
 export function InputWithIcon({
@@ -14,6 +15,7 @@ export function InputWithIcon({
 	startIcon,
 	endIcon,
 	inputProps,
+	hasPadding = true,
 }: Props) {
 	return (
 		<div className={`flex items-center  relative  w-full `}>
@@ -29,7 +31,9 @@ export function InputWithIcon({
 
 			{endIcon && (
 				<div
-					className={`absolute right-2 top-[50%] cursor-pointer -translate-y-[50%]`}>
+					className={`absolute ${
+						hasPadding ? "right-2" : "right-0"
+					} top-[50%] cursor-pointer -translate-y-[50%]`}>
 					{endIcon}
 				</div>
 			)}

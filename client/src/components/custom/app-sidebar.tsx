@@ -4,6 +4,7 @@ import {
 	Flower,
 	LayoutDashboard,
 	LifeBuoy,
+	MessagesSquare,
 	Package,
 	Send,
 	UserCog,
@@ -62,6 +63,11 @@ const data = {
 			title: "Orders",
 			url: "/orders",
 			icon: Package,
+		},
+		{
+			title: "Messages",
+			url: "/messages",
+			icon: MessagesSquare,
 		},
 		{
 			title: "Admins",
@@ -143,7 +149,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { role } = useAuth();
 
 	return (
-		<Sidebar variant="inset" {...props} className="z-[99] ">
+		<Sidebar variant="inset" {...props} className="z-[] ">
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>

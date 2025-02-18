@@ -26,6 +26,9 @@ import Flowers from "./app/user/flowers";
 import Gifts from "./app/user/gifts";
 import Bouquets from "./app/user/bouquets";
 import ProductDetails from "./app/user/product";
+import Messages from "./app/admin/messages";
+import MessagesMobile from "./app/admin/messages-mobile";
+import Conversation from "./app/conversation";
 
 export default function App() {
 	const publicRoutes = [
@@ -66,6 +69,20 @@ export default function App() {
 					{
 						path: "pre-orders",
 						element: <PreOrders />,
+					},
+					{
+						path: "messages",
+						element: <Messages />,
+						children: [
+							{
+								index: true,
+								element: <MessagesMobile />,
+							},
+							{
+								path: ":userId",
+								element: <Conversation />,
+							},
+						],
 					},
 					{
 						path: "products",

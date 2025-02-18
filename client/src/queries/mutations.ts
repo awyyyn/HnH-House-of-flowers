@@ -98,3 +98,28 @@ export const UPDATE_PRODUCT_MUTATION = gql`
 		}
 	}
 `;
+
+export const SEND_MESSAGE_MUTATION = gql`
+	mutation ($receiverId: String!, $content: String!) {
+		sendMessage(receiverId: $receiverId, content: $content) {
+			id
+			senderId
+			receiverId
+			sender {
+				firstName
+				lastName
+				email
+				photo
+			}
+			receiver {
+				firstName
+				lastName
+				email
+				photo
+			}
+			content
+			createdAt
+			updatedAt
+		}
+	}
+`;

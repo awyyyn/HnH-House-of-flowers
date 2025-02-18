@@ -64,3 +64,44 @@ export const GET_PRODUCT_QUERY = gql`
 		}
 	}
 `;
+
+export const GET_USERS_BY_MESSAGE_QUERY = gql`
+	query Query {
+		adminMessages {
+			total
+			hasNextPage
+			data {
+				id
+				firstName
+				lastName
+				email
+				photo
+			}
+		}
+	}
+`;
+
+export const GET_MESSAGES_QUERY = gql`
+	query ReadMessages($userId: ID!) {
+		readMessages(userId: $userId) {
+			id
+			senderId
+			receiverId
+			sender {
+				firstName
+				lastName
+				email
+				photo
+			}
+			receiver {
+				firstName
+				lastName
+				email
+				photo
+			}
+			content
+			createdAt
+			updatedAt
+		}
+	}
+`;
