@@ -28,7 +28,7 @@ const authLink = setContext((_, { headers }) => {
 
 const wsLink = new GraphQLWsLink(
 	createClient({
-		url: "ws://localhost:4000/graphql",
+		url: import.meta.env.VITE_GQL_WS_URL!,
 	})
 );
 
