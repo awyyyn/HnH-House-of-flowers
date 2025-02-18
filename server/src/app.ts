@@ -3,7 +3,7 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import express from "express";
-import http from "http";
+import { createServer } from "http";
 import cors from "cors";
 import { typeDefs, resolvers } from "./graphql/index.js";
 import dotenv from "dotenv";
@@ -16,7 +16,7 @@ import { GraphQLError } from "graphql";
 
 import { WebSocketServer } from "ws";
 // import { useServer } from "node_modules/graphql-ws/lib/use/ws.js";
-import { useServer } from "graphql-ws/use/ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 
 // (Removed unused useServer import)
 
@@ -25,7 +25,7 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 // Initialize an app and an httpServer
 dotenv.config();
 const app = express();
-const httpServer = http.createServer(app);
+const httpServer = createServer(app);
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -43,7 +43,7 @@ const wsServer = new WebSocketServer({
 });
 
 // Server Cleanup
-const serverCleanup = useServer({ schema }, wsServer);
+const serverCleanup = useServer({ schema }, wsServer as any);
 
 // Set up ApolloServer.
 const server = new ApolloServer({
