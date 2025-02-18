@@ -15,7 +15,8 @@ import { prisma } from "./services/prisma.js";
 import { GraphQLError } from "graphql";
 
 import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
+// import { useServer } from "node_modules/graphql-ws/lib/use/ws.js";
+import { useServer } from "graphql-ws/use/ws";
 
 // (Removed unused useServer import)
 
@@ -42,7 +43,7 @@ const wsServer = new WebSocketServer({
 });
 
 // Server Cleanup
-const serverCleanup = useServer({ schema }, wsServer as any);
+const serverCleanup = useServer({ schema }, wsServer);
 
 // Set up ApolloServer.
 const server = new ApolloServer({
