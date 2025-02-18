@@ -1,7 +1,6 @@
 import { GET_MESSAGES_QUERY, SEND_MESSAGE_MUTATION } from "@/queries";
-import { Message } from "../types/message";
+import { Message } from "@/types/message";
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { useLocation, useParams } from "react-router-dom";
 import { MESSAGE_SENT_SUBSCRIPTION } from "@/queries/subscriptions";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -11,16 +10,14 @@ import {
 	Button,
 	Input,
 } from "@/components";
-import { User } from "@/types";
-import { Send } from "lucide-react";
+import { Flower, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts";
 
-export default function Conversation() {
+export default function Chat() {
+	const { user } = useAuth();
 	const [message, setMessage] = useState("");
-	const { userId } = useParams();
-	const { state } = useLocation();
 	const { toast } = useToast();
-	const user = state?.user as User;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -39,17 +36,16 @@ export default function Conversation() {
 
 	useSubscription(MESSAGE_SENT_SUBSCRIPTION, {
 		variables: {
-			userId: userId,
+			userId: String(user!.id),
 		},
 		onData(options) {
-			console.log(options, "options");
 			setMessages((msgs) => [...msgs, options.data.data.messageSent]);
 		},
 	});
 
 	const { loading } = useQuery(GET_MESSAGES_QUERY, {
 		variables: {
-			userId: userId,
+			userId: String(user!.id),
 		},
 		onCompleted(data: { readMessages: Message[] }) {
 			setMessages(data?.readMessages ?? []);
@@ -62,12 +58,14 @@ export default function Conversation() {
 		if (!message.trim()) return;
 
 		try {
-			await sendMessage({
+			const { data } = await sendMessage({
 				variables: {
-					receiverId: userId,
+					receiverId: "67a5852e80ce4bb9e919d2fc",
 					content: message.trim(),
 				},
 			});
+
+			setMessages((msgs) => [...msgs, data.sendMessage]);
 			setMessage(""); // Clear input after sending
 		} catch (error) {
 			toast({
@@ -84,18 +82,14 @@ export default function Conversation() {
 			<div className="flex items-center px-4 py-3 border-b bg-white dark:bg-zinc-950">
 				<div className="flex items-center gap-3">
 					<Avatar>
-						<AvatarImage src={user?.photo} />
+						{/* <AvatarImage src={user?.photo} /> */}
 						<AvatarFallback className="capitalize">
-							{user?.firstName && user?.lastName
-								? `${user.firstName[0]}${user.lastName[0]}`
-								: "U"}
+							<Flower className="stroke-primary" />
 						</AvatarFallback>
 					</Avatar>
 					<div>
-						<p className="font-medium">
-							{user?.firstName} {user?.lastName}
-						</p>
-						<p className="text-sm text-gray-500">{user?.email}</p>
+						<p className="font-medium">Chat Support</p>
+						<p className="text-sm text-gray-500">House of Flowers</p>
 					</div>
 				</div>
 			</div>
@@ -106,11 +100,13 @@ export default function Conversation() {
 					<div
 						key={index}
 						className={`flex ${
-							msg.senderId === userId ? "justify-start" : "justify-end"
+							msg.senderId !== String(user!.id)
+								? "justify-start"
+								: "justify-end"
 						}`}>
 						<div
 							className={`max-w-[70%] p-3 rounded-lg ${
-								msg.senderId === userId
+								msg.senderId !== String(user!.id)
 									? "bg-white dark:bg-zinc-800"
 									: "bg-primary text-white"
 							}`}>

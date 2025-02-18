@@ -11,7 +11,7 @@ import {
 	DropdownMenuItem,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -103,6 +103,13 @@ export function Navbar({ className }: { className?: string }) {
 				</Menu>
 			</div>
 			<div className="hidden pl-5 dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
+				{isAuthenticated && role === "USER" && (
+					<>
+						<Link to="/chat">
+							<MessageCircle />
+						</Link>
+					</>
+				)}
 				<ThemeSwitcher />
 				{!isAuthenticated ? (
 					<div className="md:flex gap-2 px-4 items-center hidden ">

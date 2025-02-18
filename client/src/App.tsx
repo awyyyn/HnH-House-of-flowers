@@ -28,7 +28,8 @@ import Bouquets from "./app/user/bouquets";
 import ProductDetails from "./app/user/product";
 import Messages from "./app/admin/messages";
 import MessagesMobile from "./app/admin/messages-mobile";
-import Conversation from "./app/conversation";
+import Conversation from "./app/admin/conversation";
+import Chat from "./app/user/chat";
 
 export default function App() {
 	const publicRoutes = [
@@ -157,6 +158,10 @@ export default function App() {
 					{
 						path: "customize",
 						element: <Customize />,
+					},
+					{
+						path: "chat",
+						element: <Chat />,
 					},
 					{
 						path: "chocolates",
