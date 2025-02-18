@@ -1,25 +1,17 @@
 {
 	"compilerOptions": {
-		"target": "es2016",
-		"module": "NodeNext",
-		"rootDir": "./src",
-		"rootDirs": ["./src"],
-		"outDir": "./dist",
-		// "allowImportingTsExtensions": true,
-		// "emitDeclarationOnly": true,
-		"removeComments": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
-		"skipLibCheck": true,
-
-		/* Linting */
+		"target": "es6",
+		"module": "commonjs",
 		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUncheckedSideEffectImports": true,
-
-		"types": ["node"]
-	}
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": "./",
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"removeComments": true,
+		"sourceMap": true
+	},
+	"include": ["src/**/*"]
+	// "exclude": ["node_modules", "dist"]
 }
