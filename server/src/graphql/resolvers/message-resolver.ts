@@ -63,7 +63,7 @@ export const adminMessagesResolver = async (
 export const messageSentSubscription = {
 	subscribe: withFilter(
 		() => pubsub.asyncIterableIterator(["MESSAGE_SENT"]),
-		(payload, variables) => {
+		(payload: any, variables: any) => {
 			return (
 				payload.messageSent.receiverId === variables.userId ||
 				variables.role === "ADMIN" ||
