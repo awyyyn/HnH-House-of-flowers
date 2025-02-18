@@ -1,6 +1,12 @@
-import { createMessage, readMessages } from "@/models/message-model.js";
+import {
+	createMessage,
+	readAdminMessages,
+	readMessages,
+} from "@/models/message-model.js";
+import { pubsub } from "@/services/pubsub.js";
 import { AppContext } from "@/types/index.js";
 import { GraphQLError } from "graphql";
+import { withFilter } from "graphql-subscriptions";
 
 export const sendMessageResolver = async (
 	_: never,
@@ -17,6 +23,8 @@ export const sendMessageResolver = async (
 		if (!newMessage) {
 			throw new GraphQLError("Message not sent!");
 		}
+
+		pubsub.publish("MESSAGE_SENT", { messageSent: newMessage });
 
 		return newMessage;
 	} catch {
@@ -35,4 +43,32 @@ export const readMessagesResolver = async (
 	} catch {
 		throw new GraphQLError("Internal Server Error!");
 	}
+};
+
+export const adminMessagesResolver = async (
+	_: never,
+	__: never,
+	app: AppContext
+) => {
+	try {
+		if (app.role === "USER") {
+			return new GraphQLError("Unauthorized!");
+		}
+		return await readAdminMessages();
+	} catch (error) {
+		throw new GraphQLError("Internal Server Error!");
+	}
+};
+
+export const messageSentSubscription = {
+	subscribe: withFilter(
+		() => pubsub.asyncIterableIterator(["MESSAGE_SENT"]),
+		(payload, variables) => {
+			return (
+				payload.messageSent.receiverId === variables.userId ||
+				variables.role === "ADMIN" ||
+				variables.role === "SUPER_ADMIN"
+			);
+		}
+	),
 };
