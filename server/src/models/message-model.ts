@@ -45,6 +45,10 @@ export const readMessages = async (userId: string) => {
 				},
 			],
 		},
+		include: {
+			sender: true,
+			receiver: true,
+		},
 	});
 
 	return messages;
