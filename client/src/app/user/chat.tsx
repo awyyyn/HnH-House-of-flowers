@@ -3,13 +3,7 @@ import { Message } from "@/types/message";
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { MESSAGE_SENT_SUBSCRIPTION } from "@/queries/subscriptions";
 import { useState, useRef, useEffect } from "react";
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-	Button,
-	Input,
-} from "@/components";
+import { Avatar, AvatarFallback, Button, Input } from "@/components";
 import { Flower, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts";

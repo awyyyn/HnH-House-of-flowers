@@ -42,6 +42,7 @@ const wsServer = new WebSocketServer({
 });
 
 // Server Cleanup
+// @ts-ignore
 const serverCleanup = useServer({ schema }, wsServer);
 
 // Set up ApolloServer.

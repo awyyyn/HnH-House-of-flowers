@@ -1,4 +1,4 @@
-import { prisma } from "@/services/prisma.js";
+import { prisma } from "../services/prisma.js";
 import { Prisma } from "@prisma/client";
 
 export const createMessage = async ({

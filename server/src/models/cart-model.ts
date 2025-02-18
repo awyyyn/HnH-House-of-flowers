@@ -1,4 +1,4 @@
-import { prisma } from "@/services/prisma.js";
+import { prisma } from "../services/prisma.js";
 
 export const createCart = async ({ userId }: { userId: string }) => {
 	const cart = await prisma.cart.create({

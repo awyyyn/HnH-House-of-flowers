@@ -2,8 +2,8 @@ import {
 	createCartItem,
 	removeCartItem,
 	updateCartItem,
-} from "@/models/cart-item-model.js";
-import { AppContext } from "@/types/index.js";
+} from "../../models/cart-item-model.js";
+import { AppContext } from "../../types/index.js";
 import { GraphQLError } from "graphql";
 
 export const updateCartItemResolver = async (
@@ -46,11 +46,10 @@ export const addToCartResolver = async (
 
 export const removeToCartResolver = async (
 	_: never,
-	{ id }: { id: string },
-	app: AppContext
+	{ id }: { id: string }
 ) => {
 	try {
-		const deletedItem = await removeCartItem(id, app.id);
+		const deletedItem = await removeCartItem(id);
 
 		return deletedItem;
 	} catch {

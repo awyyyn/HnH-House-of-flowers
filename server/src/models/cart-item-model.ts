@@ -1,4 +1,4 @@
-import { prisma } from "@/services/prisma.js";
+import { prisma } from "../services/prisma.js";
 
 export const createCartItem = async ({
 	price,
@@ -56,7 +56,7 @@ export const updateCartItem = async (
 	return updatedCartItem;
 };
 
-export const removeCartItem = async (cartItemId: string, userId: string) => {
+export const removeCartItem = async (cartItemId: string) => {
 	const cartItem = await prisma.cartItem.delete({
 		where: {
 			id: cartItemId,

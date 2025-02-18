@@ -2,9 +2,9 @@ import {
 	createMessage,
 	readAdminMessages,
 	readMessages,
-} from "@/models/message-model.js";
-import { pubsub } from "@/services/pubsub.js";
-import { AppContext } from "@/types/index.js";
+} from "../../models/message-model.js";
+import { pubsub } from "../../services/pubsub.js";
+import { AppContext } from "../../types/index.js";
 import { GraphQLError } from "graphql";
 import { withFilter } from "graphql-subscriptions";
 
