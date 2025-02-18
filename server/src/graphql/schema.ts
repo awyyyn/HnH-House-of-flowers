@@ -1,6 +1,10 @@
 import { gql } from "graphql-tag";
 
 export const typeDefs = gql`
+	type Subscription {
+		messageSent(userId: ID!, role: UserRole): Message
+	}
+
 	type Query {
 		user(filter: String!): User
 		users(
@@ -17,6 +21,7 @@ export const typeDefs = gql`
 		): ProductPaginationResult
 		product(id: ID!): Product
 		readMessages(userId: ID!): [Message]
+		adminMessages: UsersPaginationResult
 	}
 
 	type Mutation {

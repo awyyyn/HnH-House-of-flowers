@@ -15,15 +15,21 @@ import {
 	readMessagesResolver,
 	removeToCartResolver,
 	sendMessageResolver,
+	adminMessagesResolver,
+	messageSentSubscription,
 } from "./resolvers/index.js";
 
 export const resolvers = {
+	Subscription: {
+		messageSent: messageSentSubscription,
+	},
 	Query: {
 		user: userResolver,
 		users: usersResolver,
 		product: productResolver,
 		products: productsResolver,
 		readMessages: readMessagesResolver,
+		adminMessages: adminMessagesResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
