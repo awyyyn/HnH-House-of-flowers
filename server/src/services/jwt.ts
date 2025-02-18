@@ -10,11 +10,12 @@ interface PayloadArgs {
 type JWTPayload = PayloadArgs & JwtPayload;
 
 export const generateAccessToken = (
-	payload: PayloadArgs /* expiresIn = "2h" */
+	payload: PayloadArgs
+	// expiresIn: string = "2h"
 ) => {
 	const secret = process.env.ACCESS_SECRET;
 	return jwt.sign(payload, secret!, {
-		// expiresIn,
+		expiresIn: "4h",
 	});
 };
 
