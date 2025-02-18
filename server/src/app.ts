@@ -77,7 +77,8 @@ app.use(
 			if (
 				origin === environment.CLIENT_URL ||
 				!origin ||
-				origin == "http://localhost:4000"
+				origin == "http://localhost:4000" ||
+				origin == "http://localhost:5173"
 			) {
 				callback(null, true);
 			} else {
