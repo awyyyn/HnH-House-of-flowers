@@ -52,7 +52,9 @@ export const readProducts = async ({
 	}
 
 	if (status) {
-		where.status = status;
+		where.status = {
+			in: status,
+		};
 	}
 
 	const products = await prisma.product.findMany({

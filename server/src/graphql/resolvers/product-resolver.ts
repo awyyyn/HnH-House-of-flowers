@@ -32,7 +32,12 @@ export const createProductResolver = async (
 
 export const productsResolver = async (
 	_: never,
-	{ filter, pagination, category, status }: ProductsPaginationArgs
+	{
+		filter,
+		pagination,
+		category,
+		status = ["DISCONTINUED", "IN_STOCK", "OUT_OF_STOCK", "PRE_ORDER"],
+	}: ProductsPaginationArgs
 ) => {
 	try {
 		return await readProducts({ filter, pagination, category, status });

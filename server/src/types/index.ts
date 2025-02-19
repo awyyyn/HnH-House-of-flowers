@@ -21,7 +21,7 @@ export interface ProductFilter {
 		page: number;
 		limit: number;
 	};
-	status?: ProductStatus;
+	status?: ProductStatus[];
 	category?: ProductCategory;
 }
 
@@ -50,7 +50,7 @@ export interface UserPaginationArgs {
 
 export interface ProductsPaginationArgs {
 	filter?: string;
-	status?: ProductStatus;
+	status?: ProductStatus[];
 	category?: ProductCategory;
 	pagination?: {
 		page: number;
