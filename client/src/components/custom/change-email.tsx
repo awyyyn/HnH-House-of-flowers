@@ -33,7 +33,7 @@ const emailSchema = z.object({
 export default function ChangeEmail() {
 	const { user, setUser } = useAuth();
 	const { toast } = useToast();
-	const [sendOTP] = useMutation(SEND_CHANGE_EMAIL_OTP_MUTATION);
+	const [sendOTP, { loading }] = useMutation(SEND_CHANGE_EMAIL_OTP_MUTATION);
 	const [updateEmail] = useMutation(UPDATE_EMAIL_MUTATION);
 	const [verifyOTP, setVerifyOTP] = useState(false);
 	const form = useForm<z.infer<typeof emailSchema>>({
@@ -46,9 +46,12 @@ export default function ChangeEmail() {
 		},
 	});
 
-	const handleSubmit = async (values: z.infer<typeof emailSchema>) => {
+	const handleSubmit = async (
+		values: z.infer<typeof emailSchema>,
+		resend = false
+	) => {
 		try {
-			if (!verifyOTP) {
+			if (!verifyOTP || resend) {
 				const { data } = await sendOTP({
 					variables: {
 						newEmail: values.newEmail,
@@ -78,7 +81,11 @@ export default function ChangeEmail() {
 					title: "Success",
 					description: "Email updated successfully",
 				});
-				setUser(data.data.data);
+				form.setValue("email", data.data.data.email);
+				setUser((usr) => ({
+					...usr,
+					email: form.getValues().newEmail,
+				}));
 			}
 		} catch (err) {
 			toast({
@@ -101,7 +108,7 @@ export default function ChangeEmail() {
 			<CardContent>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(handleSubmit)}
+						onSubmit={form.handleSubmit(() => handleSubmit(form.getValues()))}
 						className="space-y-5">
 						<FormField
 							control={form.control}
@@ -134,14 +141,27 @@ export default function ChangeEmail() {
 									</FormLabel>
 									<FormControl>
 										<Input
-											readOnly={form.formState.isSubmitting || verifyOTP}
+											readOnly={
+												form.formState.isSubmitting || loading || verifyOTP
+											}
 											placeholder=""
 											className="dark:border-primary/50"
 											{...field}
 										/>
 									</FormControl>
-									<FormDescription>
-										A verification code will be sent to this email address.
+									<FormDescription className="w-full">
+										{verifyOTP ? (
+											<div className="flex justify-center ">
+												<span>Did&apos;t receive code?&nbsp;</span>
+												<span
+													onClick={() => handleSubmit(form.getValues(), true)}
+													className="hover:underline hover:text-primary cursor-pointer">
+													Resend OTP
+												</span>
+											</div>
+										) : (
+											"A verification code will be sent to this email address."
+										)}
 									</FormDescription>
 									<FormMessage className="dark:text-primary" />
 								</FormItem>
@@ -154,7 +174,7 @@ export default function ChangeEmail() {
 										control={form.control}
 										name="otp"
 										render={({ field }) => (
-											<FormItem className="flex flex-col items-start">
+											<FormItem className="flex flex-col items-start ">
 												<FormLabel className="text-black dark:text-white ">
 													One-time Password
 												</FormLabel>
@@ -162,8 +182,9 @@ export default function ChangeEmail() {
 													{/* className="dark:border-primary/50" */}
 													<InputOTP
 														maxLength={6}
-														readOnly={form.formState.isSubmitting}
+														readOnly={form.formState.isSubmitting || loading}
 														className=""
+														containerClassName="flex w-full justify-between"
 														// onChange={(e) => form.setValue("otp", e)}
 														// value={form.getValues("otp")}
 														{...field}>
@@ -213,8 +234,10 @@ export default function ChangeEmail() {
 							</>
 						)}
 
-						<Button disabled={form.formState.isSubmitting} className="w-full">
-							{form.formState.isSubmitting ? (
+						<Button
+							disabled={form.formState.isSubmitting || loading}
+							className="w-full">
+							{form.formState.isSubmitting || loading ? (
 								<Loader className="animate-spin" />
 							) : (
 								"Update email"
