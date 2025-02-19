@@ -76,51 +76,55 @@ export default function AddToCartInline(product: Product) {
 
 	return (
 		<div className="flex items-center space-x-2">
-			<div className="flex border rounded-md">
-				<Button
-					variant="ghost"
-					size="icon"
-					onClick={decrementQuantity}
-					disabled={quantity == 1 || loading}
-					className="h-8 w-8 rounded-r-none">
-					<Minus className="h-3 w-3" />
-				</Button>
-				<Input
-					type="number"
-					min="1"
-					readOnly
-					value={quantity}
-					onChange={handleQuantityChange}
-					className="h-8 w-12 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-none"
-				/>
-				<Button
-					variant="ghost"
-					size="icon"
-					disabled={product.stock <= quantity || loading}
-					onClick={incrementQuantity}
-					className="h-8 w-8 rounded-l-none">
-					<Plus className="h-3 w-3" />
-				</Button>
-			</div>
-			<div className="flex gap-2 ">
-				<Button
-					variant="secondary"
-					onClick={handleAddToCart}
-					size="sm"
-					className="h-8"
-					disabled={loading}>
-					<ShoppingCart className="mr-2 h-3 w-3" />
-					Add to Cart
-				</Button>
-				<Button
-					onClick={handleBuyNow}
-					size="sm"
-					className="h-8"
-					disabled={loading}>
-					<Zap className="mr-2 h-3 w-3" />
-					Buy Now
-				</Button>
-			</div>
+			{product.status === "IN_STOCK" && (
+				<>
+					<div className="flex border rounded-md">
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={decrementQuantity}
+							disabled={quantity == 1 || loading}
+							className="h-8 w-8 rounded-r-none">
+							<Minus className="h-3 w-3" />
+						</Button>
+						<Input
+							type="number"
+							min="1"
+							readOnly
+							value={quantity}
+							onChange={handleQuantityChange}
+							className="h-8 w-12 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-none"
+						/>
+						<Button
+							variant="ghost"
+							size="icon"
+							disabled={product.stock <= quantity || loading}
+							onClick={incrementQuantity}
+							className="h-8 w-8 rounded-l-none">
+							<Plus className="h-3 w-3" />
+						</Button>
+					</div>
+					<div className="flex gap-2 ">
+						<Button
+							variant="secondary"
+							onClick={handleAddToCart}
+							size="sm"
+							className="h-8"
+							disabled={loading}>
+							<ShoppingCart className="mr-2 h-3 w-3" />
+							Add to Cart
+						</Button>
+						<Button
+							onClick={handleBuyNow}
+							size="sm"
+							className="h-8"
+							disabled={loading}>
+							<Zap className="mr-2 h-3 w-3" />
+							Buy Now
+						</Button>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

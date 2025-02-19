@@ -39,7 +39,7 @@ export default function CartItemPage({ item, isError = false }: CartItemProps) {
 
 	return (
 		<div
-			className={`flex items-start justify-between space-x-4 py-4 ${
+			className={`flex items-start p-2 justify-between space-x-4 py-4 ${
 				isError ? "border-red-500 border" : "border-b "
 			}`}>
 			<div className="flex gap-2 ">

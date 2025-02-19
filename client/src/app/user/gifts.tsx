@@ -17,6 +17,7 @@ export default function Gifts() {
 		{
 			variables: {
 				category: "GIFT",
+				status: ["IN_STOCK", "PRE_ORDER"],
 				pagination: {
 					page: page - 1,
 					limit: 10,

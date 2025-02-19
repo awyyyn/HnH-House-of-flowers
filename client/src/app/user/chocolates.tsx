@@ -17,6 +17,7 @@ export default function Chocolates() {
 		{
 			variables: {
 				category: "CHOCOLATE",
+				status: ["IN_STOCK", "PRE_ORDER"],
 				pagination: {
 					page: page - 1,
 					limit: 10,

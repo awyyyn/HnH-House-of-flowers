@@ -39,7 +39,7 @@ export const GET_PRODUCTS_QUERY = gql`
 		$pagination: PaginationInput
 		$category: ProductCategory
 		$filter: String
-		$status: ProductStatus
+		$status: [ProductStatus]
 	) {
 		products(
 			pagination: $pagination

@@ -16,6 +16,7 @@ export default function Flowers() {
 		GET_PRODUCTS_QUERY,
 		{
 			variables: {
+				status: ["IN_STOCK", "PRE_ORDER"],
 				category: "FLOWER",
 				pagination: {
 					page: page - 1,

@@ -16,7 +16,7 @@ export const typeDefs = gql`
 		products(
 			category: ProductCategory
 			filter: String
-			status: ProductStatus
+			status: [ProductStatus]
 			pagination: PaginationInput
 		): ProductPaginationResult
 		product(id: ID!): Product
@@ -189,7 +189,7 @@ export const typeDefs = gql`
 		price: Float!
 		images: [String]
 		stock: Int!
-		status: ProductStatus!
+		status: [ProductStatus]!
 		category: ProductCategory!
 	}
 
