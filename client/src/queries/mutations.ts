@@ -123,3 +123,41 @@ export const SEND_MESSAGE_MUTATION = gql`
 		}
 	}
 `;
+
+export const ADD_TO_CART_MUTATION = gql`
+	${productFragment}
+	mutation (
+		$price: Float!
+		$quantity: Int!
+		$productId: String!
+		$cartId: String
+	) {
+		cartItem: addToCart(
+			price: $price
+			quantity: $quantity
+			productId: $productId
+			cartId: $cartId
+		) {
+			id
+			product {
+				...ProductFragment
+			}
+			productId
+			quantity
+			cartId
+			price
+		}
+	}
+`;
+
+export const REMOVE_TO_CART_MUTATION = gql`
+	mutation ($id: ID!) {
+		cartItem: removeToCart(id: $id) {
+			id
+			productId
+			quantity
+			cartId
+			price
+		}
+	}
+`;

@@ -8,6 +8,8 @@ import {
 import { AuthContextProps, JWTDecoded, User } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import { useToast } from "@/hooks/use-toast";
+import { useSetAtom } from "jotai";
+import { cartAtom } from "@/states";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
@@ -30,7 +32,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	});
 	const [user, setUser] = useState<User>(null!);
 	const [loading, setLoading] = useState(true);
-	// const [user, setUser] = useState<User>(null!);
+	const setCart = useSetAtom(cartAtom);
 	const { toast } = useToast();
 
 	useEffect(() => {
@@ -68,6 +70,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				const data = await response.json();
 
 				setUser(data.data.user);
+				setCart(data.data.user.cart);
 				localStorage.setItem("accessToken", data.data.accessToken);
 				setValues({ isAuthenticated: true, role: data.data.user.role });
 			} catch (err) {
@@ -93,6 +96,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			localStorage.removeItem("accessToken");
 			setValues({ isAuthenticated: false, role: "USER" });
 			return;
+		}
+		if (user.role === "USER") {
+			setCart(loggedInUser.cart);
 		}
 		setUser(loggedInUser);
 		setValues({ isAuthenticated: true, role: decoded.role });

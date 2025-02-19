@@ -30,6 +30,7 @@ import Messages from "./app/admin/messages";
 import MessagesMobile from "./app/admin/messages-mobile";
 import Conversation from "./app/admin/conversation";
 import Chat from "./app/user/chat";
+import CartPage from "./app/user/cart";
 
 export default function App() {
 	const publicRoutes = [
@@ -214,6 +215,10 @@ export default function App() {
 								element: <ProductDetails />,
 							},
 						],
+					},
+					{
+						path: "cart",
+						element: <CartPage />,
 					},
 				],
 			},
