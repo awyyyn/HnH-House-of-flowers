@@ -16,7 +16,7 @@ export default function UserMessageList() {
 					to={`/messages/${user.id}`}
 					state={{ user }}
 					key={`user-message-${user.id}-${index}`}
-					className="px-2 py-4  relative overflow-hidden bg-slate-100 cursor-pointer flex gap-2 items-center">
+					className="px-2 py-4  relative overflow-hidden dark:bg-primary/5 bg-slate-100 cursor-pointer flex gap-2 items-center">
 					<div className="  ">
 						<Avatar>
 							<AvatarImage src={user.photo} />

@@ -9,17 +9,27 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	Badge,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
+import {
+	ChevronDown,
+	LogOut,
+	MessageCircle,
+	ShoppingBag,
+	User,
+} from "lucide-react";
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import ThemeSwitcher from "@/components/custom/theme-switcher";
+import { useAtomValue } from "jotai";
+import { cartAtom } from "@/states";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
 	const { isAuthenticated, logout, role } = useAuth();
+	const cart = useAtomValue(cartAtom);
 
 	return (
 		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
@@ -31,7 +41,12 @@ export function Navbar({ className }: { className?: string }) {
 							<UserDrawer />
 						</div>
 					)}
-					<TextGenerateEffect className="text-lg  " words="House of Flowers" />
+					<Link to="/">
+						<TextGenerateEffect
+							className="text-lg  "
+							words="House of Flowers"
+						/>
+					</Link>
 				</div>
 				{!isAuthenticated && (
 					<div className="flex md:hidden items-center gap-1">
@@ -62,16 +77,6 @@ export function Navbar({ className }: { className?: string }) {
 					<Link to={"/customize"}>
 						<MenuItem setActive={setActive} active={null} item="Customize" />
 					</Link>
-					{/* <MenuItem setActive={setActive} active={active} item="Services">
-						<div className="flex flex-col space-y-4 text-sm">
-							<HoveredLink href="/web-dev">Web Development</HoveredLink>
-							<HoveredLink href="/interface-design">
-								Interface Design
-							</HoveredLink>
-							<HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-							<HoveredLink href="/branding">Branding</HoveredLink>
-						</div>
-					</MenuItem> */}
 					<MenuItem setActive={setActive} active={active} item="Products">
 						<div className="text-sm grid grid-cols-2 gap-10 p-4 z-[101]">
 							<ProductItem
@@ -105,9 +110,31 @@ export function Navbar({ className }: { className?: string }) {
 			<div className="hidden pl-5 dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
 				{isAuthenticated && role === "USER" && (
 					<>
-						<Link to="/chat">
-							<MessageCircle />
-						</Link>
+						<Button
+							size="icon"
+							variant="ghost"
+							className="rounded-full"
+							asChild>
+							<Link to="/chat">
+								<MessageCircle />
+							</Link>
+						</Button>
+						<Button
+							size="icon"
+							variant="ghost"
+							asChild
+							className="rounded-full">
+							<Link to="/cart" className="relative ">
+								{cart.items.length > 0 && (
+									<Badge
+										variant="default"
+										className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full">
+										{cart.items.length}
+									</Badge>
+								)}
+								<ShoppingBag />
+							</Link>
+						</Button>
 					</>
 				)}
 				<ThemeSwitcher />
