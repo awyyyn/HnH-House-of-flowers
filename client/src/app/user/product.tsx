@@ -1,4 +1,4 @@
-import { Button, RichTextEditor } from "@/components";
+import { RichTextEditor } from "@/components";
 import { GET_PRODUCT_QUERY } from "@/queries";
 import { Product } from "@/types";
 import { useQuery } from "@apollo/client";
