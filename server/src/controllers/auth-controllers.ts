@@ -5,6 +5,8 @@ import {
 	createToken,
 	readToken,
 	sendAccountVerificationOTP,
+	createCart,
+	readCart,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -50,11 +52,16 @@ export const loginController = async (req: Request, res: Response) => {
 			id: user.id,
 		});
 
+		const cart = await readCart(user.id);
+
 		res.status(200).json({
 			message: "Login successful",
 			data: {
 				accessToken,
-				user,
+				user: {
+					...user,
+					cart,
+				},
 			},
 		});
 	} catch (err) {
@@ -97,12 +104,16 @@ export const registerController = async (req: Request, res: Response) => {
 
 		const otp = await createToken(newUser.email);
 		await sendAccountVerificationOTP({ email: newUser.email, otp: otp.token });
+		const cart = await createCart({ userId: newUser.id });
 
 		res.status(200).json({
 			message: "Register successful",
 			data: {
 				accessToken,
-				user: newUser,
+				user: {
+					...newUser,
+					cart: cart,
+				},
 			},
 		});
 	} catch (err) {
@@ -243,6 +254,8 @@ export const meController = async (req: Request, res: Response) => {
 			return;
 		}
 
+		const cart = await readCart(user.id);
+
 		// Generate token
 		const accessToken = await generateAccessToken({
 			email: user.email,
@@ -254,7 +267,10 @@ export const meController = async (req: Request, res: Response) => {
 			message: "Login successful",
 			data: {
 				accessToken,
-				user,
+				user: {
+					...user,
+					cart,
+				},
 			},
 		});
 	} catch (err) {

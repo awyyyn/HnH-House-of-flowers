@@ -39,7 +39,9 @@ export const addToCartResolver = async (
 		});
 
 		if (!newCartItem) throw new GraphQLError("Failed to add item to cart!");
-	} catch {
+		return newCartItem;
+	} catch (err) {
+		console.log(err);
 		throw new GraphQLError("Internal Server Error!");
 	}
 };
@@ -52,7 +54,8 @@ export const removeToCartResolver = async (
 		const deletedItem = await removeCartItem(id);
 
 		return deletedItem;
-	} catch {
+	} catch (err) {
+		console.log(err);
 		throw new GraphQLError("Internal Server Error!");
 	}
 };

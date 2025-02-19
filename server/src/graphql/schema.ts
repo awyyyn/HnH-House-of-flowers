@@ -46,7 +46,7 @@ export const typeDefs = gql`
 			price: Float!
 			quantity: Int!
 			productId: String!
-			cartId: String!
+			cartId: String
 		): CartItem
 		updateCartItem(id: ID!, price: Float!, quantity: Int!): CartItem
 		removeToCart(id: ID!): CartItem

@@ -17,6 +17,7 @@ import {
 	sendMessageResolver,
 	adminMessagesResolver,
 	messageSentSubscription,
+	addToCartResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -43,6 +44,7 @@ export const resolvers = {
 		updateProduct: updateProductResolver,
 		removeToCart: removeToCartResolver,
 		sendMessage: sendMessageResolver,
+		addToCart: addToCartResolver,
 	},
 	// Mutation: {},
 };
