@@ -70,7 +70,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				const data = await response.json();
 
 				setUser(data.data.user);
-				setCart(data.data.user.cart);
+				if (data.data.user.role === "USER") {
+					setCart(data.data.user.cart);
+				}
 				localStorage.setItem("accessToken", data.data.accessToken);
 				setValues({ isAuthenticated: true, role: data.data.user.role });
 			} catch (err) {
@@ -97,7 +99,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			setValues({ isAuthenticated: false, role: "USER" });
 			return;
 		}
-		if (user.role === "USER") {
+		if (loggedInUser && loggedInUser.role === "USER") {
 			setCart(loggedInUser.cart);
 		}
 		setUser(loggedInUser);
