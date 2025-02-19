@@ -1,3 +1,4 @@
+import { Cart } from "./cart.js";
 import { Order } from "./order.js";
 
 export interface User {
@@ -16,6 +17,7 @@ export interface User {
 	status: UserStatus;
 
 	orders: Order[];
+	cart: Cart;
 
 	createdAt: Date;
 	updatedAt: Date;

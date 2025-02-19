@@ -3,6 +3,7 @@ import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
 export * from "./user.js";
 export * from "./product.js";
+export * from "./cart.js";
 
 export interface UserFilter {
 	filter?: string;
@@ -13,6 +14,7 @@ export interface UserFilter {
 	status?: UserStatus;
 	role?: UserRole;
 }
+
 export interface ProductFilter {
 	filter?: string;
 	pagination?: {
