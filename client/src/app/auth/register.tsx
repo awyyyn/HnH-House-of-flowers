@@ -70,11 +70,18 @@ export default function Register() {
 			}
 
 			login(data.data.accessToken, data.data.user);
-			if (data.data.user.role === "USER") {
-				navigate("/");
-			} else {
-				navigate("/dashboard");
+
+			if (data.data.user.phoneNumber === null || !data.data.user.phoneNumber) {
+				return navigate("/set-up-account");
 			}
+
+			if (
+				data.data.user.status === "UNVERIFIED" ||
+				!data.data.user.verifiedAt
+			) {
+				return navigate("/verify-account");
+			}
+
 			toast({
 				title: "Logged in successfully",
 				description: "You have successfully logged in",

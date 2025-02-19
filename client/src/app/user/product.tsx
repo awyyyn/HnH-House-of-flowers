@@ -4,6 +4,7 @@ import { Product } from "@/types";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import AddToCart from "./components/add-to-cart-btn";
 
 const ProductDetails = () => {
 	const { productId } = useParams();
@@ -85,9 +86,7 @@ const ProductDetails = () => {
 					</div>
 				</div>
 				<div className="flex pb-10">
-					<div>
-						<Button>Buy now</Button>
-					</div>
+					<AddToCart {...product} />
 				</div>
 			</div>
 		</div>

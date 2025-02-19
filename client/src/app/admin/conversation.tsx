@@ -57,6 +57,7 @@ export default function Conversation() {
 		onCompleted(data: { readMessages: Message[] }) {
 			setMessages(data?.readMessages ?? []);
 		},
+		fetchPolicy: "no-cache",
 	});
 
 	if (loading) return <div>Loading...</div>;
