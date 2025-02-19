@@ -7,6 +7,7 @@ import {
 	sendAccountVerificationOTP,
 	createCart,
 	readCart,
+	sendForgotPasswordOTP,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -156,7 +157,8 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 			return;
 		}
 
-		await createToken(user.email);
+		const token = await createToken(user.email);
+		await sendForgotPasswordOTP({ email: user.email, otp: token.token });
 
 		res.status(200).json({
 			message: "OTP sent to email",
