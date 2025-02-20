@@ -46,7 +46,7 @@ export default function CartItemPage({ item, isError = false }: CartItemProps) {
 				<img
 					src={item.product.images[0] || "/placeholder.svg"}
 					alt={`Product-${item.product.name}`}
-					className="w-32 h-32 object-contain dark:bg-zinc-800  border-primary/5 p-2 border"
+					className="w-32 hidden md:block h-32 object-contain dark:bg-zinc-800  border-primary/5 p-2 border"
 				/>
 				<div className="flex flex-col justify-between">
 					<div className="flex-grow">
@@ -63,7 +63,7 @@ export default function CartItemPage({ item, isError = false }: CartItemProps) {
 							}).format(item.price)}
 						</p>
 					</div>
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center  space-x-2">
 						<Button
 							disabled={quantity == 1}
 							variant="outline"
@@ -71,7 +71,7 @@ export default function CartItemPage({ item, isError = false }: CartItemProps) {
 							className="border-zinc dark:border-none"
 							onClick={() => handleQuantityChange(quantity - 1)}
 							aria-label="Decrease quantity">
-							<Minus className="h-4 w-4" />
+							<Minus className="h-2 w-2md:h-4 md:w-4 " />
 						</Button>
 						<Input
 							type="number"

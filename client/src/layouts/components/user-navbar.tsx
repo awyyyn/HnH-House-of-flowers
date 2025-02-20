@@ -48,22 +48,57 @@ export function Navbar({ className }: { className?: string }) {
 						/>
 					</Link>
 				</div>
-				{!isAuthenticated && (
-					<div className="flex md:hidden items-center gap-1">
-						<Link to="/auth/login">
-							<Button size="sm">Sign In</Button>
-						</Link>
+				<div className="flex gap-2  md:hidden">
+					<ThemeSwitcher />
+					{!isAuthenticated ? (
+						<div className="flex  items-center gap-1">
+							<Link to="/auth/login">
+								<Button size="sm">Sign In</Button>
+							</Link>
 
-						<Link to="/auth/register">
-							<Button
-								size="sm"
-								className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
-								variant="outline">
-								Sign Up
-							</Button>
-						</Link>
-					</div>
-				)}
+							<Link to="/auth/register">
+								<Button
+									size="sm"
+									className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
+									variant="outline">
+									Sign Up
+								</Button>
+							</Link>
+						</div>
+					) : (
+						<>
+							{isAuthenticated && role === "USER" && (
+								<>
+									<Button
+										size="icon"
+										variant="ghost"
+										className="rounded-full"
+										asChild>
+										<Link to="/chat">
+											<MessageCircle />
+										</Link>
+									</Button>
+									<Button
+										size="icon"
+										variant="ghost"
+										asChild
+										className="rounded-full">
+										<Link to="/cart" className="relative ">
+											{cart.items.length > 0 && (
+												<Badge
+													variant="default"
+													className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full">
+													{cart.items.length}
+												</Badge>
+											)}
+											<ShoppingBag />
+										</Link>
+									</Button>
+								</>
+							)}
+						</>
+					)}
+				</div>
 			</div>
 			<div
 				className={cn(
@@ -80,24 +115,28 @@ export function Navbar({ className }: { className?: string }) {
 					<MenuItem setActive={setActive} active={active} item="Products">
 						<div className="text-sm grid grid-cols-2 gap-10 p-4 z-[101]">
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Flowers"
 								href="/flowers"
 								src="https://images.pexels.com/photos/697259/pexels-photo-697259.jpeg?cs=srgb&dl=pexels-hieu-697259.jpg&fm=jpg"
 								description="Browse our fresh and beautiful flowers for every occasion."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Bouquets"
 								href="/bouquets"
 								src="https://www.floretflowers.com/wp-content/uploads/2016/02/Floret_Market-Bouquets-14.jpg"
 								description="Discover our artfully arranged bouquets perfect for gifts and celebrations."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Chocolates"
 								href="/chocolates"
 								src="https://www.thespruceeats.com/thmb/FhHcgQni8lgV0griUeDJMTAszxI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chocolate_hero1-d62e5444a8734f8d8fe91f5631d51ca5.jpg"
 								description="Indulge in our premium quality chocolates, a sweet treat for any moment."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Gifts"
 								href="/gifts"
 								src="https://www.realsimple.com/thmb/1nO0GmEuF87RSxFBmTWtfo6TZW0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/the-best-gift-giver-GettyImages-1706575747-2089a300e6594496b7f558585a4baefb.jpg"

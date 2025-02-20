@@ -75,14 +75,16 @@ export const ProductItem = ({
 	description,
 	href,
 	src,
+	handleClose,
 }: {
 	title: string;
 	description: string;
 	href: string;
 	src: string;
+	handleClose?: VoidFunction;
 }) => {
 	return (
-		<Link to={href} className="flex space-x-2">
+		<Link to={href} onClick={handleClose} className="flex space-x-2">
 			<img
 				src={src}
 				width={140}

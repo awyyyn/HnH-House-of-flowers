@@ -17,7 +17,7 @@ export function EmptyState({
 	onAction,
 }: EmptyStateProps) {
 	return (
-		<div className="flex flex-col items-center justify-center text-center p-8 bg-muted rounded-lg">
+		<div className="flex flex-col items-center   justify-center text-center p-8   rounded-lg">
 			<Icon className="w-12 h-12 text-muted-foreground mb-4" />
 			<h2 className="text-2xl font-semibold mb-2">{title}</h2>
 			<p className="text-muted-foreground mb-6 max-w-sm">{description}</p>
