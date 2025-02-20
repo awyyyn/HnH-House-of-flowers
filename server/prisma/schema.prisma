@@ -39,7 +39,6 @@ type address {
   zone String?
   street String
   city String
-  province String
 }
 
 enum UserStatus {
