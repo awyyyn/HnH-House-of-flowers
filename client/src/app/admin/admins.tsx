@@ -152,6 +152,7 @@ export default function UsersPage() {
 				pagination={pagination}
 				setPagination={setPagination}
 				columns={columns}
+				filterName="email"
 				data={data?.users.data ?? []}
 				rowCount={data?.users.total ?? 0}
 			/>

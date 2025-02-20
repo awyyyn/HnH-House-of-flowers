@@ -38,6 +38,7 @@ export default function DataTable<TData, TValue>({
 	setPagination,
 	handleRefresh,
 	loading = false,
+	filterName = "name",
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -75,10 +76,12 @@ export default function DataTable<TData, TValue>({
 			<div className="flex flex-wrap justify-start sm:justify-between gap-2 items-center py-4">
 				<Input
 					disabled={loading}
-					placeholder="Filter emails..."
-					value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+					placeholder={`Search by ${filterName}`}
+					value={
+						(table.getColumn(filterName)?.getFilterValue() as string) ?? ""
+					}
 					onChange={(event) =>
-						table.getColumn("email")?.setFilterValue(event.target.value)
+						table.getColumn(filterName)?.setFilterValue(event.target.value)
 					}
 					className="w-full sm:max-w-sm dark:border-primary/30 dark:bg-primary/10"
 				/>

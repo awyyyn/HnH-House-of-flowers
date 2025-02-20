@@ -55,6 +55,7 @@ export default function DeleteUserModal({
 				variables.reason = input;
 			}
 			await mutate({ variables });
+			onClose();
 		} catch (err) {
 			toast({
 				title: "Something went wrong!",

@@ -136,7 +136,7 @@ export default function ProductsPage() {
 	return (
 		<>
 			<div className="flex justify-between items-center py-2">
-				<h1 className="text-4xl">List of admins</h1>
+				<h1 className="text-4xl">List of products</h1>
 			</div>
 			<DataTable
 				loading={loading}

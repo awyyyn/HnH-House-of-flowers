@@ -58,6 +58,7 @@ export interface DataTableProps<TData, TValue> {
 	rowCount: number;
 	loading?: boolean;
 	handleRefresh?: VoidFunction;
+	filterName?: string;
 	pagination: DataTablePagination;
 	setPagination: Dispatch<SetStateAction<DataTablePagination>>;
 }
