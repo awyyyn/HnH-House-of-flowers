@@ -8,6 +8,7 @@ export * from "./ui/pagination";
 export * from "./ui/select";
 export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
+export { default as Helmet } from "./custom/helmet";
 export * from "./custom/empty-state";
 export * from "./aceternity/sparkle";
 export * from "./aceternity/aurora";
