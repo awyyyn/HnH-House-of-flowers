@@ -16,7 +16,6 @@ export const userFragment = gql`
 		birthDate
 		address {
 			city
-			province
 			street
 			zone
 		}

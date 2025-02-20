@@ -26,7 +26,6 @@ export interface UserAddress {
 	zone: string | null;
 	street: string;
 	city: string;
-	province: string;
 }
 
 export type UserRole = "SUPER_ADMIN" | "ADMIN" | "USER";

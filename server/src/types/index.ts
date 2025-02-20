@@ -74,7 +74,6 @@ export interface UpdateUserInput {
 	address: {
 		zone: string;
 		city: string;
-		province: string;
 		street: string;
 	} | null;
 }

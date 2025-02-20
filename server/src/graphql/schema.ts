@@ -116,14 +116,12 @@ export const typeDefs = gql`
 		zone: String
 		street: String
 		city: String
-		province: String
 	}
 
 	input AddressInput {
 		zone: String
 		street: String
 		city: String
-		province: String
 	}
 
 	enum UserRole {
