@@ -33,8 +33,11 @@ export function DatePicker({
 					disabled={readonly}
 					variant={"outline"}
 					className={cn(
-						"w-full  justify-start text-left font-normal",
-						!date && "text-muted-foreground"
+						"w-full  justify-start text-left font-normal bg-transparent  ",
+						!date && "text-muted-foreground",
+						readonly
+							? "border-none border-black/20 shadow-sm   shadow-black/10    "
+							: "border-black/20 dark:border-primary/50   "
 					)}>
 					<CalendarIcon className="mr-2 h-4 w-4" />
 					{date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -50,7 +53,6 @@ export function DatePicker({
 							handleChangeValue(date);
 						}
 					}}
-					initialFocus
 				/>
 			</PopoverContent>
 		</Popover>
