@@ -1,5 +1,11 @@
+import { Helmet } from "@/components";
 import ProductForm from "./components/product-form";
 
 export default function AddProduct() {
-	return <ProductForm />;
+	return (
+		<>
+			<Helmet title="Add Admin" />
+			<ProductForm />;
+		</>
+	);
 }

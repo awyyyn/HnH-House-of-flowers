@@ -7,7 +7,7 @@ import PaginationComponent from "./components/pagination";
 import CardSkeleton from "./components/card-skeleton";
 import ProductCard from "./components/product-card";
 import { PackageSearch } from "lucide-react";
-import { EmptyState } from "@/components";
+import { EmptyState, Helmet } from "@/components";
 
 export default function Bouquets() {
 	const [params] = useSearchParams();
@@ -32,6 +32,7 @@ export default function Bouquets() {
 
 	return (
 		<>
+			<Helmet title="Bouquets" />
 			{data?.products.data.length === 0 ? (
 				<EmptyState
 					description="We're currently updating our inventory. Please check back soon for new products."

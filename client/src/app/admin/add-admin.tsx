@@ -10,6 +10,7 @@ import {
 	Form,
 	FormDescription,
 	InputWithIcon,
+	Helmet,
 } from "@/components";
 import { z } from "zod";
 import { useState } from "react";
@@ -74,88 +75,91 @@ export default function AddAdmin() {
 	};
 
 	return (
-		<div>
-			<div className="flex flex-col gap-4 h-full mt-[20dvh] P-5 mx-auto sm:max-w-[400px] dark:bg-zinc-900 dark:shadow-primary/10 shadow-md p-2 md:p-5">
-				<div>
-					<h1 className="text-2xl">Add New Administrator</h1>
-					<p className="dark:text-gray-400">
-						Administrator can manage users, orders, and flowers
-					</p>
+		<>
+			<Helmet title="Add Admin" />
+			<div>
+				<div className="flex flex-col gap-4 h-full mt-[20dvh] P-5 mx-auto sm:max-w-[400px] dark:bg-zinc-900 dark:shadow-primary/10 shadow-md p-2 md:p-5">
+					<div>
+						<h1 className="text-2xl">Add New Administrator</h1>
+						<p className="dark:text-gray-400">
+							Administrator can manage users, orders, and flowers
+						</p>
+					</div>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(handleSubmit)}>
+							<div className="space-y-4 ">
+								<FormField
+									control={form.control}
+									name="email"
+									render={({ field }) => (
+										<FormItem className="flex flex-col items-start">
+											<FormLabel className="text-black dark:text-white ">
+												Email
+											</FormLabel>
+											<FormControl>
+												<Input
+													readOnly={form.formState.isSubmitting}
+													placeholder=""
+													className="dark:border-primary/50"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage className="dark:text-primary" />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem className="flex flex-col items-start">
+											<FormLabel className="text-black dark:text-white ">
+												Password
+											</FormLabel>
+											<FormControl>
+												<InputWithIcon
+													endIcon={
+														showPassword ? (
+															<EyeOff size={20} onClick={handleShowPassword} />
+														) : (
+															<Eye size={20} onClick={handleShowPassword} />
+														)
+													}
+													inputProps={{
+														type: showPassword ? "text" : "password",
+														readOnly: true,
+														placeholder: "",
+														...field,
+													}}
+													className="dark:ring-primary/60 dark:border-primary/50"
+												/>
+											</FormControl>
+											<div className="flex w-full">
+												<FormMessage className="dark:text-primary text-start" />
+												<FormDescription
+													onClick={generatePassword}
+													className="ml-auto cursor-pointer">
+													Generate Password
+												</FormDescription>
+											</div>
+										</FormItem>
+									)}
+								/>
+								<Button
+									disabled={form.formState.isSubmitting}
+									type="submit"
+									className="w-full">
+									{form.formState.isSubmitting ? (
+										<Loader className="animate-spin" />
+									) : (
+										"Add Admin"
+									)}
+								</Button>
+							</div>
+						</form>
+					</Form>
 				</div>
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(handleSubmit)}>
-						<div className="space-y-4 ">
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem className="flex flex-col items-start">
-										<FormLabel className="text-black dark:text-white ">
-											Email
-										</FormLabel>
-										<FormControl>
-											<Input
-												readOnly={form.formState.isSubmitting}
-												placeholder=""
-												className="dark:border-primary/50"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage className="dark:text-primary" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem className="flex flex-col items-start">
-										<FormLabel className="text-black dark:text-white ">
-											Password
-										</FormLabel>
-										<FormControl>
-											<InputWithIcon
-												endIcon={
-													showPassword ? (
-														<EyeOff size={20} onClick={handleShowPassword} />
-													) : (
-														<Eye size={20} onClick={handleShowPassword} />
-													)
-												}
-												inputProps={{
-													type: showPassword ? "text" : "password",
-													readOnly: true,
-													placeholder: "",
-													...field,
-												}}
-												className="dark:ring-primary/60 dark:border-primary/50"
-											/>
-										</FormControl>
-										<div className="flex w-full">
-											<FormMessage className="dark:text-primary text-start" />
-											<FormDescription
-												onClick={generatePassword}
-												className="ml-auto cursor-pointer">
-												Generate Password
-											</FormDescription>
-										</div>
-									</FormItem>
-								)}
-							/>
-							<Button
-								disabled={form.formState.isSubmitting}
-								type="submit"
-								className="w-full">
-								{form.formState.isSubmitting ? (
-									<Loader className="animate-spin" />
-								) : (
-									"Add Admin"
-								)}
-							</Button>
-						</div>
-					</form>
-				</Form>
 			</div>
-		</div>
+		</>
 	);
 }
