@@ -90,8 +90,8 @@ export default function Conversation() {
 				{/* Header */}
 				<div className="flex items-center px-4 py-3 border-b bg-white dark:bg-zinc-950">
 					<div className="flex items-center gap-3">
-						<Avatar>
-							<AvatarImage src={user?.photo} />
+						<Avatar className="shadow-sm border border-primary/10">
+							<AvatarImage className="object-contain " src={user?.photo} />
 							<AvatarFallback className="capitalize">
 								{user?.firstName && user?.lastName
 									? `${user.firstName[0]}${user.lastName[0]}`

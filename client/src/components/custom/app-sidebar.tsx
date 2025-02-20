@@ -35,7 +35,7 @@ const data = {
 			isActive: true,
 		},
 		{
-			title: "Flowers",
+			title: "Products",
 			url: "#",
 			icon: Flower,
 			items: [
