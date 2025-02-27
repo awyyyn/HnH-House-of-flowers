@@ -174,7 +174,7 @@ export default function CustomizeFlower({
 
 	const RightContent = () => {
 		return (
-			<AuroraBackground showRadialGradient={false}>
+			<AuroraBackground showRadialGradient={false} className="">
 				<div className=" relative flex  w-[350px] h-[350px]   overflow-hidden  rounded-xl bg-clip-content">
 					{/* <div className="absolute top-5 left-5">
 					<ColourfulText text="Preview" className="text-3xl" />

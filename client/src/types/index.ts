@@ -8,12 +8,18 @@ import { User, UserRole } from "./user.js";
 import { JwtPayload } from "jwt-decode";
 import { ColumnDef } from "@tanstack/react-table";
 
+export type PaymentMethod = "COD" | "ONLINE_PAYMENT" | "COP";
+export type DeliveryMethod = "PICKUP" | "DELIVERY";
+
 export interface CustomizationValues {
 	wrapper: string;
 	color: string;
 	mainFlower: string;
 	additionalFlower: string;
 	tie: string;
+	note: string;
+	paymentMethod: PaymentMethod;
+	delivery: DeliveryMethod;
 }
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {

@@ -1,8 +1,21 @@
-import { Button, Helmet, Stepper } from "@/components";
+import {
+	AuroraBackground,
+	Button,
+	Helmet,
+	Label,
+	Stepper,
+	Textarea,
+	ToggleGroup,
+	ToggleGroupItem,
+	Wrapper,
+} from "@/components";
 import PickTheme from "./components/pick-theme";
 import { useState } from "react";
 import CustomizeFlower from "./components/customize-flower";
-import { CustomizationValues } from "@/types";
+import { CustomizationValues, DeliveryMethod, PaymentMethod } from "@/types";
+import { additionalFlowers, mainFlowers, ties } from "@/constants";
+import { DatePicker } from "@/components/custom/date-picker";
+import { add } from "date-fns";
 
 const steps = [
 	{ title: "Step 1", description: "Choose a theme" },
@@ -19,6 +32,9 @@ export default function Customize() {
 		mainFlower: "",
 		additionalFlower: "",
 		tie: "",
+		note: "",
+		paymentMethod: "COP",
+		delivery: "PICKUP",
 	});
 
 	const handleNext = () => {
@@ -51,8 +67,137 @@ export default function Customize() {
 						selectedWrapper={values.wrapper}
 					/>
 				);
+			case 2:
+				return (
+					<div className="space-y-2">
+						<AuroraBackground showRadialGradient={false} className="">
+							<div className=" relative flex  w-[350px] h-[350px]   overflow-hidden  rounded-xl bg-clip-content">
+								{/* <div className="absolute top-5 left-5">
+											<ColourfulText text="Preview" className="text-3xl" />
+										</div> */}
+								{values.additionalFlower && (
+									<img
+										className="absolute  left-[113px] z-20 top-[76px] w-[166psx] h-[23s0px]"
+										src={
+											additionalFlowers.find(
+												(flower) => flower.id === values.additionalFlower
+											)!.svg
+										}
+										alt="clovers"
+									/>
+								)}
+								{values.mainFlower && (
+									<img
+										className="absolute left-[104px] z-30  top-[39px]  w-[157spx] h-[17s3px]"
+										src={
+											mainFlowers.find(
+												(flower) => flower.id === values.mainFlower
+											)!.svg
+										}
+										alt="sunflower"
+									/>
+								)}
+								<Wrapper id={values.wrapper} color={values.color} />
+								{values.tie && (
+									<img
+										className="absolute left-[105px] z-50 top-[61px] ] w-[155spx] h-[14s2px] "
+										src={ties.find((flower) => flower.id === values.tie)!.svg}
+										alt="bigTwine tie"
+									/>
+								)}
+							</div>
+						</AuroraBackground>
+
+						<div className="grid px-5 grid-cols-1 md:grid-cols-9">
+							<div className="col-span-1 md:col-span-3">
+								<Label>Delivery</Label>
+								<div className="flex">
+									<ToggleGroup
+										onValueChange={(value) =>
+											setValues((p) => ({
+												...p,
+												delivery: value as DeliveryMethod,
+												paymentMethod:
+													p.paymentMethod === "ONLINE_PAYMENT"
+														? "ONLINE_PAYMENT"
+														: value === "PICKUP"
+														? "COP"
+														: "COD",
+											}))
+										}
+										value={values.delivery}
+										type="single">
+										<ToggleGroupItem value="PICKUP" aria-label="Toggle bold">
+											<p>Pick up</p>
+										</ToggleGroupItem>
+										<ToggleGroupItem value="DELIVER" aria-label="Toggle italic">
+											<p>Deliver</p>
+										</ToggleGroupItem>
+									</ToggleGroup>
+								</div>
+							</div>
+							<div className="col-span-1 md:col-span-3">
+								<Label>Payment Method</Label>
+								<div className="flex">
+									<ToggleGroup
+										onValueChange={(value) =>
+											setValues((val) => ({
+												...val,
+												paymentMethod: value as PaymentMethod,
+											}))
+										}
+										value={values.paymentMethod}
+										type="single">
+										{values.delivery === "PICKUP" ? (
+											<ToggleGroupItem value="COP" aria-label="Toggle bold">
+												<p>COP</p>
+											</ToggleGroupItem>
+										) : (
+											<ToggleGroupItem value="COD" aria-label="Toggle bold">
+												<p>COD</p>
+											</ToggleGroupItem>
+										)}
+										<ToggleGroupItem
+											value="ONLINE_PAYMENT"
+											aria-label="Toggle italic">
+											<p>Online Payment</p>
+										</ToggleGroupItem>
+									</ToggleGroup>
+								</div>
+							</div>
+							<div className="col-span-1 md:col-span-3">
+								<Label className="capitalize">
+									{values.delivery.toString().toLowerCase()} Date
+								</Label>
+								<DatePicker
+									fromDate={add(new Date(), { days: 1 })}
+									defaultValue={add(new Date(), { days: 1 })}
+									handleChangeValue={() => {}}
+								/>
+							</div>
+						</div>
+
+						<div className="space-y-2 px-5 pb-5">
+							<Label>Note</Label>
+							<Textarea
+								placeholder="Type your note here..."
+								value={values.note}
+								onChange={(e) => {
+									setValues({
+										...values,
+										note: e.target.value,
+									});
+								}}
+								className="dark:bg-zinc-800 border-transparent outline-transparent"
+							/>
+						</div>
+					</div>
+				);
+
+			case 3:
+				return;
 			default:
-				return <div>Step 3</div>;
+				return null;
 		}
 	};
 
@@ -70,7 +215,11 @@ export default function Customize() {
 					</Button>
 					<Button
 						onClick={handleNext}
-						disabled={activeStep === steps.length - 1 || !values.wrapper}>
+						disabled={
+							activeStep === 1
+								? !values.mainFlower || !values.tie || !values.wrapper
+								: false
+						}>
 						{activeStep === steps.length - 1 ? "Finish" : "Next"}
 					</Button>
 				</div>

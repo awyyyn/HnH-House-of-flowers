@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -17,10 +15,12 @@ export function DatePicker({
 	defaultValue,
 	handleChangeValue,
 	readonly = false,
+	fromDate,
 }: {
 	defaultValue?: Date;
 	readonly?: boolean;
 	handleChangeValue: (value: Date) => void;
+	fromDate?: Date;
 }) {
 	const [date, setDate] = React.useState<Date | undefined>(
 		defaultValue ?? undefined
@@ -33,7 +33,7 @@ export function DatePicker({
 					disabled={readonly}
 					variant={"outline"}
 					className={cn(
-						"w-full  justify-start text-left font-normal bg-transparent  ",
+						"w-full dark:border-nsone justify-start text-left font-normal bg-transparent  ",
 						!date && "text-muted-foreground",
 						readonly
 							? "border-none border-black/20 shadow-sm   shadow-black/10    "
@@ -53,6 +53,7 @@ export function DatePicker({
 							handleChangeValue(date);
 						}
 					}}
+					fromDate={fromDate}
 				/>
 			</PopoverContent>
 		</Popover>

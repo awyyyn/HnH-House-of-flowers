@@ -60,7 +60,7 @@ export default function UserInfoModal({
 					<div className="">
 						<Label>Middle Name</Label>
 						<p>
-							{user.middleName ?? (
+							{user?.middleName || (
 								<span style={{ fontStyle: "italic", color: "gray" }}>
 									No Data
 								</span>
@@ -98,9 +98,36 @@ export default function UserInfoModal({
 						</p>
 					</div>
 					<div className="">
+						<Label>City / Municipality</Label>
+						{user.address?.zone ? (
+							<p>{user.address?.city}</p>
+						) : (
+							<i className="block text-gray-400">No data</i>
+						)}
+					</div>
+					<div className="">
+						<Label>Street</Label>
+						{user.address?.zone ? (
+							<p>{user.address?.street}</p>
+						) : (
+							<i className="block text-gray-400">No data</i>
+						)}
+					</div>
+					<div className="">
+						<Label>Zone </Label>
+						{user.address?.zone ? (
+							<p>{user.address?.zone}</p>
+						) : (
+							<i className="block text-gray-400">No data</i>
+						)}
+					</div>
+
+					<div className="">
 						<Label>Status</Label>
 						<p>
-							<Badge variant={statusColorMap[user.status]}>{user.status}</Badge>
+							<Badge variant={statusColorMap[user.status]}>
+								{user.status === "DELETED" ? "BLOCKED" : user.status}
+							</Badge>
 						</p>
 					</div>
 				</div>
