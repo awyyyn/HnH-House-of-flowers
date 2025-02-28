@@ -31,6 +31,8 @@ import MessagesMobile from "./app/admin/messages-mobile";
 import Conversation from "./app/admin/conversation";
 import Chat from "./app/user/chat";
 import CartPage from "./app/user/cart";
+import BouquetsItems from "./app/admin/bouquet-items";
+import AddBouquetItem from "./app/admin/add-bouquet-item";
 
 export default function App() {
 	const publicRoutes = [
@@ -83,6 +85,19 @@ export default function App() {
 							{
 								path: ":userId",
 								element: <Conversation />,
+							},
+						],
+					},
+					{
+						path: "bouquet-items",
+						children: [
+							{
+								index: true,
+								element: <BouquetsItems />,
+							},
+							{
+								path: "add-item",
+								element: <AddBouquetItem />,
 							},
 						],
 					},

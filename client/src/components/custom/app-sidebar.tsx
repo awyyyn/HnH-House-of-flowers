@@ -70,6 +70,25 @@ const data = {
 			icon: MessagesSquare,
 		},
 		{
+			title: "Bouquets",
+			url: "#",
+			icon: MessagesSquare,
+			items: [
+				{
+					title: "Add Item",
+					url: "/bouquet-items/add-item",
+				},
+				{
+					title: "Customize Orders",
+					url: "/bouquet-items/customize-orders",
+				},
+				{
+					title: "List",
+					url: "/bouquet-items",
+				},
+			],
+		},
+		{
 			title: "Admins",
 			url: "#",
 			icon: UserCog,

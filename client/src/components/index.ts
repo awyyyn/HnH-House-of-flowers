@@ -57,4 +57,5 @@ export * from "./custom/protected-route";
 export * from "./ui/card";
 export * from "./custom/file-upload";
 export * from "./ui/command";
+export * from "./ui/radio-group";
 export * from "./custom/rich-text-editor";
