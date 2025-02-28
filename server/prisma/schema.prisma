@@ -24,6 +24,7 @@ model User {
 
   orders Order[]
   cart Cart?
+  payments Payment[]
 
   messagesSent     Message[] @relation(name: "SentMessages")
   messagesReceived Message[] @relation(name: "ReceivedMessages")
@@ -60,6 +61,8 @@ model Order {
   status     OrderStatus @default(PENDING)
   totalPrice Float
 
+  payment Payment? 
+
   orderItems OrderItem[]
 
   // TimeStamps
@@ -70,13 +73,28 @@ model Order {
   @@map("orders")
 }
 
+type Item {
+  svg String
+  color String
+}
+
+type BouquetItems {
+  subFlowers String[]
+  mainFlower String
+  wrapper String
+  tie String
+}
+  
+ 
+
 model Customize {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  description String?
-  price       Float?
 
-  orderItem OrderItem?
+  note String?
+  totalPrice Float
+
+  bouquetItems BouquetItems
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -92,13 +110,25 @@ model OrderItem {
   price    Float
   quantity Int
 
+  
+
   productId   String?    @unique @db.ObjectId
   product     Product?   @relation(fields: [productId], references: [id])
-  isCustomize Boolean    @default(false)
-  customizeId String?    @unique @db.ObjectId
-  customize   Customize? @relation(fields: [customizeId], references: [id])
+
 
   @@map("order_items")
+}
+
+model Payment {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  paymentId String @unique
+  orderId   String @db.ObjectId @unique
+  order     Order  @relation(fields: [orderId], references: [id])
+  userId    String @db.ObjectId
+  user      User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
 }
 
 enum OrderStatus {
@@ -108,6 +138,28 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
   READY_FOR_PICKUP
+}
+
+model BouquetItem {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String
+  price Float
+  svg String[]
+  colors String[] @default([])
+  
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bouquet_flowers")
+}
+
+enum BouquetItemType {
+  WRAPPER
+  TIE
+  FLOWER
+  SUB_FLOWER
 }
 
 model Product {
