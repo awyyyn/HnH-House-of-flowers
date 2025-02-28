@@ -208,9 +208,11 @@ export const typeDefs = gql`
 	type Customize {
 		id: ID!
 		name: String!
-		description: String
-		price: String
-		orderItem: OrderItem
+		note: String
+
+		totalPrice: Float
+		bouquetItems: BouquetItems
+
 		createdAt: String!
 		updatedAt: String!
 	}
@@ -246,5 +248,31 @@ export const typeDefs = gql`
 		cart: Cart!
 
 		price: Float!
+	}
+
+	type BouquetItem {
+		id: ID!
+		name: String!
+		price: Float!
+		svg: [String]
+		colors: [String]
+		type: BouquetItemType!
+		isAvailable: Boolean!
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	enum BouquetItemType {
+		WRAPPER
+		TIE
+		FLOWER
+		SUB_FLOWER
+	}
+
+	type BouquetItems {
+		subFlowers: [String]
+		mainFlower: String
+		wrapper: String
+		tie: String
 	}
 `;

@@ -73,10 +73,7 @@ model Order {
   @@map("orders")
 }
 
-type Item {
-  svg String
-  color String
-}
+ 
 
 type BouquetItems {
   subFlowers String[]
@@ -148,6 +145,7 @@ model BouquetItem {
   svg String[]
   colors String[] @default([])
   type BouquetItemType
+  isAvailable Boolean @default(true)
   
   // TimeStamps
   createdAt DateTime @default(now())
