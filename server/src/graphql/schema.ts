@@ -22,7 +22,12 @@ export const typeDefs = gql`
 		product(id: ID!): Product
 		readMessages(userId: ID!): [Message]
 		adminMessages: UsersPaginationResult
-		bouquetItems: [BouquetItem]
+		bouquetItems(
+			filter: String
+			type: [BouquetItemType]
+			pagination: PaginationInput
+			isAvailable: Boolean
+		): BouquetItemPaginationResult
 		bouquetItem(id: ID!): BouquetItem
 	}
 
@@ -88,6 +93,12 @@ export const typeDefs = gql`
 	type ProductPaginationResult {
 		total: Int!
 		data: [Product]
+		hasNextPage: Boolean!
+	}
+
+	type BouquetItemPaginationResult {
+		total: Int!
+		data: [BouquetItem]
 		hasNextPage: Boolean!
 	}
 

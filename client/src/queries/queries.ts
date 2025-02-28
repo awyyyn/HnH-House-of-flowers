@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { productFragment, userFragment } from "./fragments";
+import {
+	bouquetItemFragment,
+	productFragment,
+	userFragment,
+} from "./fragments";
 
 export const getUserQuery = gql`
 	${userFragment}
@@ -102,6 +106,29 @@ export const GET_MESSAGES_QUERY = gql`
 			content
 			createdAt
 			updatedAt
+		}
+	}
+`;
+
+export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
+	${bouquetItemFragment}
+	query (
+		$isAvailable: Boolean
+		$filter: String
+		$type: [BouquetItemType]
+		$pagination: PaginationInput
+	) {
+		data: bouquetItems(
+			isAvailable: $isAvailable
+			filter: $filter
+			type: $type
+			pagination: $pagination
+		) {
+			total
+			data {
+				...BouquetItemFragment
+			}
+			hasNextPage
 		}
 	}
 `;

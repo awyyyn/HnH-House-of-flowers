@@ -1,7 +1,7 @@
 import {
 	createBouquetItem,
-	readAllBouquetItems,
 	readBouquetItem,
+	readBouquetItems,
 	updateBouquetItem,
 } from "@/models/bouquet-items-model.js";
 
@@ -35,7 +35,7 @@ export const updateBouquetItemResolver = async (
 };
 
 export const readAllBouquetItemsResolver = async () => {
-	return await readAllBouquetItems();
+	return await readBouquetItems();
 };
 
 export const readBouquetItemResolver = async (

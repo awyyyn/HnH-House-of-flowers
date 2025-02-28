@@ -1,4 +1,5 @@
 import { prisma } from "../services/prisma.js";
+import { BouquetItemType } from "./bouquet-item.js";
 import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
 export * from "./user.js";
@@ -24,6 +25,16 @@ export interface ProductFilter {
 	};
 	status?: ProductStatus[];
 	category?: ProductCategory;
+}
+
+export interface BouquetItemFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	isAvailable?: boolean;
+	type?: BouquetItemType[];
 }
 
 export interface PaginationResult<T> {

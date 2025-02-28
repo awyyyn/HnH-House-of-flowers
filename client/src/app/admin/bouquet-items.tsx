@@ -1,5 +1,154 @@
-import React from "react";
+"use client";
 
-export default function BouquetsItems() {
-	return <div>BouquetsItems</div>;
+import * as React from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Info, MoreHorizontal } from "lucide-react";
+import {
+	Badge,
+	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+	Helmet,
+} from "@/components";
+import { useQuery } from "@apollo/client";
+import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
+import DataTable from "./components/table";
+
+import { useNavigate } from "react-router-dom";
+import { BouquetItem } from "@/types";
+
+export default function BouquetItems() {
+	const navigate = useNavigate();
+	const [pagination, setPagination] = React.useState({
+		pageIndex: 0, //initial page index
+		pageSize: 10, //default page size
+	});
+
+	const { data, loading, refetch } = useQuery<{
+		bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
+	}>(GET_ALL_BOUQUET_ITEMS_QUERY, {
+		variables: {
+			pagination: {
+				page: Number(pagination.pageIndex),
+				limit: Number(pagination.pageSize),
+			},
+		},
+	});
+
+	const columns: ColumnDef<BouquetItem>[] = [
+		{
+			id: "id",
+			header: "#",
+			cell: ({ row }) => row.index + 1,
+			enableSorting: false,
+			enableHiding: false,
+		},
+		{
+			accessorKey: "name",
+			header: "Name",
+			enableHiding: true,
+			cell: ({ row }) => row.original.name,
+		},
+		{
+			accessorKey: "price",
+			header: "Price",
+			enableHiding: true,
+			cell: ({ row }) => {
+				return Intl.NumberFormat("en-PH", {
+					style: "currency",
+					currency: "PHP",
+				}).format(row.original.price);
+				// return user.phoneNumber ?? <i className="text-gray-400">No data</i>;
+			},
+		},
+		{
+			accessorKey: "isAvailable",
+			header: "Status",
+			enableHiding: true,
+			cell: ({ row }) => {
+				return (
+					<Badge
+						variant={row.original.isAvailable ? "default" : "destructive"}
+						className="capitalize">
+						{row.original.isAvailable ? "Available" : "Not Available"}
+					</Badge>
+				);
+			},
+		},
+		// {
+		// 	accessorKey: "category",
+		// 	header: "Category",
+		// 	enableHiding: true,
+		// 	cell: ({ row }) => {
+		// 		return (
+		// 			<p className="capitalize">
+		// 				{row.original.category[0]}
+		// 				{row.original.category.slice(1).toLocaleLowerCase()}
+		// 			</p>
+		// 		);
+		// 	},
+		// },
+		{
+			id: "actions",
+			enableHiding: false,
+
+			cell: ({ row }) => {
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="h-8 w-8 p-0">
+								<span className="sr-only">Open menu</span>
+								<MoreHorizontal />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuItem
+								onClick={() => {
+									navigate(`/products/${row.original.id}/info`, {
+										state: { product: row.original },
+									});
+								}}
+								className="cursor-pointer">
+								<Info />
+								View Details
+							</DropdownMenuItem>
+
+							<DropdownMenuItem
+								onClick={() =>
+									navigate("/products/edit/" + row.original.id, {
+										state: { product: row.original },
+									})
+								}
+								className="cursor-pointer">
+								<Edit />
+								Edit Product
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				);
+			},
+		},
+	];
+
+	return (
+		<>
+			<Helmet title="Product" />
+			<div className="flex justify-between items-center py-2">
+				<h1 className="text-4xl">List of products</h1>
+			</div>
+			<DataTable
+				loading={loading}
+				handleRefresh={refetch}
+				pagination={pagination}
+				setPagination={setPagination}
+				columns={columns}
+				data={data?.products.data ?? []}
+				rowCount={data?.products.total ?? 0}
+			/>
+		</>
+	);
 }
