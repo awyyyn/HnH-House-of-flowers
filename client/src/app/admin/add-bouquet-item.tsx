@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Trash2, Save } from "lucide-react";
+import { Trash2, Save, Loader2 } from "lucide-react";
 import {
 	Button,
 	Input,
@@ -23,6 +23,9 @@ import {
 	RadioGroup,
 	RadioGroupItem,
 } from "@/components";
+import { CREATE_BOUQUET_ITEM_MUTATION } from "@/queries";
+import { useMutation } from "@apollo/client";
+import { toast } from "@/hooks/use-toast";
 
 // Define the item types
 const ItemType = z.enum(["WRAPPER", "TIE", "FLOWER", "SUB_FLOWER"]);
@@ -32,8 +35,8 @@ const formSchema = z.object({
 	name: z.string().min(2, {
 		message: "Name must be at least 2 characters.",
 	}),
-	price: z.number().min(0, {
-		message: "Price must be a positive number.",
+	price: z.string().regex(/^\d+(\.\d+)?$/, {
+		message: "Price must only contain digits and an optional decimal point.",
 	}),
 	type: ItemType,
 	svg: z
@@ -66,12 +69,13 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function BouquetItemForm() {
+	const [createBouquetItem] = useMutation(CREATE_BOUQUET_ITEM_MUTATION);
 	// Initialize the form
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			price: 0,
+			price: "",
 			type: "FLOWER",
 			svg: [""],
 			colors: [],
@@ -126,12 +130,42 @@ export default function BouquetItemForm() {
 		return luminance > 0.5 ? "#000000" : "#ffffff";
 	};
 
+	console.log(form.formState.errors, "qq");
+
 	// Handle form submission
-	async function onSubmit(data: FormValues) {
+	async function onSubmit(values: FormValues) {
 		// Remove the currentColor field from the submitted data
-		const { currentColor, ...submitData } = data;
-		console.log("Form data:", submitData);
-		// Here you would typically send the data to your API
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { currentColor, ...data } = values;
+
+			await createBouquetItem({
+				variables: {
+					data: {
+						...data,
+						price: parseFloat(data.price),
+						isAvailable: true,
+						colors: data.colors.map((color) => color.toUpperCase()),
+					},
+				},
+			});
+
+			// Reset the form
+			form.reset();
+
+			toast({
+				title: "Bouquet Item created",
+				description: "The bouquet item has been created successfully",
+				variant: "success",
+				duration: 5000,
+			});
+		} catch (error) {
+			toast({
+				title: "An error occurred",
+				description: (error as Error).message,
+				variant: "destructive",
+			});
+		}
 	}
 
 	return (
@@ -152,7 +186,11 @@ export default function BouquetItemForm() {
 								<FormItem>
 									<FormLabel>Name</FormLabel>
 									<FormControl>
-										<Input placeholder="Rose Bouquet" {...field} />
+										<Input
+											readOnly={form.formState.isSubmitting}
+											placeholder="Rose Bouquet"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -169,11 +207,12 @@ export default function BouquetItemForm() {
 									<FormControl>
 										<Input
 											type="number"
+											readOnly={form.formState.isSubmitting}
 											step="0.01"
 											min="0"
 											placeholder="29.99"
 											{...field}
-											onChange={(e) => field.onChange(Number(e.target.value))}
+											onChange={(e) => field.onChange(String(e.target.value))}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -192,6 +231,7 @@ export default function BouquetItemForm() {
 										<RadioGroup
 											onValueChange={field.onChange}
 											defaultValue={field.value}
+											disabled={form.formState.isSubmitting}
 											className="grid grid-cols-2 gap-4">
 											{Object.values(ItemType.Values).map((type) => (
 												<FormItem
@@ -224,7 +264,11 @@ export default function BouquetItemForm() {
 											<FormLabel>Front SVG</FormLabel>
 											<FormControl>
 												<div className="space-y-2">
-													<Textarea placeholder="<svg>...</svg>" {...field} />
+													<Textarea
+														readOnly={form.formState.isSubmitting}
+														placeholder="<svg>...</svg>"
+														{...field}
+													/>
 													{field.value && (
 														<div className="border p-4 rounded-md">
 															<p className="text-sm font-medium mb-2">
@@ -252,7 +296,11 @@ export default function BouquetItemForm() {
 											<FormLabel>Back SVG</FormLabel>
 											<FormControl>
 												<div className="space-y-2">
-													<Textarea placeholder="<svg>...</svg>" {...field} />
+													<Textarea
+														readOnly={form.formState.isSubmitting}
+														placeholder="<svg>...</svg>"
+														{...field}
+													/>
 													{field.value && (
 														<div className="border p-4 rounded-md">
 															<p className="text-sm font-medium mb-2">
@@ -283,12 +331,16 @@ export default function BouquetItemForm() {
 										<FormLabel>SVG</FormLabel>
 										<FormControl>
 											<div className="space-y-2">
-												<Textarea placeholder="<svg>...</svg>" {...field} />
+												<Textarea
+													readOnly={form.formState.isSubmitting}
+													placeholder="<svg>...</svg>"
+													{...field}
+												/>
 												{field.value && (
 													<div className="border p-4 rounded-md">
 														<p className="text-sm font-medium mb-2">Preview:</p>
 														<div
-															className="h-24 w-24 mx-auto"
+															className="flex justify-center"
 															dangerouslySetInnerHTML={{ __html: field.value }}
 														/>
 													</div>
@@ -302,78 +354,90 @@ export default function BouquetItemForm() {
 						)}
 
 						{/* Colors Field */}
-						<div className="space-y-4">
-							<FormField
-								control={form.control}
-								name="currentColor"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Colors</FormLabel>
-										<div className="flex space-x-2">
-											<div className="flex-1 flex space-x-2">
-												<FormControl>
+						{(form.getValues().type === "TIE" ||
+							form.getValues().type === "WRAPPER") && (
+							<div className="space-y-4">
+								<FormField
+									control={form.control}
+									name="currentColor"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Colors</FormLabel>
+											<div className="flex space-x-2">
+												<div className="flex-1 flex space-x-2">
+													<FormControl>
+														<Input
+															readOnly={form.formState.isSubmitting}
+															placeholder="Red or #FF0000"
+															{...field}
+															onChange={(e) => {
+																field.onChange(e.target.value);
+																if (e.target.value) {
+																	handleAddColor(e.target.value);
+																}
+															}}
+														/>
+													</FormControl>
 													<Input
-														placeholder="Red or #FF0000"
-														{...field}
+														type="color"
+														className="w-12 h-10 p-1 cursor-pointer"
+														value={field.value || "#000000"}
 														onChange={(e) => {
 															field.onChange(e.target.value);
-															if (e.target.value) {
-																handleAddColor(e.target.value);
-															}
+															handleAddColor(e.target.value);
 														}}
 													/>
-												</FormControl>
-												<Input
-													type="color"
-													className="w-12 h-10 p-1 cursor-pointer"
-													value={field.value || "#000000"}
-													onChange={(e) => {
-														field.onChange(e.target.value);
-														handleAddColor(e.target.value);
-													}}
-												/>
+												</div>
 											</div>
-										</div>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-							<FormField
-								control={form.control}
-								name="colors"
-								render={({ field }) => (
-									<FormItem>
-										<div className="flex flex-wrap gap-2">
-											{field.value.map((color) => (
-												<Badge
-													key={color}
-													className="flex items-center gap-1 px-3 py-1"
-													style={{
-														backgroundColor: color,
-														color: getContrastColor(color),
-													}}>
-													{color}
-													<button
-														type="button"
-														onClick={() => handleRemoveColor(color)}
-														className="ml-1 text-xs hover:opacity-70"
-														style={{ color: getContrastColor(color) }}>
-														<Trash2 className="h-3 w-3" />
-													</button>
-												</Badge>
-											))}
-										</div>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
+								<FormField
+									control={form.control}
+									name="colors"
+									render={({ field }) => (
+										<FormItem>
+											<div className="flex flex-wrap gap-2">
+												{field.value.map((color) => (
+													<Badge
+														key={color}
+														className="flex items-center gap-1 px-3 py-1"
+														style={{
+															backgroundColor: color,
+															color: getContrastColor(color),
+														}}>
+														{color}
+														<button
+															type="button"
+															onClick={() => handleRemoveColor(color)}
+															className="ml-1 text-xs hover:opacity-70"
+															style={{ color: getContrastColor(color) }}>
+															<Trash2 className="h-3 w-3" />
+														</button>
+													</Badge>
+												))}
+											</div>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						)}
 					</CardContent>
 					<CardFooter>
-						<Button type="submit" className="ml-auto">
+						<Button
+							disabled={form.formState.isSubmitting}
+							type="submit"
+							className="ml-auto min-w-[200px]">
 							<Save className="h-4 w-4 mr-2" />
-							Save Bouquet Item
+
+							{form.formState.isSubmitting ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								"Save Bouquet Item"
+							)}
 						</Button>
 					</CardFooter>
 				</Card>

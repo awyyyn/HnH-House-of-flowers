@@ -38,3 +38,16 @@ export const productFragment = gql`
 		updatedAt
 	}
 `;
+export const bouquetItemFragment = gql`
+	fragment BouquetItemFragment on BouquetItem {
+		id
+		name
+		price
+		svg
+		colors
+		type
+		isAvailable
+		createdAt
+		updatedAt
+	}
+`;

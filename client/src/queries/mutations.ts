@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { productFragment, userFragment } from "./fragments";
+import {
+	bouquetItemFragment,
+	productFragment,
+	userFragment,
+} from "./fragments";
 
 export const CREATE_ADMIN_MUTATION = gql`
 	${userFragment}
@@ -158,6 +162,27 @@ export const REMOVE_TO_CART_MUTATION = gql`
 			quantity
 			cartId
 			price
+		}
+	}
+`;
+
+export const CREATE_BOUQUET_ITEM_MUTATION = gql`
+	${bouquetItemFragment}
+	mutation ($data: BouquetItemInput!) {
+		bouquetItem: createBouquetItem(data: $data) {
+			...BouquetItemFragment
+		}
+	}
+`;
+
+export const UPDATE_BOUQUET_ITEM_MUTATION = gql`
+	${bouquetItemFragment}
+	mutation UpdateBouquetItem(
+		$updateBouquetItemId: ID!
+		$data: BouquetItemInput!
+	) {
+		bouquetItem: updateBouquetItem(id: $updateBouquetItemId, data: $data) {
+			...BouquetItemFragment
 		}
 	}
 `;
