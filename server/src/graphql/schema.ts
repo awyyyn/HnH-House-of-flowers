@@ -22,6 +22,8 @@ export const typeDefs = gql`
 		product(id: ID!): Product
 		readMessages(userId: ID!): [Message]
 		adminMessages: UsersPaginationResult
+		bouquetItems: [BouquetItem]
+		bouquetItem(id: ID!): BouquetItem
 	}
 
 	type Mutation {
@@ -51,6 +53,8 @@ export const typeDefs = gql`
 		updateCartItem(id: ID!, price: Float!, quantity: Int!): CartItem
 		removeToCart(id: ID!): CartItem
 		sendMessage(receiverId: String!, content: String!): Message
+		createBouquetItem(data: BouquetItemInput!): BouquetItem
+		updateBouquetItem(id: ID!, data: BouquetItemInput!): BouquetItem
 	}
 
 	input UpdateUserInput {
@@ -274,5 +278,14 @@ export const typeDefs = gql`
 		mainFlower: String
 		wrapper: String
 		tie: String
+	}
+
+	input BouquetItemInput {
+		name: String!
+		price: Float!
+		svg: [String]
+		colors: [String]
+		type: BouquetItemType!
+		isAvailable: Boolean!
 	}
 `;

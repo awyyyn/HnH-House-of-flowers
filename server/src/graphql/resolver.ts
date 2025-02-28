@@ -18,6 +18,10 @@ import {
 	adminMessagesResolver,
 	messageSentSubscription,
 	addToCartResolver,
+	readBouquetItemResolver,
+	readAllBouquetItemsResolver,
+	createBouquetItemResolver,
+	updateBouquetItemResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -31,6 +35,8 @@ export const resolvers = {
 		products: productsResolver,
 		readMessages: readMessagesResolver,
 		adminMessages: adminMessagesResolver,
+		bouquetItems: readAllBouquetItemsResolver,
+		bouquetItem: readBouquetItemResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
@@ -45,6 +51,8 @@ export const resolvers = {
 		removeToCart: removeToCartResolver,
 		sendMessage: sendMessageResolver,
 		addToCart: addToCartResolver,
+		createBouquetItem: createBouquetItemResolver,
+		updateBouquetItem: updateBouquetItemResolver,
 	},
 	// Mutation: {},
 };
