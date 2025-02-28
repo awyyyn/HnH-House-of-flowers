@@ -147,6 +147,7 @@ model BouquetItem {
   price Float
   svg String[]
   colors String[] @default([])
+  type BouquetItemType
   
   // TimeStamps
   createdAt DateTime @default(now())
