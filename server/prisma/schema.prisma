@@ -56,23 +56,38 @@ enum UserRole {
 
 model Order {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  customerID String      @db.ObjectId
-  customer   User        @relation(fields: [customerID], references: [id])
+  customerID String?      @db.ObjectId
+  customer   User?        @relation(fields: [customerID], references: [id])
   status     OrderStatus @default(PENDING)
   totalPrice Float
+ 
 
   payment Payment? 
+  typeOfDelivery typeOfDelivery
+  typeOfPayment  typeOfPayment  
+  isPreOrder Boolean @default(false)
 
   orderItems OrderItem[]
-
   // TimeStamps
   orderDate    DateTime  @default(now())
-  preOrderData DateTime?
-  deliveryDate DateTime?
+  processedAt  DateTime?
+  shippedAt    DateTime?
+  deliveredAt  DateTime?
+  cancelledAt  DateTime?
+  completedAt  DateTime?
 
   @@map("orders")
 }
 
+enum typeOfPayment {
+  CASH
+  GCASH
+}
+
+enum typeOfDelivery {
+  PICKUP
+  DELIVERY
+}
  
 
 type BouquetItems {
@@ -81,8 +96,6 @@ type BouquetItems {
   wrapper String
   tie String
 }
-  
- 
 
 model Customize {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -107,17 +120,23 @@ model OrderItem {
   price    Float
   quantity Int
 
-  
-
-  productId   String?    @unique @db.ObjectId
+  productId   String?      @db.ObjectId
   product     Product?   @relation(fields: [productId], references: [id])
-
 
   @@map("order_items")
 }
 
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
 model Payment {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
+  checkoutUrl String
+  status     PaymentStatus
   paymentId String @unique
   orderId   String @db.ObjectId @unique
   order     Order  @relation(fields: [orderId], references: [id])

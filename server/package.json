@@ -30,6 +30,7 @@
 		"otp-generator": "^4.0.1",
 		"qrcode": "^1.5.4",
 		"speakeasy": "^2.0.0",
+		"uuid": "^11.1.0",
 		"ws": "^8.18.0"
 	},
 	"devDependencies": {
@@ -42,6 +43,7 @@
 		"@types/otp-generator": "^4.0.2",
 		"@types/qrcode": "^1.5.5",
 		"@types/speakeasy": "^2.0.10",
+		"@types/uuid": "^10.0.0",
 		"@types/ws": "^8.5.14",
 		"env-cmd": "^10.1.0",
 		"pkgroll": "^2.6.1",
