@@ -118,7 +118,7 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 		$type: [BouquetItemType]
 		$pagination: PaginationInput
 	) {
-		data: bouquetItems(
+		bouquetItems(
 			isAvailable: $isAvailable
 			filter: $filter
 			type: $type

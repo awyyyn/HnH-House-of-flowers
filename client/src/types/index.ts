@@ -14,11 +14,13 @@ export type DeliveryMethod = "PICKUP" | "DELIVERY";
 
 export interface CustomizationValues {
 	wrapper: string;
-	color: string;
+
 	mainFlower: string;
-	additionalFlower: string;
+	additionalFlower: string[];
 	tie: string;
 	note: string;
+	wrapperColor: string;
+	tieColor: string;
 	paymentMethod: PaymentMethod;
 	delivery: DeliveryMethod;
 }

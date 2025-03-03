@@ -177,12 +177,51 @@ export const CREATE_BOUQUET_ITEM_MUTATION = gql`
 
 export const UPDATE_BOUQUET_ITEM_MUTATION = gql`
 	${bouquetItemFragment}
-	mutation UpdateBouquetItem(
-		$updateBouquetItemId: ID!
-		$data: BouquetItemInput!
-	) {
-		bouquetItem: updateBouquetItem(id: $updateBouquetItemId, data: $data) {
+	mutation UpdateBouquetItem($id: ID!, $data: BouquetItemInput!) {
+		bouquetItem: updateBouquetItem(id: $id, data: $data) {
 			...BouquetItemFragment
+		}
+	}
+`;
+
+export const CHECKOUT_MUTATION = gql`
+	mutation CreateCheckoutSession(
+		$lineItems: [LineItemInput!]!
+		$totalPrice: Float!
+		$typeOfDelivery: OrderDeliveryType!
+		$typeOfPayment: OrderPaymentType!
+	) {
+		createCheckoutSession(
+			line_items: $lineItems
+			totalPrice: $totalPrice
+			typeOfDelivery: $typeOfDelivery
+			typeOfPayment: $typeOfPayment
+		) {
+			id
+			payment {
+				checkoutUrl
+				id
+			}
+			status
+			totalPrice
+			isPreOrder
+			orderItems {
+				id
+				product {
+					images
+					name
+				}
+				price
+				quantity
+				orderId
+			}
+
+			orderDate
+			processedAt
+			shippedAt
+			deliveredAt
+			cancelledAt
+			completedAt
 		}
 	}
 `;
