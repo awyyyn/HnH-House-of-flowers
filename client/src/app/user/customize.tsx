@@ -7,15 +7,20 @@ import {
 	Textarea,
 	ToggleGroup,
 	ToggleGroupItem,
-	Wrapper,
 } from "@/components";
 import PickTheme from "./components/pick-theme";
 import { useState } from "react";
 import CustomizeFlower from "./components/customize-flower";
-import { CustomizationValues, DeliveryMethod, PaymentMethod } from "@/types";
-import { additionalFlowers, mainFlowers, ties } from "@/constants";
+import {
+	BouquetItem,
+	CustomizationValues,
+	DeliveryMethod,
+	PaymentMethod,
+} from "@/types";
 import { DatePicker } from "@/components/custom/date-picker";
 import { add } from "date-fns";
+import { useQuery } from "@apollo/client";
+import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
 
 const steps = [
 	{ title: "Step 1", description: "Choose a theme" },
@@ -24,18 +29,44 @@ const steps = [
 	{ title: "Step 4", description: "Finish" },
 ];
 
+function prepareSvgForColorization(svg: string): string {
+	// Replace fill and stroke attributes with currentColor
+	return svg.replace(/fill="[^"]*"/g, 'fill="currentColor"');
+	// .replace(/stroke="[^"]*"/g, 'stroke="currentColor"');
+}
+
 export default function Customize() {
 	const [activeStep, setActiveStep] = useState(0);
 	const [values, setValues] = useState<CustomizationValues>({
 		wrapper: "",
-		color: "",
+		wrapperColor: "",
 		mainFlower: "",
-		additionalFlower: "",
+		additionalFlower: [],
 		tie: "",
+		tieColor: "",
 		note: "",
 		paymentMethod: "COP",
 		delivery: "PICKUP",
 	});
+	const { data } = useQuery<{
+		bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
+	}>(GET_ALL_BOUQUET_ITEMS_QUERY, {
+		variables: {
+			isAvailable: true,
+		},
+	});
+
+	const wrappers =
+		data?.bouquetItems.data.filter((item) => item.type === "WRAPPER") ?? [];
+
+	const flowers =
+		data?.bouquetItems.data.filter((item) => item.type === "FLOWER") ?? [];
+
+	const subFlowers =
+		data?.bouquetItems.data.filter((item) => item.type === "SUB_FLOWER") ?? [];
+
+	const ties =
+		data?.bouquetItems.data.filter((item) => item.type === "TIE") ?? [];
 
 	const handleNext = () => {
 		setActiveStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
@@ -50,11 +81,14 @@ export default function Customize() {
 			case 0:
 				return (
 					<PickTheme
+						wrappers={wrappers}
 						selected={values.wrapper}
 						handleSelect={(id) => {
 							setValues({
 								...values,
 								wrapper: id,
+								wrapperColor: wrappers.find((wrppr) => wrppr.id === id)!
+									.colors[0],
 							});
 						}}
 					/>
@@ -62,9 +96,13 @@ export default function Customize() {
 			case 1:
 				return (
 					<CustomizeFlower
+						wrappers={wrappers}
 						setValues={setValues}
 						values={values}
 						selectedWrapper={values.wrapper}
+						flowers={flowers}
+						subFlowers={subFlowers}
+						ties={ties}
 					/>
 				);
 			case 2:
@@ -75,34 +113,73 @@ export default function Customize() {
 								{/* <div className="absolute top-5 left-5">
 											<ColourfulText text="Preview" className="text-3xl" />
 										</div> */}
-								{values.additionalFlower && (
-									<img
-										className="absolute  left-[113px] z-20 top-[76px] w-[166psx] h-[23s0px]"
-										src={
-											additionalFlowers.find(
-												(flower) => flower.id === values.additionalFlower
-											)!.svg
-										}
-										alt="clovers"
-									/>
-								)}
+								{values.additionalFlower &&
+									values.additionalFlower.map((adlFlower) => (
+										<div
+											className="absolute  left-[113px] z-20 top-[76px] w-[166psx] h-[23s0px]"
+											// src={
+											// 	flowers.find((flower) => flower.id === adlFlower)!
+											// 		.svg[0]
+											// }
+
+											dangerouslySetInnerHTML={{
+												__html: subFlowers.find(
+													(subFlwr) => subFlwr.id === adlFlower
+												)!.svg[0],
+											}}
+										/>
+									))}
 								{values.mainFlower && (
-									<img
+									<div
 										className="absolute left-[104px] z-30  top-[39px]  w-[157spx] h-[17s3px]"
-										src={
-											mainFlowers.find(
-												(flower) => flower.id === values.mainFlower
-											)!.svg
-										}
-										alt="sunflower"
+										dangerouslySetInnerHTML={{
+											__html: flowers.find(
+												(flwr) => flwr.id === values.mainFlower
+											)!.svg,
+										}}
 									/>
 								)}
-								<Wrapper id={values.wrapper} color={values.color} />
+								{values.wrapper && (
+									<div className="z-10 absolute left-[100px]  top-[62px]  ]">
+										<div
+											style={{ color: values.wrapperColor || "currentColor" }}
+											dangerouslySetInnerHTML={{
+												// __html: prepareSvgForColorization(wrapper.svg[0]),
+												__html: prepareSvgForColorization(
+													wrappers.find(
+														(wrapper) => wrapper.id === values.wrapper
+													)!.svg[0]
+												),
+											}}
+										/>
+									</div>
+								)}
+								{values.wrapper && (
+									<div className="z-40 absolute  left-[100px]  top-[82px]  ">
+										<div
+											// style={{ color: selectedColors[item.id] || "currentColor" }}
+											style={{ color: values.wrapperColor || "red" }}
+											dangerouslySetInnerHTML={{
+												// __html: prepareSvgForColorization(wrapper.svg[0]),
+												__html: prepareSvgForColorization(
+													wrappers.find(
+														(wrapper) => wrapper.id === values.wrapper
+													)!.svg[1]
+												),
+											}}
+										/>
+									</div>
+								)}
 								{values.tie && (
-									<img
+									<div
 										className="absolute left-[105px] z-50 top-[61px] ] w-[155spx] h-[14s2px] "
-										src={ties.find((flower) => flower.id === values.tie)!.svg}
-										alt="bigTwine tie"
+										// src={
+										// 	ties.find((flower) => flower.id === values.tie)!.svg[0]
+										// }
+										dangerouslySetInnerHTML={{
+											__html: ties.find((flower) => flower.id === values.tie)!
+												.svg[0],
+										}}
 									/>
 								)}
 							</div>
@@ -213,15 +290,38 @@ export default function Customize() {
 					<Button onClick={handlePrevious} disabled={activeStep === 0}>
 						Previous
 					</Button>
-					<Button
-						onClick={handleNext}
-						disabled={
-							activeStep === 1
-								? !values.mainFlower || !values.tie || !values.wrapper
-								: false
-						}>
-						{activeStep === steps.length - 1 ? "Finish" : "Next"}
-					</Button>
+					<div className="flex items-center gap-2">
+						{activeStep < steps.length - 1 && activeStep > 0 && (
+							<Button
+								variant="outline"
+								onClick={() => {
+									setValues({
+										wrapper: "",
+										wrapperColor: "",
+										mainFlower: "",
+										additionalFlower: [],
+										tie: "",
+										tieColor: "",
+										note: "",
+										paymentMethod: "COP",
+
+										delivery: "PICKUP",
+									});
+									setActiveStep(0);
+								}}>
+								Reset
+							</Button>
+						)}
+						<Button
+							onClick={handleNext}
+							disabled={
+								activeStep === 1
+									? !values.mainFlower || !values.tie || !values.wrapper
+									: false
+							}>
+							{activeStep === steps.length - 1 ? "Finish" : "Next"}
+						</Button>
+					</div>
 				</div>
 			</div>
 		</>

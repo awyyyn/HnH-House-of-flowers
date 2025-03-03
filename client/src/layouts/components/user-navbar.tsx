@@ -16,6 +16,7 @@ import {
 	ChevronDown,
 	LogOut,
 	MessageCircle,
+	Package2,
 	ShoppingBag,
 	User,
 } from "lucide-react";
@@ -25,6 +26,7 @@ import { Link } from "react-router-dom";
 import ThemeSwitcher from "@/components/custom/theme-switcher";
 import { useAtomValue } from "jotai";
 import { cartAtom } from "@/states";
+import { IconPackages } from "@tabler/icons-react";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
@@ -208,6 +210,12 @@ export function Navbar({ className }: { className?: string }) {
 								<Link to="/account">
 									<User />
 									<span>Profile</span>
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link to="/orders">
+									<IconPackages />
+									<span>Orders</span>
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={logout}>
