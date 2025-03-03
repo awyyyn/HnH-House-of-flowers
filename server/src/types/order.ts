@@ -1,4 +1,5 @@
 import { Customize } from "./customize.js";
+import { Payment } from "./payment.js";
 import { User } from "./user.js";
 
 export interface OrderItem {
@@ -14,16 +15,24 @@ export interface OrderItem {
 
 export interface Order {
 	readonly id: string;
-	customerId: string;
-	customer: User;
+	customerId: string | null;
+	customer: User | null;
 	status: OrderStatus;
 	totalPrice: number;
+
+	payment: Payment | null;
+	typeOfPayment: OrderPaymentType;
+	typeOfDelivery: OrderDeliveryType;
+	isPreOrder: boolean;
 
 	orderItems: Order[];
 
 	orderDate: Date;
-	preOrderDate?: Date;
-	deliveryDate?: Date;
+	processedAt: Date | null;
+	shippedAt: Date | null;
+	deliveredAt: Date | null;
+	cancelledAt: Date | null;
+	completedAt: Date | null;
 }
 
 export type OrderStatus =
@@ -33,3 +42,7 @@ export type OrderStatus =
 	| "DELIVERED"
 	| "CANCELLED"
 	| "READY_FOR_PICKUP";
+
+export type OrderPaymentType = "CASH" | "GCASH";
+
+export type OrderDeliveryType = "PICKUP" | "DELIVERY";
