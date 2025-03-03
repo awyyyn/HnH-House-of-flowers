@@ -1,3 +1,4 @@
+import { createCheckoutSessionResolver } from "./resolvers/checkout-resolver.js";
 import {
 	blockUserResolver,
 	createAdminResolver,
@@ -53,6 +54,7 @@ export const resolvers = {
 		addToCart: addToCartResolver,
 		createBouquetItem: createBouquetItemResolver,
 		updateBouquetItem: updateBouquetItemResolver,
+		createCheckoutSession: createCheckoutSessionResolver,
 	},
 	// Mutation: {},
 };

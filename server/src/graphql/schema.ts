@@ -60,6 +60,31 @@ export const typeDefs = gql`
 		sendMessage(receiverId: String!, content: String!): Message
 		createBouquetItem(data: BouquetItemInput!): BouquetItem
 		updateBouquetItem(id: ID!, data: BouquetItemInput!): BouquetItem
+		createCheckoutSession(
+			line_items: [LineItemInput!]!
+			totalPrice: Float!
+			typeOfDelivery: OrderDeliveryType!
+			typeOfPayment: OrderPaymentType!
+			preOrder: Boolean
+		): Order
+	}
+
+	enum OrderPaymentType {
+		CASH
+		GCASH
+	}
+
+	enum OrderDeliveryType {
+		PICKUP
+		DELIVERY
+	}
+
+	input LineItemInput {
+		amount: Float!
+		id: String!
+		name: String!
+		images: [String]!
+		quantity: Int!
 	}
 
 	input UpdateUserInput {
@@ -153,24 +178,33 @@ export const typeDefs = gql`
 
 	type OrderItem {
 		id: ID!
-		order: Order!
+		order: Order
+		orderId: String
 		price: Float!
 		quantity: Int!
-		isCustomize: Boolean!
-		customize: Customize
+
+		productId: String
+		product: Product
 	}
 
 	type Order {
 		id: ID!
 		customer: User!
 		status: OrderStatus!
+
 		totalPrice: Float!
+		isPreOrder: Boolean!
 
 		orderItems: [OrderItem]
 
+		payment: Payment
+
 		orderDate: String!
-		preOrderDate: String
-		deliveryDate: String
+		processedAt: String
+		shippedAt: String
+		deliveredAt: String
+		cancelledAt: String
+		completedAt: String
 	}
 
 	enum OrderStatus {
@@ -298,5 +332,25 @@ export const typeDefs = gql`
 		colors: [String]
 		type: BouquetItemType!
 		isAvailable: Boolean!
+	}
+
+	type Payment {
+		id: ID!
+		checkoutUrl: String!
+		status: PaymentStatus!
+		paymentId: String!
+		orderId: String!
+		order: Order!
+		userId: String!
+		user: User!
+
+		createdAt: String!
+	}
+
+	enum PaymentStatus {
+		PENDING
+		SUCCESS
+		FAILED
+		CANCELLED
 	}
 `;
