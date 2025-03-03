@@ -17,14 +17,22 @@ import { useQuery } from "@apollo/client";
 import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
 import DataTable from "./components/table";
 
-import { useNavigate } from "react-router-dom";
 import { BouquetItem } from "@/types";
+import BouquetItemModal from "./components/bouquet-item-modal";
 
 export default function BouquetItems() {
-	const navigate = useNavigate();
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0, //initial page index
 		pageSize: 10, //default page size
+	});
+	const [item, setItem] = React.useState<{
+		editing?: boolean;
+		bouquetItem: BouquetItem | null;
+		isOpen: boolean;
+	}>({
+		editing: false,
+		isOpen: false,
+		bouquetItem: null,
 	});
 
 	const { data, loading, refetch } = useQuery<{
@@ -108,8 +116,10 @@ export default function BouquetItems() {
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 							<DropdownMenuItem
 								onClick={() => {
-									navigate(`/products/${row.original.id}/info`, {
-										state: { product: row.original },
+									setItem({
+										bouquetItem: row.original,
+										isOpen: true,
+										editing: false,
 									});
 								}}
 								className="cursor-pointer">
@@ -118,14 +128,16 @@ export default function BouquetItems() {
 							</DropdownMenuItem>
 
 							<DropdownMenuItem
-								onClick={() =>
-									navigate("/products/edit/" + row.original.id, {
-										state: { product: row.original },
-									})
-								}
+								onClick={() => {
+									setItem({
+										bouquetItem: row.original,
+										isOpen: true,
+										editing: true,
+									});
+								}}
 								className="cursor-pointer">
 								<Edit />
-								Edit Product
+								Edit Bouquet Item
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -136,7 +148,7 @@ export default function BouquetItems() {
 
 	return (
 		<>
-			<Helmet title="Product" />
+			<Helmet title="Bouquet Item" />
 			<div className="flex justify-between items-center py-2">
 				<h1 className="text-4xl">List of products</h1>
 			</div>
@@ -146,9 +158,19 @@ export default function BouquetItems() {
 				pagination={pagination}
 				setPagination={setPagination}
 				columns={columns}
-				data={data?.products.data ?? []}
-				rowCount={data?.products.total ?? 0}
+				data={data?.bouquetItems.data ?? []}
+				rowCount={data?.bouquetItems.total ?? 0}
 			/>
+			{item.bouquetItem && item.isOpen && (
+				<BouquetItemModal
+					bouquet={item.bouquetItem}
+					isOpen={item.isOpen}
+					edit={!!item.editing}
+					handleClose={() => {
+						setItem({ bouquetItem: null, editing: false, isOpen: false });
+					}}
+				/>
+			)}
 		</>
 	);
 }

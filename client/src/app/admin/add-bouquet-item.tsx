@@ -26,9 +26,60 @@ import {
 import { CREATE_BOUQUET_ITEM_MUTATION } from "@/queries";
 import { useMutation } from "@apollo/client";
 import { toast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 // Define the item types
 const ItemType = z.enum(["WRAPPER", "TIE", "FLOWER", "SUB_FLOWER"]);
+// Function to extract color from SVG
+const extractColorFromSVG = (svgContent: string): string | null => {
+	try {
+		// Create a temporary div to parse the SVG
+		const div = document.createElement("div");
+		div.innerHTML = svgContent.trim();
+		const svg = div.querySelector("svg");
+		if (!svg) return null;
+
+		// Check for fill attribute
+		const fill = svg.getAttribute("fill");
+		if (fill && fill !== "none") return fill;
+
+		// Check for stroke attribute
+		const stroke = svg.getAttribute("stroke");
+		if (stroke && stroke !== "none") return stroke;
+
+		// Check for style attribute with fill or stroke
+		const style = svg.getAttribute("style");
+		if (style) {
+			const fillMatch = style.match(/fill:\s*([^;]+)/);
+			const strokeMatch = style.match(/stroke:\s*([^;]+)/);
+			if (fillMatch && fillMatch[1] !== "none") return fillMatch[1];
+			if (strokeMatch && strokeMatch[1] !== "none") return strokeMatch[1];
+		}
+
+		// Check first path or rect for color
+		const element = svg.querySelector("path, rect");
+		if (element) {
+			const elementFill = element.getAttribute("fill");
+			if (elementFill && elementFill !== "none") return elementFill;
+
+			const elementStroke = element.getAttribute("stroke");
+			if (elementStroke && elementStroke !== "none") return elementStroke;
+
+			const elementStyle = element.getAttribute("style");
+			if (elementStyle) {
+				const fillMatch = elementStyle.match(/fill:\s*([^;]+)/);
+				const strokeMatch = elementStyle.match(/stroke:\s*([^;]+)/);
+				if (fillMatch && fillMatch[1] !== "none") return fillMatch[1];
+				if (strokeMatch && strokeMatch[1] !== "none") return strokeMatch[1];
+			}
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error parsing SVG:", error);
+		return null;
+	}
+};
 
 // Create the form schema
 const formSchema = z.object({
@@ -106,6 +157,26 @@ export default function BouquetItemForm() {
 			currentColors.filter((color) => color !== colorToRemove)
 		);
 	};
+
+	// Watch for SVG changes to set default colors
+	useEffect(() => {
+		const subscription = watch((value, { name }) => {
+			if (
+				name?.startsWith("svg.") &&
+				(value.type === "WRAPPER" || value.type === "TIE")
+			) {
+				const svgContent = value.svg?.[0];
+				if (svgContent) {
+					const color = extractColorFromSVG(svgContent);
+					if (color && currentColors.length === 0) {
+						setValue("colors", [color]);
+					}
+				}
+			}
+		});
+
+		return () => subscription.unsubscribe();
+	}, [watch, setValue, currentColors]);
 
 	// Get contrast color for text
 	const getContrastColor = (hexColor: string): string => {
@@ -229,7 +300,12 @@ export default function BouquetItemForm() {
 									<FormLabel>Type</FormLabel>
 									<FormControl>
 										<RadioGroup
-											onValueChange={field.onChange}
+											onValueChange={(v) => {
+												field.onChange(v);
+												if (v === "FLOWER" || v === "SUB_FLOWER") {
+													setValue("colors", []);
+												}
+											}}
 											defaultValue={field.value}
 											disabled={form.formState.isSubmitting}
 											className="grid grid-cols-2 gap-4">
@@ -400,7 +476,7 @@ export default function BouquetItemForm() {
 									render={({ field }) => (
 										<FormItem>
 											<div className="flex flex-wrap gap-2">
-												{field.value.map((color) => (
+												{field.value.map((color, index) => (
 													<Badge
 														key={color}
 														className="flex items-center gap-1 px-3 py-1"
@@ -409,13 +485,15 @@ export default function BouquetItemForm() {
 															color: getContrastColor(color),
 														}}>
 														{color}
-														<button
-															type="button"
-															onClick={() => handleRemoveColor(color)}
-															className="ml-1 text-xs hover:opacity-70"
-															style={{ color: getContrastColor(color) }}>
-															<Trash2 className="h-3 w-3" />
-														</button>
+														{index !== 0 && (
+															<button
+																type="button"
+																onClick={() => handleRemoveColor(color)}
+																className="ml-1 text-xs hover:opacity-70"
+																style={{ color: getContrastColor(color) }}>
+																<Trash2 className="h-3 w-3" />
+															</button>
+														)}
 													</Badge>
 												))}
 											</div>

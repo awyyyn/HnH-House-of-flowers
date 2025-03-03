@@ -33,6 +33,7 @@ import Chat from "./app/user/chat";
 import CartPage from "./app/user/cart";
 import BouquetsItems from "./app/admin/bouquet-items";
 import AddBouquetItem from "./app/admin/add-bouquet-item";
+import CheckoutPage from "./app/user/checkout";
 
 export default function App() {
 	const publicRoutes = [
@@ -174,6 +175,10 @@ export default function App() {
 					{
 						path: "customize",
 						element: <Customize />,
+					},
+					{
+						path: "checkout",
+						element: <CheckoutPage />,
 					},
 					{
 						path: "chat",
