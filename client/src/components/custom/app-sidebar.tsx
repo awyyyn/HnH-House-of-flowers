@@ -2,6 +2,7 @@ import * as React from "react";
 import {
 	BookOpen,
 	Flower,
+	Flower2,
 	LayoutDashboard,
 	LifeBuoy,
 	MessagesSquare,
@@ -70,18 +71,18 @@ const data = {
 			icon: MessagesSquare,
 		},
 		{
-			title: "Bouquets",
+			title: "Bouquet Items",
 			url: "#",
-			icon: MessagesSquare,
+			icon: Flower2,
 			items: [
 				{
 					title: "Add Item",
 					url: "/bouquet-items/add-item",
 				},
-				{
-					title: "Customize Orders",
-					url: "/bouquet-items/customize-orders",
-				},
+				// {
+				// 	title: "Customize Orders",
+				// 	url: "/bouquet-items/customize-orders",
+				// },
 				{
 					title: "List",
 					url: "/bouquet-items",
