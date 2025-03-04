@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,12 +9,13 @@ import { useAtomValue } from "jotai";
 import { cartAtom } from "@/states";
 import { useMutation } from "@apollo/client";
 import { CHECKOUT_MUTATION } from "@/queries";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 type PaymentType = "CASH" | "GCASH";
 type DeliveryType = "PICKUP" | "DELIVERY";
 
-export default function OrderPage() {
+const CheckoutPage = () => {
+	const { toast } = useToast();
 	const [paymentType, setPaymentType] = useState<PaymentType>("CASH");
 	const [deliveryType, setDeliveryType] = useState<DeliveryType>("PICKUP");
 	const [checkout, { loading }] = useMutation(CHECKOUT_MUTATION);
@@ -25,7 +24,10 @@ export default function OrderPage() {
 	const cart = useAtomValue(cartAtom);
 	// cart.items.ma
 
-	if (!state.selectedItems.size) return navigate(-1);
+	if (!state.selectedItems.size) {
+		navigate(-1);
+		return null;
+	}
 
 	const cartItems = cart.items.filter((item) =>
 		state.selectedItems.has(item.id)
@@ -44,11 +46,13 @@ export default function OrderPage() {
 						name: item.product.name,
 						images: item.product.images,
 						quantity: item.quantity,
+						cartItemId: item.id,
 					})),
 					totalPrice: cartItems.reduce(
 						(acc, item) => acc + item.price * item.quantity,
 						0
 					),
+					fromCartItem: true,
 					typeOfDelivery: deliveryType,
 					typeOfPayment: paymentType,
 				},
@@ -215,4 +219,6 @@ export default function OrderPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default CheckoutPage;
