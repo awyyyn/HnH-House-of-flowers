@@ -34,6 +34,8 @@ import CartPage from "./app/user/cart";
 import BouquetsItems from "./app/admin/bouquet-items";
 import AddBouquetItem from "./app/admin/add-bouquet-item";
 import CheckoutPage from "./app/user/checkout";
+import CheckoutSuccess from "./app/user/checkout-success";
+import CheckoutError from "./app/user/checkout-error";
 
 export default function App() {
 	const publicRoutes = [
@@ -178,7 +180,20 @@ export default function App() {
 					},
 					{
 						path: "checkout",
-						element: <CheckoutPage />,
+						children: [
+							{
+								index: true,
+								element: <CheckoutPage />,
+							},
+							{
+								path: "success",
+								element: <CheckoutSuccess />,
+							},
+							{
+								path: "error",
+								element: <CheckoutError />,
+							},
+						],
 					},
 					{
 						path: "chat",
