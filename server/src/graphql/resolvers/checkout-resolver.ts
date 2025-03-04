@@ -1,10 +1,18 @@
-import { environment } from "@/environments/environment.js";
-import { createOrder } from "@/models/order-model.js";
-import { readProduct } from "@/models/product-model.js";
-import { AppContext } from "@/types/index.js";
-import { OrderDeliveryType, OrderPaymentType } from "@/types/order.js";
 import { GraphQLError } from "graphql";
 import { v4 as uuidv4 } from "uuid";
+
+import { environment } from "../../environments/environment.js";
+import {
+	readProduct,
+	updateProduct,
+	createOrder,
+	removeCartItem,
+} from "../../models/index.js";
+import {
+	OrderDeliveryType,
+	OrderPaymentType,
+	AppContext,
+} from "../../types/index.js";
 
 export const createCheckoutSessionResolver = async (
 	_: never,
@@ -14,9 +22,11 @@ export const createCheckoutSessionResolver = async (
 		typeOfDelivery,
 		typeOfPayment,
 		preOrder = false,
+		fromCartItem = false,
 	}: {
 		totalPrice: number;
 		line_items: {
+			cartItemId: string;
 			amount: number;
 			id: string;
 			name: string;
@@ -26,6 +36,7 @@ export const createCheckoutSessionResolver = async (
 		preOrder?: boolean;
 		typeOfPayment: OrderPaymentType;
 		typeOfDelivery: OrderDeliveryType;
+		fromCartItem?: boolean;
 	},
 	app: AppContext
 ) => {
@@ -48,6 +59,10 @@ export const createCheckoutSessionResolver = async (
 					if (product.stock < item.quantity) {
 						throw new GraphQLError("Product out of stock");
 					}
+
+					await updateProduct(product.id, {
+						stock: product.stock - item.quantity,
+					});
 				})
 			);
 
@@ -84,7 +99,6 @@ export const createCheckoutSessionResolver = async (
 			const response = await fetch(url, options);
 			const data = await response.json();
 
-			console.log(data);
 			if (response.status !== 200) {
 				throw new GraphQLError("Failed to checkout");
 			}
@@ -101,7 +115,6 @@ export const createCheckoutSessionResolver = async (
 				productId: item.id,
 				quantity: item.quantity,
 			})),
-
 			status: "PENDING",
 			totalPrice,
 			typeOfDelivery,
@@ -109,6 +122,12 @@ export const createCheckoutSessionResolver = async (
 			typeOfPayment,
 			payment,
 		});
+
+		if (fromCartItem) {
+			await Promise.all(
+				line_items.map(async (item) => await removeCartItem(item.cartItemId))
+			);
+		}
 
 		return order;
 	} catch (err) {
