@@ -14,4 +14,4 @@ export interface Payment {
 	createdAt: Date;
 }
 
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "CANCELLED";
+export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED";
