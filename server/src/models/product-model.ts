@@ -12,7 +12,10 @@ export const createProduct = async (
 	return newProduct;
 };
 
-export const updateProduct = async (id: string, values: ProductInput) => {
+export const updateProduct = async (
+	id: string,
+	values: Partial<ProductInput>
+) => {
 	const updatedProduct = await prisma.product.update({
 		where: { id },
 		data: values,

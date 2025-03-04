@@ -6,6 +6,7 @@ export * from "./user.js";
 export * from "./product.js";
 export * from "./cart.js";
 export * from "./bouquet-item.js";
+export * from "./order.js";
 
 export interface UserFilter {
 	filter?: string;
