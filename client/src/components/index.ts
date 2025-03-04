@@ -6,6 +6,7 @@ export * from "./ui/checkbox";
 export * from "./ui/step";
 export * from "./ui/pagination";
 export * from "./ui/select";
+export * from "./ui/alert";
 export * from "./ui/switch";
 export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
