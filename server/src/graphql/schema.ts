@@ -66,6 +66,7 @@ export const typeDefs = gql`
 			typeOfDelivery: OrderDeliveryType!
 			typeOfPayment: OrderPaymentType!
 			preOrder: Boolean
+			fromCartItem: Boolean
 		): Order
 	}
 
@@ -80,6 +81,7 @@ export const typeDefs = gql`
 	}
 
 	input LineItemInput {
+		cartItemId: String
 		amount: Float!
 		id: String!
 		name: String!

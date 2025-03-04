@@ -190,12 +190,14 @@ export const CHECKOUT_MUTATION = gql`
 		$totalPrice: Float!
 		$typeOfDelivery: OrderDeliveryType!
 		$typeOfPayment: OrderPaymentType!
+		$fromCartItem: Boolean
 	) {
 		createCheckoutSession(
 			line_items: $lineItems
 			totalPrice: $totalPrice
 			typeOfDelivery: $typeOfDelivery
 			typeOfPayment: $typeOfPayment
+			fromCartItem: $fromCartItem
 		) {
 			id
 			payment {
