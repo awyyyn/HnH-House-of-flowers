@@ -21,12 +21,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
+import { format, formatDate } from "date-fns";
+import { Order } from "@/types";
 // import type { OrderWithItems } from "./types";
 
 interface OrderDetailDialogProps {
 	// order: OrderWithItems;
-	order: any;
+	order: Order;
 	open: boolean;
 	onClose: () => void;
 }
@@ -60,7 +62,11 @@ export default function OrderDetailDialog({
 					</div>
 					<DialogDescription className="flex items-center gap-2">
 						<Calendar className="h-3.5 w-3.5" />
-						Placed on {formatDate(order.orderDate)}
+						Placed on{" "}
+						{formatDate(
+							new Date(Number(order.orderDate)),
+							"MMMM dd, yyyy"
+						)} - {format(new Date(Number(order.orderDate)), "hh:mm a")}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -153,7 +159,11 @@ export default function OrderDetailDialog({
 								{order.status === "DELIVERED" && (
 									<span className="text-xs text-muted-foreground mt-1 flex items-center">
 										<CheckCircle2 className="h-3 w-3 mr-1" />
-										{formatDate(order.deliveredAt || order.orderDate)}
+										{formatDate(
+											new Date(Number(order.deliveredAt || order.orderDate)),
+											"MMMM dd, yyyy"
+										)}{" "}
+										- {format(new Date(Number(order.deliveredAt)), "hh:mm a")}
 									</span>
 								)}
 							</div>
@@ -168,7 +178,11 @@ export default function OrderDetailDialog({
 							<h3 className="font-medium text-red-700">Order Cancelled</h3>
 							<p className="text-sm text-red-600">
 								This order was cancelled on{" "}
-								{formatDate(order.cancelledAt || order.orderDate)}
+								{formatDate(
+									new Date(Number(order.cancelledAt)),
+									"MMMM dd, yyyy"
+								)}{" "}
+								- {format(new Date(Number(order.cancelledAt)), "hh:mm a")}
 							</p>
 						</div>
 					</div>

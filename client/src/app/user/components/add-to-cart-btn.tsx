@@ -110,7 +110,7 @@ export default function AddToCartInline(product: Product) {
 							onClick={handleAddToCart}
 							size="sm"
 							className="h-8"
-							disabled={loading}>
+							disabled={loading || product.stock === 0}>
 							<ShoppingCart className="mr-2 h-3 w-3" />
 							Add to Cart
 						</Button>
@@ -118,7 +118,7 @@ export default function AddToCartInline(product: Product) {
 							onClick={handleBuyNow}
 							size="sm"
 							className="h-8"
-							disabled={loading}>
+							disabled={loading || product.stock === 0}>
 							<Zap className="mr-2 h-3 w-3" />
 							Buy Now
 						</Button>
