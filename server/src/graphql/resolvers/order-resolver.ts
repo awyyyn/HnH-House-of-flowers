@@ -1,0 +1,32 @@
+import { readOrders, readOrdersByUser } from "@/models/order-model.js";
+import { AppContext, OrderFilter } from "@/types/index.js";
+import { GraphQLError } from "graphql";
+
+export const readOrdersResolver = async (
+	_: never,
+	{ filter, pagination, status, typeOfDelivery, typeOfPayment }: OrderFilter
+) => {
+	try {
+		return await readOrders({
+			filter,
+			pagination,
+			status,
+			typeOfDelivery,
+			typeOfPayment,
+		});
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readOrdersByUserResolver = async (
+	_: never,
+	__: never,
+	app: AppContext
+) => {
+	try {
+		return await readOrdersByUser(app.id);
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
