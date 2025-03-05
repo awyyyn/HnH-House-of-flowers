@@ -1,4 +1,3 @@
-import { createCheckoutSessionResolver } from "./resolvers/checkout-resolver.js";
 import {
 	blockUserResolver,
 	createAdminResolver,
@@ -23,6 +22,9 @@ import {
 	readAllBouquetItemsResolver,
 	createBouquetItemResolver,
 	updateBouquetItemResolver,
+	readOrdersResolver,
+	createCheckoutSessionResolver,
+	readOrdersByUserResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -38,6 +40,8 @@ export const resolvers = {
 		adminMessages: adminMessagesResolver,
 		bouquetItems: readAllBouquetItemsResolver,
 		bouquetItem: readBouquetItemResolver,
+		orders: readOrdersResolver,
+		readOrdersByUser: readOrdersByUserResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
