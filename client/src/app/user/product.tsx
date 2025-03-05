@@ -74,7 +74,17 @@ const ProductDetails = () => {
 						<div className="flex gap-1">
 							<p className="dark:text-white/90">Status:</p>
 							<p className="font-medium capitalize">
-								{product.status.split("_").join(" ").toLowerCase()}
+								{product.stock === 0
+									? "Out of stock"
+									: product.status.toLowerCase().split("_").join(" ")}{" "}
+								{product.stock > 0 && (
+									<>
+										<span className="ml-1 text-xs">x</span>
+										<span className="text-md text-gray-600">
+											{product.stock}
+										</span>
+									</>
+								)}
 							</p>
 						</div>
 

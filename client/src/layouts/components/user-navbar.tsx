@@ -16,7 +16,6 @@ import {
 	ChevronDown,
 	LogOut,
 	MessageCircle,
-	Package2,
 	ShoppingBag,
 	User,
 } from "lucide-react";
@@ -213,7 +212,7 @@ export function Navbar({ className }: { className?: string }) {
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link to="/orders">
+								<Link to="/my-orders">
 									<IconPackages />
 									<span>Orders</span>
 								</Link>

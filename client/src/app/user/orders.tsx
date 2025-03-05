@@ -40,7 +40,8 @@ import OrderDetailDialog from "./components/order-detail-dialog";
 import { useQuery } from "@apollo/client";
 import { READ_ORDERS_BY_USER } from "@/queries";
 import { Order, OrderStatus } from "@/types";
-import { format, formatDate, getUnixTime, parse } from "date-fns";
+import { format, formatDate } from "date-fns";
+import { OrdersSkeleton } from "./components/order-skeleton";
 
 export default function Orders() {
 	const router = useNavigate();
@@ -48,32 +49,23 @@ export default function Orders() {
 	const [statusFilter, setStatusFilter] = useState<string>("all");
 	const [sortBy, setSortBy] = useState<string>("newest");
 	const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-	const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
-	const { data, loading } = useQuery<{ orders: Order[] }>(READ_ORDERS_BY_USER, {
-		onCompleted(data) {
-			setFilteredOrders(data.orders);
-			// console.log(new Date(data.orders[0].orderDate).toISOString(), "qqq");
-			console.log(new Date(Number(data.orders[0].orderDate)).getTime(), "qqq");
-		},
-	});
+	const { loading, data } = useQuery<{ orders: Order[] }>(READ_ORDERS_BY_USER);
 
 	// Filter orders based on search query and status
-	// const filteredOrders2 = useMemo(() => {
-	// 	if (!data?.orders) return [];
+	const filteredOrders = useMemo(() => {
+		if (!data?.orders) return [];
 
-	// 	return data.orders.filter((order: Order) => {
-	// 		const matchesSearch =
-	// 			order.formattedId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-	// 			order.orderItems.some((item) =>
-	// 				item.payment.name.toLowerCase().includes(searchQuery.toLowerCase())
-	// 			);
+		return data.orders.filter((order: Order) => {
+			const matchesSearch = order.formattedId
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase());
 
-	// 		const matchesStatus =
-	// 			statusFilter === "all" || order.status === statusFilter;
+			const matchesStatus =
+				statusFilter === "all" || order.status === statusFilter;
 
-	// 		return matchesSearch && matchesStatus;
-	// 	});
-	// }, [data?.orders, searchQuery, statusFilter]);
+			return matchesSearch && matchesStatus;
+		});
+	}, [searchQuery, statusFilter, data?.orders]);
 
 	// Sort orders based on selected sort option
 	const sortedOrders = useMemo(() => {
@@ -150,7 +142,7 @@ export default function Orders() {
 		: null;
 
 	if (loading) {
-		return <div>Loading orders...</div>;
+		return <OrdersSkeleton />;
 	}
 
 	return (
@@ -258,7 +250,7 @@ export default function Orders() {
 		</div>
 	);
 
-	function renderOrdersList(ordersList: any[]) {
+	function renderOrdersList(ordersList: Order[]) {
 		if (ordersList.length === 0) {
 			return (
 				<div className="text-center py-12 border rounded-lg bg-muted/20">
@@ -270,7 +262,7 @@ export default function Orders() {
 							: "You haven't placed any orders yet"}
 					</p>
 					{statusFilter === "all" && [].length === 0 && (
-						<Button className="mt-4" onClick={() => router("/products")}>
+						<Button className="mt-4" onClick={() => router("/flowers")}>
 							Browse Products
 						</Button>
 					)}
