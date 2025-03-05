@@ -12,6 +12,7 @@ import UsersPage from "./app/admin/users";
 import AdminsPage from "./app/admin/admins";
 import Orders from "./app/admin/orders";
 import PreOrders from "./app/admin/pre-orders";
+import UserOrders from "./app/user/orders";
 import AddAdmin from "./app/admin/add-admin";
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
@@ -177,6 +178,10 @@ export default function App() {
 					{
 						path: "customize",
 						element: <Customize />,
+					},
+					{
+						path: "my-orders",
+						element: <UserOrders />,
 					},
 					{
 						path: "checkout",
