@@ -56,6 +56,7 @@ enum UserRole {
 
 model Order {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  formattedId String @unique
   customerID String?      @db.ObjectId
   customer   User?        @relation(fields: [customerID], references: [id])
   status     OrderStatus @default(PENDING)

@@ -28,7 +28,15 @@ export const typeDefs = gql`
 			pagination: PaginationInput
 			isAvailable: Boolean
 		): BouquetItemPaginationResult
+		orders(
+			filter: String
+			pagination: PaginationInput
+			typeOfDelivery: OrderDeliveryType
+			typeOfPayment: OrderPaymentType
+			status: [OrderStatus]
+		): OrdersPaginationResult
 		bouquetItem(id: ID!): BouquetItem
+		readOrdersByUser: [Order]
 	}
 
 	type Mutation {
@@ -129,6 +137,12 @@ export const typeDefs = gql`
 		hasNextPage: Boolean!
 	}
 
+	type OrdersPaginationResult {
+		total: Int!
+		data: [Order]
+		hasNextPage: Boolean!
+	}
+
 	"""
 	User type
 	"""
@@ -193,6 +207,7 @@ export const typeDefs = gql`
 		id: ID!
 		customer: User!
 		status: OrderStatus!
+		formattedId: String!
 
 		totalPrice: Float!
 		isPreOrder: Boolean!
@@ -200,6 +215,8 @@ export const typeDefs = gql`
 		orderItems: [OrderItem]
 
 		payment: Payment
+		typeOfDelivery: OrderDeliveryType
+		typeOfPayment: OrderPaymentType
 
 		orderDate: String!
 		processedAt: String
