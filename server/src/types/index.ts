@@ -1,5 +1,6 @@
 import { prisma } from "../services/prisma.js";
 import { BouquetItemType } from "./bouquet-item.js";
+import { OrderDeliveryType, OrderPaymentType, OrderStatus } from "./order.js";
 import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
 export * from "./user.js";
@@ -36,6 +37,17 @@ export interface BouquetItemFilter {
 	};
 	isAvailable?: boolean;
 	type?: BouquetItemType[];
+}
+
+export interface OrderFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	status?: OrderStatus[];
+	typeOfPayment?: OrderPaymentType;
+	typeOfDelivery?: OrderDeliveryType;
 }
 
 export interface PaginationResult<T> {

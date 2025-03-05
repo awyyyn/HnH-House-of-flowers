@@ -1,5 +1,5 @@
-import { Customize } from "./customize.js";
 import { Payment } from "./payment.js";
+import { Product } from "./product.js";
 import { User } from "./user.js";
 
 export interface OrderItem {
@@ -8,14 +8,15 @@ export interface OrderItem {
 	order: Order;
 	price: number;
 	quantity: number;
-	isCustomize: boolean;
-	customizeId?: string;
-	customize?: Customize;
+
+	product: Product | null;
+	productId: string | null;
 }
 
 export interface Order {
 	readonly id: string;
-	customerId: string | null;
+	formattedId: string;
+	customerID: string | null;
 	customer: User | null;
 	status: OrderStatus;
 	totalPrice: number;
