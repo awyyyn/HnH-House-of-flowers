@@ -132,3 +132,42 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 		}
 	}
 `;
+
+export const READ_ORDERS_BY_USER = gql`
+	query {
+		orders: readOrdersByUser {
+			id
+			status
+			formattedId
+			totalPrice
+			isPreOrder
+			typeOfDelivery
+			typeOfPayment
+			orderItems {
+				id
+				orderId
+				price
+				quantity
+				productId
+				product {
+					images
+				}
+			}
+			payment {
+				id
+				checkoutUrl
+				status
+				paymentId
+				orderId
+				userId
+				createdAt
+			}
+			orderDate
+			processedAt
+			shippedAt
+			deliveredAt
+			cancelledAt
+			completedAt
+		}
+	}
+`;
