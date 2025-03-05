@@ -26,7 +26,7 @@ export interface Order {
 	typeOfDelivery: OrderDeliveryType;
 	isPreOrder: boolean;
 
-	orderItems: Order[];
+	orderItems: OrderItem[];
 
 	orderDate: string;
 	processedAt: string | null;
