@@ -133,7 +133,7 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 	}
 `;
 
-export const READ_ORDERS_BY_USER = gql`
+export const READ_ORDERS_BY_USER_QUERY = gql`
 	query {
 		orders: readOrdersByUser {
 			id
@@ -165,9 +165,73 @@ export const READ_ORDERS_BY_USER = gql`
 			orderDate
 			processedAt
 			shippedAt
-			deliveredAt
+			forPickup
 			cancelledAt
 			completedAt
+		}
+	}
+`;
+
+export const READ_ORDERS_QUERY = gql`
+	query Orders(
+		$filter: String
+		$pagination: PaginationInput
+		$typeOfDelivery: OrderDeliveryType
+		$typeOfPayment: OrderPaymentType
+		$status: [OrderStatus]
+	) {
+		orders(
+			filter: $filter
+			pagination: $pagination
+			typeOfDelivery: $typeOfDelivery
+			typeOfPayment: $typeOfPayment
+			status: $status
+		) {
+			total
+			hasNextPage
+			data {
+				id
+				customer {
+					id
+					firstName
+					lastName
+					address {
+						zone
+						city
+						street
+					}
+				}
+				status
+				formattedId
+				totalPrice
+				isPreOrder
+				orderItems {
+					id
+					product {
+						name
+						images
+						id
+					}
+					price
+					quantity
+				}
+				payment {
+					checkoutUrl
+					id
+					checkoutUrl
+					paymentId
+					status
+					userId
+				}
+				typeOfDelivery
+				typeOfPayment
+				orderDate
+				processedAt
+				shippedAt
+				forPickup
+				cancelledAt
+				completedAt
+			}
 		}
 	}
 `;

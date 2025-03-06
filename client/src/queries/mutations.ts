@@ -221,7 +221,27 @@ export const CHECKOUT_MUTATION = gql`
 			orderDate
 			processedAt
 			shippedAt
-			deliveredAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
+export const UPDATE_ORDER_MUTATION = gql`
+	mutation Mutation($id: ID!, $status: OrderStatus) {
+		updateOrder(id: $id, status: $status) {
+			id
+			status
+			formattedId
+			totalPrice
+			isPreOrder
+			typeOfDelivery
+			typeOfPayment
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
 			cancelledAt
 			completedAt
 		}

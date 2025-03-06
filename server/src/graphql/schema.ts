@@ -76,6 +76,7 @@ export const typeDefs = gql`
 			preOrder: Boolean
 			fromCartItem: Boolean
 		): Order
+		updateOrder(id: ID!, status: OrderStatus): Order
 	}
 
 	enum OrderPaymentType {
@@ -208,7 +209,6 @@ export const typeDefs = gql`
 		customer: User!
 		status: OrderStatus!
 		formattedId: String!
-
 		totalPrice: Float!
 		isPreOrder: Boolean!
 
@@ -221,7 +221,7 @@ export const typeDefs = gql`
 		orderDate: String!
 		processedAt: String
 		shippedAt: String
-		deliveredAt: String
+		forPickup: String
 		cancelledAt: String
 		completedAt: String
 	}
@@ -230,7 +230,7 @@ export const typeDefs = gql`
 		PENDING
 		PROCESSING
 		SHIPPED
-		DELIVERED
+		COMPLETED
 		CANCELLED
 		READY_FOR_PICKUP
 	}
