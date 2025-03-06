@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { formatDate } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -13,15 +14,7 @@ export function formatCurrency(amount: number): string {
 	}).format(amount);
 }
 
-export function formatDate(dateString?: string): string {
-	if (!dateString) return "";
-
+export function formatOrderDate(dateString: number): string {
 	const date = new Date(dateString);
-	return new Intl.DateTimeFormat("en-PH", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	}).format(date);
+	return `${formatDate(date, "MMM d, yyyy")} at ${formatDate(date, "h:mm a")}`;
 }

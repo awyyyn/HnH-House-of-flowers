@@ -1,12 +1,10 @@
 import { prisma } from "@/services/prisma.js";
-import { OrderFilter, PaginationResult, User } from "@/types/index.js";
+import { OrderFilter } from "@/types/index.js";
 import {
-	Order,
 	OrderDeliveryType,
 	OrderPaymentType,
 	OrderStatus,
 } from "@/types/order.js";
-import { Payment } from "@/types/payment.js";
 import { Prisma } from "@prisma/client";
 import { getUnixTime } from "date-fns";
 
@@ -77,29 +75,35 @@ export const createOrder = async ({
 
 export const updateOrder = async (
 	id: string,
-	data: Partial<
-		Pick<
-			Order,
-			| "cancelledAt"
-			| "completedAt"
-			| "deliveredAt"
-			| "processedAt"
-			| "shippedAt"
-			| "status"
-		>
-	>
+	values: {
+		status: OrderStatus;
+		selectedStatus: OrderStatus[];
+	}
 ) => {
-	// id: data.attributes.data.idå
+	const order = await prisma.order.findFirst({
+		where: { id },
+	});
+
+	if (!order) throw new Error("Order not found!");
+
+	let data: Prisma.OrderUpdateInput = {
+		status: values.status,
+	};
+
+	if (values.status === "CANCELLED") {
+		data.cancelledAt = new Date().toISOString();
+	} else if (values.status === "READY_FOR_PICKUP") {
+		data.forPickup = new Date().toISOString();
+	} else if (values.status === "COMPLETED") {
+		data.completedAt = new Date().toISOString();
+	} else if (values.status === "SHIPPED") {
+		data.shippedAt = new Date().toISOString();
+	} else if (values.status === "PROCESSING") {
+		data.processedAt = new Date().toISOString();
+	}
 
 	const updatedOrder = await prisma.order.update({
-		data: {
-			processedAt: data.processedAt ? new Date(data.processedAt) : undefined,
-			shippedAt: data.shippedAt ? new Date(data.shippedAt) : undefined,
-			deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
-			cancelledAt: data.cancelledAt ? new Date(data.cancelledAt) : undefined,
-			completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
-			status: data.status ? data.status : undefined,
-		},
+		data,
 		where: {
 			id,
 		},
@@ -160,7 +164,7 @@ export const readOrders = async ({
 	typeOfPayment,
 	status = [
 		"CANCELLED",
-		"DELIVERED",
+		"COMPLETED",
 		"PENDING",
 		"PROCESSING",
 		"READY_FOR_PICKUP",
@@ -211,7 +215,11 @@ export const readOrders = async ({
 		skip: pagination ? pagination.limit * pagination?.page : undefined,
 		take: pagination ? pagination.limit : undefined,
 		include: {
-			orderItems: true,
+			orderItems: {
+				include: {
+					product: true,
+				},
+			},
 			payment: true,
 			customer: true,
 		},
@@ -219,7 +227,11 @@ export const readOrders = async ({
 
 	const total = await prisma.order.count({ where });
 
-	console.log(JSON.stringify(orders, null, 2));
+	console.log({
+		hasNextPage: orders.length === pagination?.limit,
+		total,
+		data: orders,
+	});
 
 	return {
 		hasNextPage: orders.length === pagination?.limit,
