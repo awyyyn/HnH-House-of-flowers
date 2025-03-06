@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -6,16 +6,14 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
-import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+	Button,
+	Label,
+} from "@/components";
 import { useToast } from "@/hooks/use-toast";
 import { Order, OrderStatus } from "@/types";
 import { formatOrderDate } from "@/lib";
@@ -28,7 +26,7 @@ interface OrderStatusUpdateModalProps {
 	onClose: () => void;
 }
 
-const OrderStatusUpdateModal: React.FC<OrderStatusUpdateModalProps> = ({
+const OrderStatusUpdateModal: FC<OrderStatusUpdateModalProps> = ({
 	order,
 	isOpen,
 	onClose,
@@ -38,7 +36,7 @@ const OrderStatusUpdateModal: React.FC<OrderStatusUpdateModalProps> = ({
 	const [updateStatus, { loading }] = useMutation(UPDATE_ORDER_MUTATION);
 
 	// Reset status when modal opens with new order
-	React.useEffect(() => {
+	useEffect(() => {
 		if (order) {
 			setStatus(order.status);
 		}
@@ -158,7 +156,7 @@ const OrderStatusUpdateModal: React.FC<OrderStatusUpdateModalProps> = ({
 												Shipped
 											</SelectItem>
 											<SelectItem
-												disabled={hasPickUpDate || !hasShippedDate}
+												disabled={!hasShippedDate}
 												value="COMPLETED"
 												className="capitalize">
 												Delivered

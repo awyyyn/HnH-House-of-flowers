@@ -103,6 +103,14 @@ export default function Orders() {
 			},
 		},
 		{
+			accessorKey: "payment.status",
+			header: "Payment Status",
+			enableHiding: true,
+			cell: ({ row }) => {
+				return <p className="capitalize">{row.original.payment?.status}</p>;
+			},
+		},
+		{
 			accessorKey: "typeOfPayment",
 			header: "Payment Method",
 			enableHiding: true,
