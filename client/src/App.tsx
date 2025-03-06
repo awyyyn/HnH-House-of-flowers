@@ -37,6 +37,7 @@ import AddBouquetItem from "./app/admin/add-bouquet-item";
 import CheckoutPage from "./app/user/checkout";
 import CheckoutSuccess from "./app/user/checkout-success";
 import CheckoutError from "./app/user/checkout-error";
+import AddOrder from "./app/admin/add-order";
 
 export default function App() {
 	const publicRoutes = [
@@ -72,7 +73,16 @@ export default function App() {
 					},
 					{
 						path: "orders",
-						element: <Orders />,
+						children: [
+							{
+								path: "add",
+								element: <AddOrder />,
+							},
+							{
+								index: true,
+								element: <Orders />,
+							},
+						],
 					},
 					{
 						path: "pre-orders",

@@ -62,8 +62,18 @@ const data = {
 		},
 		{
 			title: "Orders",
-			url: "/orders",
+			url: "#",
 			icon: Package,
+			items: [
+				{
+					title: "Add",
+					url: "/orders/add",
+				},
+				{
+					title: "List",
+					url: "/orders",
+				},
+			],
 		},
 		{
 			title: "Messages",
