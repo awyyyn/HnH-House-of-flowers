@@ -31,7 +31,7 @@ export interface Order {
 	orderDate: Date;
 	processedAt: Date | null;
 	shippedAt: Date | null;
-	deliveredAt: Date | null;
+	forPickup: Date | null;
 	cancelledAt: Date | null;
 	completedAt: Date | null;
 }
@@ -40,7 +40,7 @@ export type OrderStatus =
 	| "PENDING"
 	| "PROCESSING"
 	| "SHIPPED"
-	| "DELIVERED"
+	| "COMPLETED"
 	| "CANCELLED"
 	| "READY_FOR_PICKUP";
 

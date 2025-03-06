@@ -73,7 +73,7 @@ model Order {
   orderDate    DateTime  @default(now())
   processedAt  DateTime?
   shippedAt    DateTime?
-  deliveredAt  DateTime?
+  forPickup  DateTime?
   cancelledAt  DateTime?
   completedAt  DateTime?
 
@@ -152,7 +152,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
-  DELIVERED
+  COMPLETED
   CANCELLED
   READY_FOR_PICKUP
 }
