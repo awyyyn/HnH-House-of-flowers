@@ -21,7 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatOrderDate } from "@/lib/utils";
 import { format, formatDate } from "date-fns";
 import { Order } from "@/types";
 // import type { OrderWithItems } from "./types";
@@ -31,15 +31,17 @@ interface OrderDetailDialogProps {
 	order: Order;
 	open: boolean;
 	onClose: () => void;
+	showCustomer?: boolean;
 }
 
 export default function OrderDetailDialog({
 	order,
 	open,
 	onClose,
+	showCustomer,
 }: OrderDetailDialogProps) {
 	const getStatusStep = () => {
-		const statuses = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED"];
+		const statuses = ["PENDING", "PROCESSING", "SHIPPED", "COMPLETED"];
 		if (order.status === "CANCELLED") return -1;
 		if (order.status === "READY_FOR_PICKUP") return 2; // Same level as SHIPPED
 		return statuses.indexOf(order.status);
@@ -156,14 +158,10 @@ export default function OrderDetailDialog({
 									<CheckCircle2 className="h-4 w-4" />
 								</div>
 								<span className="text-xs mt-2">Completed</span>
-								{order.status === "DELIVERED" && (
+								{order.status === "COMPLETED" && (
 									<span className="text-xs text-muted-foreground mt-1 flex items-center">
 										<CheckCircle2 className="h-3 w-3 mr-1" />
-										{formatDate(
-											new Date(Number(order.deliveredAt || order.orderDate)),
-											"MMMM dd, yyyy"
-										)}{" "}
-										- {format(new Date(Number(order.deliveredAt)), "hh:mm a")}
+										{formatOrderDate(Number(order.completedAt))}
 									</span>
 								)}
 							</div>
@@ -226,6 +224,30 @@ export default function OrderDetailDialog({
 							</p>
 						</div>
 					</div>
+					{order.customer && showCustomer && (
+						<div className="md:col-span-2">
+							<h3 className="font-medium mb-2">Customer Information</h3>
+							<div className="text-sm space-y-1">
+								<p className="capitalize space-x-2">
+									<span className="font-medium">Name:</span>
+									<span>
+										{order.customer?.firstName} {order.customer?.lastName}
+									</span>
+								</p>
+								{order.customer.address && (
+									<p>
+										<span className="font-medium">Address:</span>{" "}
+										<span>
+											{order.customer.address?.zone &&
+												`${order.customer.address?.zone}, `}
+											{order.customer.address?.street},{" "}
+											{order.customer.address?.city}
+										</span>
+									</p>
+								)}
+							</div>
+						</div>
+					)}
 				</div>
 
 				<Separator />
@@ -287,12 +309,7 @@ export default function OrderDetailDialog({
 						</div>
 						<div className="flex justify-between text-sm">
 							<span>Delivery Fee</span>
-							<span>
-								{formatCurrency(
-									order.totalPrice -
-										order.orderItems.reduce((acc, item) => acc + item.price, 0)
-								)}
-							</span>
+							<span>{formatCurrency(50)}</span>
 						</div>
 						<Separator className="my-2" />
 						<div className="flex justify-between font-medium">

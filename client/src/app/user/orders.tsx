@@ -38,7 +38,7 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import OrderDetailDialog from "./components/order-detail-dialog";
 import { useQuery } from "@apollo/client";
-import { READ_ORDERS_BY_USER } from "@/queries";
+import { READ_ORDERS_BY_USER_QUERY } from "@/queries";
 import { Order, OrderStatus } from "@/types";
 import { format, formatDate } from "date-fns";
 import { OrdersSkeleton } from "./components/order-skeleton";
@@ -49,7 +49,9 @@ export default function Orders() {
 	const [statusFilter, setStatusFilter] = useState<string>("all");
 	const [sortBy, setSortBy] = useState<string>("newest");
 	const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-	const { loading, data } = useQuery<{ orders: Order[] }>(READ_ORDERS_BY_USER);
+	const { loading, data } = useQuery<{ orders: Order[] }>(
+		READ_ORDERS_BY_USER_QUERY
+	);
 
 	// Filter orders based on search query and status
 	const filteredOrders = useMemo(() => {
@@ -92,7 +94,7 @@ export default function Orders() {
 		["SHIPPED", "READY_FOR_PICKUP"].includes(order.status)
 	);
 	const completedOrders = sortedOrders.filter(
-		(order) => order.status === "DELIVERED"
+		(order) => order.status === "COMPLETED"
 	);
 	const cancelledOrders = sortedOrders.filter(
 		(order) => order.status === "CANCELLED"
@@ -112,7 +114,7 @@ export default function Orders() {
 				color: "bg-indigo-100 text-indigo-800",
 				icon: <Truck className="h-3 w-3 mr-1" />,
 			},
-			DELIVERED: {
+			COMPLETED: {
 				color: "bg-green-100 text-green-800",
 				icon: <ShoppingBag className="h-3 w-3 mr-1" />,
 			},
@@ -179,7 +181,7 @@ export default function Orders() {
 							<DropdownMenuItem onClick={() => setStatusFilter("SHIPPED")}>
 								Shipped
 							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setStatusFilter("DELIVERED")}>
+							<DropdownMenuItem onClick={() => setStatusFilter("COMPLETED")}>
 								Delivered
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={() => setStatusFilter("CANCELLED")}>
