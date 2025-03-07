@@ -32,22 +32,37 @@ import { useState } from "react";
 import { RevenueChart } from "./components/revenue-chart";
 import { useQuery } from "@apollo/client";
 import { DASHBOARD_QUERY } from "@/queries";
-import { LastMonth, Revenue } from "@/types";
+import {
+	BestSellingProduct,
+	LastMonth,
+	OrderSummary,
+	Product,
+	ProductSummary,
+	Revenue,
+} from "@/types";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "@/lib";
+import SummaryItem from "./components/summary-item";
 
 export default function Dashboard() {
 	const [activeTab, setActiveTab] = useState("overview");
 	const { loading, data } = useQuery<{
 		revenues: Revenue[];
 		lastMonthData: LastMonth;
+		topProducts: BestSellingProduct[];
+		products: { data: Product[] };
+		ordersSummary: OrderSummary[];
+		productsSummary: ProductSummary;
 	}>(DASHBOARD_QUERY, {
 		variables: {
 			// year: 2025,
+			take: 6,
+			pagination: {
+				page: 0,
+				limit: 8,
+			},
 		},
 	});
-
-	console.log(data, "qqq");
 
 	if (loading) return <div>Loading...</div>;
 
@@ -161,42 +176,24 @@ export default function Dashboard() {
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									<div className="flex items-center gap-4">
-										<div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-											<Flower className="h-6 w-6 text-primary" />
+									{(data?.topProducts || []).map((product) => (
+										<div key={product.id} className="flex items-center gap-4">
+											<div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
+												<Flower className="h-6 w-6 text-primary" />
+											</div>
+											<div className="flex-1 space-y-1">
+												<p className="text-sm font-medium leading-none">
+													{product.name}
+												</p>
+												<p className="text-sm text-muted-foreground">
+													{product.sold} sold
+												</p>
+											</div>
+											<div className="font-medium">
+												{formatCurrency(product.price)}
+											</div>
 										</div>
-										<div className="flex-1 space-y-1">
-											<p className="text-sm font-medium leading-none">
-												Rose Bouquet
-											</p>
-											<p className="text-sm text-muted-foreground">128 sold</p>
-										</div>
-										<div className="font-medium">$64.99</div>
-									</div>
-									<div className="flex items-center gap-4">
-										<div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-											<Flower className="h-6 w-6 text-primary" />
-										</div>
-										<div className="flex-1 space-y-1">
-											<p className="text-sm font-medium leading-none">
-												Spring Mix
-											</p>
-											<p className="text-sm text-muted-foreground">96 sold</p>
-										</div>
-										<div className="font-medium">$49.99</div>
-									</div>
-									<div className="flex items-center gap-4">
-										<div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-											<Flower className="h-6 w-6 text-primary" />
-										</div>
-										<div className="flex-1 space-y-1">
-											<p className="text-sm font-medium leading-none">
-												Tulip Arrangement
-											</p>
-											<p className="text-sm text-muted-foreground">64 sold</p>
-										</div>
-										<div className="font-medium">$39.99</div>
-									</div>
+									))}
 								</div>
 							</CardContent>
 						</Card>
@@ -211,9 +208,11 @@ export default function Dashboard() {
 									Manage your flower shop inventory
 								</CardDescription>
 							</div>
-							<Button size="sm">
-								<Package className="h-4 w-4 mr-2" />
-								Add Product
+							<Button size="sm" asChild>
+								<Link to="/products">
+									<Package className="h-4 w-4 mr-2" />
+									View All
+								</Link>
 							</Button>
 						</CardHeader>
 						<CardContent>
@@ -231,50 +230,7 @@ export default function Dashboard() {
 										</TableRow>
 									</TableHeader>
 									<TableBody>
-										{[
-											{
-												name: "Red Rose Bouquet",
-												category: "Bouquets",
-												price: "$64.99",
-												stock: 24,
-												status: "In Stock",
-											},
-											{
-												name: "Tulip Arrangement",
-												category: "Arrangements",
-												price: "$39.99",
-												stock: 18,
-												status: "In Stock",
-											},
-											{
-												name: "Spring Mix",
-												category: "Bouquets",
-												price: "$49.99",
-												stock: 12,
-												status: "Low Stock",
-											},
-											{
-												name: "Sunflower Bouquet",
-												category: "Bouquets",
-												price: "$54.99",
-												stock: 0,
-												status: "Out of Stock",
-											},
-											{
-												name: "Lily Arrangement",
-												category: "Arrangements",
-												price: "$59.99",
-												stock: 8,
-												status: "Low Stock",
-											},
-											{
-												name: "Daisy Bouquet",
-												category: "Bouquets",
-												price: "$44.99",
-												stock: 32,
-												status: "In Stock",
-											},
-										].map((product, i) => (
+										{(data?.products.data || []).map((product, i) => (
 											<TableRow key={i}>
 												<TableCell>
 													<div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center">
@@ -289,19 +245,31 @@ export default function Dashboard() {
 												<TableCell>{product.stock}</TableCell>
 												<TableCell>
 													<Badge
+														className="capitalize"
 														variant={
-															product.status === "In Stock"
-																? "outline"
-																: product.status === "Low Stock"
+															product.stock === 0
+																? "destructive"
+																: product.stock < 10
 																? "secondary"
-																: "destructive"
+																: "default"
 														}>
-														{product.status}
+														{product.stock === 0
+															? "Out of stock"
+															: product.stock < 10
+															? "Low stock"
+															: product.status
+																	.split("_")
+																	.join(" ")
+																	.toLowerCase()}
 													</Badge>
 												</TableCell>
 												<TableCell className="text-right">
-													<Button variant="ghost" size="sm">
-														Edit
+													<Button asChild variant="ghost" size="sm">
+														<Link
+															to={`/products/edit/${product.id}`}
+															state={{ product }}>
+															Edit
+														</Link>
 													</Button>
 												</TableCell>
 											</TableRow>
@@ -314,33 +282,33 @@ export default function Dashboard() {
 					<div className="grid gap-4 md:grid-cols-2">
 						<Card>
 							<CardHeader>
-								<CardTitle>Inventory Status</CardTitle>
-								<CardDescription>Stock levels by category</CardDescription>
+								<CardTitle>Products Overview</CardTitle>
+								<CardDescription>
+									Total Products: {data?.productsSummary.total}
+								</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{[
-										{ name: "Bouquets", stock: 68, total: 100 },
-										{ name: "Arrangements", stock: 26, total: 50 },
-										{ name: "Single Flowers", stock: 124, total: 200 },
-										{ name: "Plants", stock: 32, total: 40 },
-										{ name: "Accessories", stock: 45, total: 60 },
-									].map((category) => (
-										<div key={category.name} className="space-y-2">
-											<div className="flex items-center justify-between">
-												<div className="text-sm font-medium">
-													{category.name}
-												</div>
-												<div className="text-sm text-muted-foreground">
-													{category.stock}/{category.total}
-												</div>
-											</div>
-											<Progress
-												value={(category.stock / category.total) * 100}
-												className="h-2"
-											/>
-										</div>
-									))}
+									<SummaryItem
+										label="Flowers"
+										count={data?.productsSummary.flowerCount || 0}
+										percentage={data?.productsSummary.flowerPercentage || 0}
+									/>
+									<SummaryItem
+										label="Bouquets"
+										count={data?.productsSummary.bouquetCount || 0}
+										percentage={data?.productsSummary.bouquetPercentage || 0}
+									/>
+									<SummaryItem
+										label="Chocolates"
+										count={data?.productsSummary.chocolateCount || 0}
+										percentage={data?.productsSummary.chocolatePercentage || 0}
+									/>
+									<SummaryItem
+										label="Gifts"
+										count={data?.productsSummary.giftCount || 0}
+										percentage={data?.productsSummary.giftPercentage || 0}
+									/>
 								</div>
 							</CardContent>
 						</Card>
@@ -389,11 +357,16 @@ export default function Dashboard() {
 				</TabsContent>
 				<TabsContent value="recent" className="space-y-4">
 					<Card>
-						<CardHeader>
-							<CardTitle>Recent Orders</CardTitle>
-							<CardDescription>
-								A list of recent orders from your store.
-							</CardDescription>
+						<CardHeader className="flex flex-row items-center justify-between">
+							<div>
+								<CardTitle>Recent Orders</CardTitle>
+								<CardDescription>
+									A list of recent orders from your store.
+								</CardDescription>
+							</div>
+							<Button size="sm" asChild>
+								<Link to="/orders">View All</Link>
+							</Button>
 						</CardHeader>
 						<CardContent>
 							<div className="rounded-md border">
@@ -500,29 +473,13 @@ export default function Dashboard() {
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{[
-										{ status: "Processing", count: 12, color: "bg-primary" },
-										{ status: "Shipped", count: 8, color: "bg-secondary" },
-										{ status: "Delivered", count: 24, color: "bg-muted" },
-										{ status: "Cancelled", count: 2, color: "bg-destructive" },
-									].map((status) => (
-										<div
-											key={status.status}
-											className="flex items-center gap-4">
-											<div
-												className={`w-3 h-3 rounded-full ${status.color}`}></div>
-											<div className="flex-1 space-y-1">
-												<p className="text-sm font-medium leading-none">
-													{status.status}
-												</p>
-												<p className="text-sm text-muted-foreground">
-													{status.count} orders
-												</p>
-											</div>
-											<div className="font-medium">
-												{Math.round((status.count / 46) * 100)}%
-											</div>
-										</div>
+									{(data?.ordersSummary ?? []).map((order) => (
+										<SummaryItem
+											label={order.status.toLocaleLowerCase()}
+											count={order.count}
+											percentage={order.percentage}
+											key={order.status}
+										/>
 									))}
 								</div>
 							</CardContent>

@@ -239,11 +239,18 @@ export const READ_ORDERS_QUERY = gql`
 `;
 
 export const DASHBOARD_QUERY = gql`
-	query ($year: Int) {
+	query ($year: Int, $take: Int, $pagination: PaginationInput) {
 		revenues: readMonthlyRevenue(year: $year) {
 			year
 			month
 			revenue
+		}
+		topProducts: readBestSellingProducts(take: $take) {
+			id
+			images
+			price
+			name
+			sold
 		}
 		lastMonthData {
 			orders {
@@ -261,6 +268,36 @@ export const DASHBOARD_QUERY = gql`
 				overAll
 				percentage
 			}
+		}
+
+		products(pagination: $pagination) {
+			data {
+				id
+				name
+				price
+				status
+				stock
+				images
+				category
+				description
+			}
+		}
+
+		productsSummary {
+			total
+			bouquetCount
+			chocolateCount
+			flowerCount
+			giftCount
+			bouquetPercentage
+			flowerPercentage
+			chocolatePercentage
+			giftPercentage
+		}
+		ordersSummary {
+			count
+			status
+			percentage
 		}
 	}
 `;
