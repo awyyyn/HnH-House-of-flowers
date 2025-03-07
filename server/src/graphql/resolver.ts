@@ -27,6 +27,9 @@ import {
 	readOrdersByUserResolver,
 	updateOrderResolver,
 	createOrderResolver,
+	readMonthlyRevenueResolver,
+	readLastMonthDataResolver,
+	readBestSellingProductResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -44,6 +47,9 @@ export const resolvers = {
 		bouquetItem: readBouquetItemResolver,
 		orders: readOrdersResolver,
 		readOrdersByUser: readOrdersByUserResolver,
+		readMonthlyRevenue: readMonthlyRevenueResolver,
+		lastMonthData: readLastMonthDataResolver,
+		readBestSellingProducts: readBestSellingProductResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,

@@ -12,6 +12,24 @@ import { ColumnDef } from "@tanstack/react-table";
 export type PaymentMethod = "COD" | "ONLINE_PAYMENT" | "COP";
 export type DeliveryMethod = "PICKUP" | "DELIVERY";
 
+export type Revenue = {
+	month: string;
+	revenue: number;
+	year: number;
+};
+
+export type LastMonth = {
+	orders: LastMonthItem;
+	revenues: LastMonthItem;
+	users: LastMonthItem;
+};
+
+export type LastMonthItem = {
+	lastMonth: number;
+	overAll: number;
+	percentage: number;
+};
+
 export interface CustomizationValues {
 	wrapper: string;
 

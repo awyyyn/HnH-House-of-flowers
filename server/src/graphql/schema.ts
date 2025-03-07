@@ -38,6 +38,9 @@ export const typeDefs = gql`
 		): OrdersPaginationResult
 		bouquetItem(id: ID!): BouquetItem
 		readOrdersByUser: [Order]
+		readMonthlyRevenue(year: Int): [MonthlyRevenue]
+		lastMonthData: LastMonth
+		readBestSellingProducts(take: Int): [TopSellingProduct]
 	}
 
 	type Mutation {
@@ -93,6 +96,32 @@ export const typeDefs = gql`
 	enum OrderDeliveryType {
 		PICKUP
 		DELIVERY
+	}
+
+	type MonthlyRevenue {
+		year: Int!
+		month: String!
+		revenue: Float!
+	}
+
+	type LastMonth {
+		orders: LastMonthItem!
+		revenues: LastMonthItem!
+		users: LastMonthItem!
+	}
+
+	type TopSellingProduct {
+		id: ID!
+		images: [String]
+		price: Float!
+		name: String!
+		sold: Int!
+	}
+
+	type LastMonthItem {
+		lastMonth: Int!
+		overAll: Int!
+		percentage: Float!
 	}
 
 	input LineItemInput {

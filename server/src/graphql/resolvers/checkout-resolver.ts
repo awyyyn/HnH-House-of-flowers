@@ -55,7 +55,7 @@ export const createCheckoutSessionResolver = async (
 					if (!product) {
 						throw new GraphQLError("Product not found");
 					}
-					console.log(product.stock, item.quantity);
+
 					if (product.stock < item.quantity) {
 						throw new GraphQLError("Product out of stock");
 					}

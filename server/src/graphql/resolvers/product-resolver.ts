@@ -1,5 +1,6 @@
 import {
 	createProduct,
+	getBestSellingProducts,
 	readProduct,
 	readProducts,
 	updateProduct,
@@ -71,6 +72,23 @@ export const updateProductResolver = async (
 export const productResolver = async (_: never, { id }: { id: string }) => {
 	try {
 		const product = await readProduct(id);
+
+		if (!product) {
+			throw new GraphQLError("Product not found");
+		}
+
+		return product;
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readBestSellingProductResolver = async (
+	_: never,
+	{ take }: { take?: number }
+) => {
+	try {
+		const product = await getBestSellingProducts(take);
 
 		if (!product) {
 			throw new GraphQLError("Product not found");
