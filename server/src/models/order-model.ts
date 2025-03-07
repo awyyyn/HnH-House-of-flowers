@@ -437,3 +437,27 @@ export const getLastMonthData = async () => {
 		},
 	};
 };
+
+export const getOrderSummary = async () => {
+	// Group orders by status and count each
+	const ordersGrouped = await prisma.order.groupBy({
+		by: ["status"],
+		_count: {
+			status: true,
+		},
+	});
+
+	// Total orders count
+	const totalOrders = await prisma.order.count();
+
+	// Calculate percentage for each status
+	return ordersGrouped.map((group) => {
+		const count = group._count.status;
+		const percentage = totalOrders > 0 ? (count / totalOrders) * 100 : 0;
+		return {
+			status: group.status,
+			count,
+			percentage: Number(percentage.toFixed(2)),
+		};
+	});
+};

@@ -1,3 +1,4 @@
+import { sub } from "date-fns";
 import { prisma } from "../services/prisma.js";
 import { ProductFilter, Product, ProductInput } from "../types/index.js";
 import { Prisma } from "@prisma/client";
@@ -77,6 +78,11 @@ export const readProducts = async ({
 
 export const getBestSellingProducts = async (take: number = 5) => {
 	let products = await prisma.product.findMany({
+		where: {
+			createdAt: {
+				gte: sub(new Date(), { months: 1 }),
+			},
+		},
 		select: {
 			_count: {
 				select: {
@@ -102,4 +108,44 @@ export const getBestSellingProducts = async (take: number = 5) => {
 		...product,
 		sold: product._count.orderItem,
 	}));
+};
+
+export const getProductSummary = async () => {
+	const total = await prisma.product.count();
+
+	const bouquetCount = await prisma.product.count({
+		where: {
+			category: "BOUQUET",
+		},
+	});
+
+	const flowerCount = await prisma.product.count({
+		where: {
+			category: "FLOWER",
+		},
+	});
+
+	const chocolateCount = await prisma.product.count({
+		where: {
+			category: "CHOCOLATE",
+		},
+	});
+
+	const giftCount = await prisma.product.count({
+		where: {
+			category: "GIFT",
+		},
+	});
+
+	return {
+		total,
+		bouquetCount,
+		bouquetPercentage: total > 0 ? (bouquetCount / total) * 100 : 0,
+		flowerCount,
+		flowerPercentage: total > 0 ? (flowerCount / total) * 100 : 0,
+		chocolateCount,
+		chocolatePercentage: total > 0 ? (chocolateCount / total) * 100 : 0,
+		giftCount,
+		giftPercentage: total > 0 ? (giftCount / total) * 100 : 0,
+	};
 };

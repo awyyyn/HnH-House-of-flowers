@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction, SVGProps } from "react";
 import { User, UserRole } from "./user.js";
 import { JwtPayload } from "jwt-decode";
 import { ColumnDef } from "@tanstack/react-table";
+import { OrderStatus } from "./order.js";
 
 export type PaymentMethod = "COD" | "ONLINE_PAYMENT" | "COP";
 export type DeliveryMethod = "PICKUP" | "DELIVERY";
@@ -16,6 +17,32 @@ export type Revenue = {
 	month: string;
 	revenue: number;
 	year: number;
+};
+
+export type ProductSummary = {
+	total: number;
+	bouquetCount: number;
+	chocolateCount: number;
+	flowerCount: number;
+	giftCount: number;
+	bouquetPercentage: number;
+	flowerPercentage: number;
+	chocolatePercentage: number;
+	giftPercentage: number;
+};
+
+export type OrderSummary = {
+	count: number;
+	status: OrderStatus;
+	percentage: number;
+};
+
+export type BestSellingProduct = {
+	id: string;
+	images: string[];
+	price: number;
+	name: string;
+	sold: number;
 };
 
 export type LastMonth = {
