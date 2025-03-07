@@ -237,3 +237,30 @@ export const READ_ORDERS_QUERY = gql`
 		}
 	}
 `;
+
+export const DASHBOARD_QUERY = gql`
+	query ($year: Int) {
+		revenues: readMonthlyRevenue(year: $year) {
+			year
+			month
+			revenue
+		}
+		lastMonthData {
+			orders {
+				lastMonth
+				overAll
+				percentage
+			}
+			revenues {
+				lastMonth
+				overAll
+				percentage
+			}
+			users {
+				lastMonth
+				overAll
+				percentage
+			}
+		}
+	}
+`;

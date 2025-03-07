@@ -146,7 +146,11 @@ export default function ProductForm({
 		<Form {...form}>
 			<form className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
 				<div className="flex items-center justify-between ">
-					<div></div>
+					<div className="md:px-5">
+						<h1 className="text-2xl font-semibold dark:text-white">
+							{editing ? "Edit Product" : "Add Product"}
+						</h1>
+					</div>
 					<div className="hidden md:flex items-center gap-2">
 						<Button variant="ghost" type="reset" onClick={() => form.reset()}>
 							Reset
