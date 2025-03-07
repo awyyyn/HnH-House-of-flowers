@@ -5,6 +5,7 @@ import {
 	OrderPaymentType,
 	OrderStatus,
 } from "@/types/order.js";
+import { PaymentStatus } from "@/types/payment.js";
 import { Prisma } from "@prisma/client";
 import { getUnixTime } from "date-fns";
 
@@ -32,6 +33,7 @@ export const createOrder = async ({
 	payment?: {
 		checkoutUrl: string;
 		id: string;
+		status?: PaymentStatus;
 	};
 }) => {
 	const unixTimestamp = getUnixTime(new Date()); // Get current Unix timestamp
@@ -50,9 +52,8 @@ export const createOrder = async ({
 						create: {
 							checkoutUrl: payment.checkoutUrl,
 							paymentId: payment.id,
-							status: "PENDING",
-
-							userId: String(userId),
+							status: payment?.status ? payment.status : "PENDING",
+							userId: userId ? String(userId) : undefined,
 						},
 				  }
 				: undefined,
@@ -62,6 +63,14 @@ export const createOrder = async ({
 					data: items,
 				},
 			},
+			processedAt:
+				payment?.status === "SUCCESS" ? new Date().toISOString() : undefined,
+			completedAt:
+				payment?.status === "SUCCESS" ? new Date().toISOString() : undefined,
+			forPickup:
+				payment?.status === "SUCCESS" ? new Date().toISOString() : undefined,
+			shippedAt:
+				payment?.status === "SUCCESS" ? new Date().toISOString() : undefined,
 		},
 		include: {
 			orderItems: true,
@@ -77,7 +86,6 @@ export const updateOrder = async (
 	id: string,
 	values: {
 		status: OrderStatus;
-		selectedStatus: OrderStatus[];
 	}
 ) => {
 	const order = await prisma.order.findFirst({

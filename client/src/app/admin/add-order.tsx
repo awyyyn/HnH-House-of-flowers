@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +16,12 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import ProductItem from "./components/product-item";
 import { Product } from "@/types";
-import { useQuery } from "@apollo/client";
-import { GET_PRODUCTS_QUERY } from "@/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_ORDER_MUTATION, GET_PRODUCTS_QUERY } from "@/queries";
 import { formatCurrency } from "@/lib";
 
 // Mock product data - replace with actual data fetching in a real implementation
@@ -31,10 +30,11 @@ export default function AddOrderForm() {
 	const [items, setItems] = useState<Array<Product & { quantity: number }>>([]);
 	const { toast } = useToast();
 	const [paymentType, setPaymentType] = useState<"CASH" | "GCASH">("CASH");
-	const [deliveryType, setDeliveryType] = useState<"PICKUP" | "DELIVERY">(
-		"PICKUP"
-	);
-	const [isPreOrder, setIsPreOrder] = useState(false);
+	const [placeOrder, { loading }] = useMutation(CREATE_ORDER_MUTATION);
+	// const [deliveryType, setDeliveryType] = useState<"PICKUP" | "DELIVERY">(
+	// 	"PICKUP"
+	// );
+	// const [isPreOrder, setIsPreOrder] = useState(false);
 	const { data } = useQuery<{
 		products: { data: Product[]; hasNextPage: boolean; total: number };
 	}>(GET_PRODUCTS_QUERY, {
@@ -89,7 +89,7 @@ export default function AddOrderForm() {
 	};
 
 	// Handle form submission
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (items.length === 0) {
@@ -100,39 +100,32 @@ export default function AddOrderForm() {
 			});
 			return;
 		}
-
-		// Create the order object based on the form data
-		// const order = {
-		// 	customerID: null,
-		// 	customer: null,
-		// 	status: "PENDING",
-		// 	totalPrice,
-		// 	payment: null,
-		// 	typeOfPayment: paymentType,
-		// 	typeOfDelivery: deliveryType,
-		// 	isPreOrder,
-		// 	items: items.map((item) => ({
-		// 		productId: item.productId,
-		// 		price: item.price,
-		// 		quantity: item.quantity,
-		// 	})),
-		// 	orderDate: new Date().toISOString(),
-		// 	contactInfo,
-		// };
-
-		// Here you would typically send the order to your API
-		// console.log("Submitting order:", order);
-
-		toast({
-			title: "Order Created",
-			description: "Your order has been successfully created",
-		});
-
-		// Reset form
-		setItems([]);
-		setPaymentType("CASH");
-		setDeliveryType("PICKUP");
-		setIsPreOrder(false);
+		try {
+			await placeOrder({
+				variables: {
+					lineItems: items.map((item) => ({
+						amount: item.price,
+						id: item.id,
+						name: item.name,
+						images: item.images,
+						quantity: item.quantity,
+					})),
+					totalPrice,
+				},
+			});
+			toast({
+				variant: "success",
+				title: "Order Created",
+				description: "Order has been successfully created",
+			});
+			setItems([]);
+		} catch (err) {
+			toast({
+				title: "Error",
+				description: (err as Error).message,
+				variant: "destructive",
+			});
+		}
 	};
 
 	return (
@@ -234,8 +227,18 @@ export default function AddOrderForm() {
 						</div>
 					</CardContent>
 					<CardFooter>
-						<Button type="submit" className="w-full">
-							Create Order
+						<Button
+							disabled={!items.length || loading}
+							type="submit"
+							className="w-full">
+							{loading ? (
+								<>
+									<Loader2 className="animate-spin" />
+									<span> Placing order...</span>
+								</>
+							) : (
+								"Place Order"
+							)}
 						</Button>
 					</CardFooter>
 				</form>

@@ -26,6 +26,7 @@ import {
 	createCheckoutSessionResolver,
 	readOrdersByUserResolver,
 	updateOrderResolver,
+	createOrderResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -61,6 +62,7 @@ export const resolvers = {
 		updateBouquetItem: updateBouquetItemResolver,
 		createCheckoutSession: createCheckoutSessionResolver,
 		updateOrder: updateOrderResolver,
+		createOrder: createOrderResolver,
 	},
 	// Mutation: {},
 };

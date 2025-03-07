@@ -76,6 +76,11 @@ export const typeDefs = gql`
 			preOrder: Boolean
 			fromCartItem: Boolean
 		): Order
+		createOrder(
+			line_items: [LineItemInput!]!
+			totalPrice: Float!
+			preOrder: Boolean
+		): Order
 		updateOrder(id: ID!, status: OrderStatus): Order
 	}
 
@@ -206,7 +211,7 @@ export const typeDefs = gql`
 
 	type Order {
 		id: ID!
-		customer: User!
+		customer: User
 		status: OrderStatus!
 		formattedId: String!
 		totalPrice: Float!
@@ -360,8 +365,8 @@ export const typeDefs = gql`
 		paymentId: String!
 		orderId: String!
 		order: Order!
-		userId: String!
-		user: User!
+		userId: String
+		user: User
 
 		createdAt: String!
 	}

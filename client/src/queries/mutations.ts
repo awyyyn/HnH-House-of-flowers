@@ -228,6 +228,46 @@ export const CHECKOUT_MUTATION = gql`
 	}
 `;
 
+export const CREATE_ORDER_MUTATION = gql`
+	mutation CreateOrder(
+		$lineItems: [LineItemInput!]!
+		$totalPrice: Float!
+		$preOrder: Boolean
+	) {
+		createOrder(
+			line_items: $lineItems
+			totalPrice: $totalPrice
+			preOrder: $preOrder
+		) {
+			id
+			payment {
+				checkoutUrl
+				id
+			}
+			status
+			totalPrice
+			isPreOrder
+			orderItems {
+				id
+				product {
+					images
+					name
+				}
+				price
+				quantity
+				orderId
+			}
+
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
 export const UPDATE_ORDER_MUTATION = gql`
 	mutation Mutation($id: ID!, $status: OrderStatus) {
 		updateOrder(id: $id, status: $status) {

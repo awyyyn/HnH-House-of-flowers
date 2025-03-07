@@ -118,8 +118,9 @@ export const createCheckoutSessionResolver = async (
 			status: "PENDING",
 			totalPrice,
 			typeOfDelivery,
-			userId: app.id,
+			userId: app.role !== "USER" ? undefined : app.id,
 			typeOfPayment,
+			preOrder,
 			payment,
 		});
 

@@ -134,7 +134,7 @@ export default function DeleteUserModal({
 						disabled={loading || !input || (unblock && input !== "confirm")}>
 						{loading ? (
 							<Loader className="animate-spin" />
-						) : unblock ? (
+						) : !unblock ? (
 							isAdmin ? (
 								"Ban"
 							) : (
