@@ -82,11 +82,11 @@ export default function App() {
 								index: true,
 								element: <Orders />,
 							},
+							{
+								path: "pre-orders",
+								element: <PreOrders />,
+							},
 						],
-					},
-					{
-						path: "pre-orders",
-						element: <PreOrders />,
 					},
 					{
 						path: "messages",

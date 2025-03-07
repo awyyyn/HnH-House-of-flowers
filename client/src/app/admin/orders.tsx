@@ -166,7 +166,7 @@ export default function Orders() {
 		<>
 			<Helmet title="Orders" />
 			<div className="flex justify-between items-center py-2">
-				<h1 className="text-4xl">List of products</h1>
+				<h1 className="text-4xl">List of orders</h1>
 			</div>
 			<DataTable
 				loading={loading || isFetching}

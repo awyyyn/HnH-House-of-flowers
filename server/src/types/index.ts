@@ -45,6 +45,7 @@ export interface OrderFilter {
 		page: number;
 		limit: number;
 	};
+	isPreOrder?: boolean;
 	status?: OrderStatus[];
 	typeOfPayment?: OrderPaymentType;
 	typeOfDelivery?: OrderDeliveryType;

@@ -56,11 +56,6 @@ const data = {
 			icon: Users,
 		},
 		{
-			title: "Pre-Orders",
-			url: "/pre-orders",
-			icon: BookOpen,
-		},
-		{
 			title: "Orders",
 			url: "#",
 			icon: Package,
@@ -72,6 +67,10 @@ const data = {
 				{
 					title: "List",
 					url: "/orders",
+				},
+				{
+					title: "Pre-Orders",
+					url: "/orders/pre-orders",
 				},
 			],
 		},

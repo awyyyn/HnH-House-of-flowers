@@ -10,7 +10,14 @@ import { v4 as uuidv4 } from "uuid";
 
 export const readOrdersResolver = async (
 	_: never,
-	{ filter, pagination, status, typeOfDelivery, typeOfPayment }: OrderFilter
+	{
+		filter,
+		pagination,
+		isPreOrder,
+		status,
+		typeOfDelivery,
+		typeOfPayment,
+	}: OrderFilter
 ) => {
 	try {
 		return await readOrders({
@@ -19,6 +26,7 @@ export const readOrdersResolver = async (
 			status,
 			typeOfDelivery,
 			typeOfPayment,
+			isPreOrder,
 		});
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);

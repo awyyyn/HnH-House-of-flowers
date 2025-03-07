@@ -34,6 +34,7 @@ export const typeDefs = gql`
 			typeOfDelivery: OrderDeliveryType
 			typeOfPayment: OrderPaymentType
 			status: [OrderStatus]
+			isPreOrder: Boolean
 		): OrdersPaginationResult
 		bouquetItem(id: ID!): BouquetItem
 		readOrdersByUser: [Order]

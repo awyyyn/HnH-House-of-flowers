@@ -179,6 +179,7 @@ export const READ_ORDERS_QUERY = gql`
 		$typeOfDelivery: OrderDeliveryType
 		$typeOfPayment: OrderPaymentType
 		$status: [OrderStatus]
+		$isPreOrder: Boolean
 	) {
 		orders(
 			filter: $filter
@@ -186,6 +187,7 @@ export const READ_ORDERS_QUERY = gql`
 			typeOfDelivery: $typeOfDelivery
 			typeOfPayment: $typeOfPayment
 			status: $status
+			isPreOrder: $isPreOrder
 		) {
 			total
 			hasNextPage

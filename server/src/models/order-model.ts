@@ -170,6 +170,7 @@ export const readOrders = async ({
 	pagination,
 	typeOfDelivery,
 	typeOfPayment,
+	isPreOrder,
 	status = [
 		"CANCELLED",
 		"COMPLETED",
@@ -182,6 +183,8 @@ export const readOrders = async ({
 	// : Promise<PaginationResult<Order>>
 
 	let where: Prisma.OrderWhereInput = {};
+
+	console.log(isPreOrder, "qqq");
 
 	if (filter) {
 		where = {
@@ -202,6 +205,10 @@ export const readOrders = async ({
 				},
 			],
 		};
+	}
+
+	if (isPreOrder) {
+		where.isPreOrder = isPreOrder;
 	}
 
 	if (typeOfDelivery) {
