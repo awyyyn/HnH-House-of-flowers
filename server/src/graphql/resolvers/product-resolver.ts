@@ -1,6 +1,7 @@
 import {
 	createProduct,
 	getBestSellingProducts,
+	getProductSummary,
 	readProduct,
 	readProducts,
 	updateProduct,
@@ -95,6 +96,14 @@ export const readBestSellingProductResolver = async (
 		}
 
 		return product;
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readProductsSummaryResolver = async (_: never) => {
+	try {
+		return await getProductSummary();
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);
 	}

@@ -2,6 +2,7 @@ import {
 	createOrder,
 	getLastMonthData,
 	getMonthlyRevenue,
+	getOrderSummary,
 	readOrders,
 	readOrdersByUser,
 	updateOrder,
@@ -127,6 +128,14 @@ export const readMonthlyRevenueResolver = async (
 export const readLastMonthDataResolver = async () => {
 	try {
 		return await getLastMonthData();
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readOrdersSummaryResolver = async () => {
+	try {
+		return await getOrderSummary();
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);
 	}

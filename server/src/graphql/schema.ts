@@ -41,6 +41,8 @@ export const typeDefs = gql`
 		readMonthlyRevenue(year: Int): [MonthlyRevenue]
 		lastMonthData: LastMonth
 		readBestSellingProducts(take: Int): [TopSellingProduct]
+		productsSummary: ProductSummary
+		ordersSummary: [OrderSummary]
 	}
 
 	type Mutation {
@@ -86,6 +88,24 @@ export const typeDefs = gql`
 			preOrder: Boolean
 		): Order
 		updateOrder(id: ID!, status: OrderStatus): Order
+	}
+
+	type ProductSummary {
+		total: Int!
+		bouquetCount: Int!
+		chocolateCount: Int!
+		flowerCount: Int!
+		giftCount: Int!
+		bouquetPercentage: Float!
+		flowerPercentage: Float!
+		chocolatePercentage: Float!
+		giftPercentage: Float!
+	}
+
+	type OrderSummary {
+		count: Int!
+		status: OrderStatus!
+		percentage: Float!
 	}
 
 	enum OrderPaymentType {

@@ -30,6 +30,8 @@ import {
 	readMonthlyRevenueResolver,
 	readLastMonthDataResolver,
 	readBestSellingProductResolver,
+	readProductsSummaryResolver,
+	readOrdersSummaryResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -50,6 +52,8 @@ export const resolvers = {
 		readMonthlyRevenue: readMonthlyRevenueResolver,
 		lastMonthData: readLastMonthDataResolver,
 		readBestSellingProducts: readBestSellingProductResolver,
+		productsSummary: readProductsSummaryResolver,
+		ordersSummary: readOrdersSummaryResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
