@@ -7,7 +7,14 @@ import {
 } from "@/types/order.js";
 import { PaymentStatus } from "@/types/payment.js";
 import { Prisma } from "@prisma/client";
-import { getUnixTime } from "date-fns";
+import {
+	endOfMonth,
+	getUnixTime,
+	getYear,
+	startOfMonth,
+	sub,
+	subMonths,
+} from "date-fns";
 
 export const createOrder = async ({
 	userId,
@@ -184,8 +191,6 @@ export const readOrders = async ({
 
 	let where: Prisma.OrderWhereInput = {};
 
-	console.log(isPreOrder, "qqq");
-
 	if (filter) {
 		where = {
 			OR: [
@@ -242,12 +247,6 @@ export const readOrders = async ({
 
 	const total = await prisma.order.count({ where });
 
-	console.log({
-		hasNextPage: orders.length === pagination?.limit,
-		total,
-		data: orders,
-	});
-
 	return {
 		hasNextPage: orders.length === pagination?.limit,
 		total,
@@ -273,7 +272,168 @@ export const readOrdersByUser = async (userId: string) => {
 		},
 	});
 
-	console.log(JSON.stringify(orders, null, 2));
-
 	return orders;
+};
+
+export const getMonthlyRevenue = async (year?: number) => {
+	// Get the current date (e.g., March 2025)
+	const currentDate = new Date();
+
+	// If no year is provided, calculate the last 12 months from the previous month
+	if (!year) {
+		const monthlyRevenue = [];
+
+		// Start from the previous month (February 2025)
+		const startMonthDate = subMonths(currentDate, 1); // February 2025
+
+		// Loop through the last 12 months (from February 2025 to March 2024)
+		for (let i = 0; i < 12; i++) {
+			// Get the target month date
+			const targetMonthDate = subMonths(startMonthDate, i);
+
+			// Get the start and end of the current month
+			const startDate = startOfMonth(targetMonthDate); // Start of the month
+			const endDate = endOfMonth(targetMonthDate); // End of the month
+
+			// Fetch orders for that specific month
+			const orders = await prisma.order.findMany({
+				where: {
+					orderDate: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+			});
+
+			// Sum the total revenue for that month
+			const revenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+
+			// Store the result for this month along with the month index (for sorting)
+			monthlyRevenue.push({
+				year: getYear(targetMonthDate),
+				month: startDate.toLocaleString("default", { month: "long" }),
+				monthIndex: startDate.getMonth(),
+				revenue,
+			});
+		}
+
+		// Sort by year and month from oldest to most recent
+		monthlyRevenue.sort((a, b) =>
+			a.year === b.year ? a.monthIndex - b.monthIndex : a.year - b.year
+		);
+
+		// Remove the monthIndex property before returning
+		return monthlyRevenue.map(({ year, month, revenue }) => ({
+			year,
+			month,
+			revenue,
+		}));
+	}
+
+	// If a year is provided, calculate monthly revenue for that year
+	const targetYear = year;
+
+	// Array to store revenue for each of the months in the provided year
+	const monthlyRevenueForYear = [];
+
+	// Loop through the 12 months of the specified year
+	for (let i = 0; i < 12; i++) {
+		// Set the target month for the specified year
+		const targetMonthDate = new Date(targetYear, i, 1); // e.g., January 2024, February 2024, etc.
+
+		// Get the start and end of the current month
+		const startDate = startOfMonth(targetMonthDate); // Start of the month
+		const endDate = endOfMonth(targetMonthDate); // End of the month
+
+		// Fetch orders for that specific month
+		const orders = await prisma.order.findMany({
+			where: {
+				orderDate: {
+					gte: startDate,
+					lte: endDate,
+				},
+			},
+		});
+
+		// Sum the total revenue for that month
+		const revenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+
+		// Store the result for this month along with the month index (for sorting)
+		monthlyRevenueForYear.push({
+			year: targetYear,
+			month: startDate.toLocaleString("default", { month: "long" }),
+			monthIndex: startDate.getMonth(),
+			revenue,
+		});
+	}
+
+	// Sort by month from oldest to most recent (year is the same for all)
+	monthlyRevenueForYear.sort((a, b) => a.monthIndex - b.monthIndex);
+
+	// Remove the monthIndex property before returning
+	return monthlyRevenueForYear.map(({ year, month, revenue }) => ({
+		year,
+		month,
+		revenue,
+	}));
+};
+
+export const getLastMonthData = async () => {
+	const newOrdersCount = await prisma.order.findMany({
+		where: {
+			orderDate: {
+				gte: sub(new Date(), { months: 1 }),
+			},
+		},
+	});
+
+	const totalOrdersCount = await prisma.order.count();
+
+	const orderPercentage =
+		totalOrdersCount > 0 ? (newOrdersCount.length / totalOrdersCount) * 100 : 0;
+
+	const newUserCount = await prisma.user.count({
+		where: {
+			createdAt: {
+				gte: sub(new Date(), { months: 1 }),
+			},
+		},
+	});
+
+	const totalUserCount = await prisma.order.count();
+
+	const userPercentage =
+		totalOrdersCount > 0 ? (newUserCount / totalUserCount) * 100 : 0;
+
+	const orders = await prisma.order.findMany({
+		select: {
+			totalPrice: true,
+		},
+	});
+
+	const overallRevenue = orders.reduce((acc, curr) => acc + curr.totalPrice, 0);
+	const lastMonthRevenue = newOrdersCount.reduce(
+		(acc, curr) => acc + curr.totalPrice,
+		0
+	);
+	const revenuePercentage =
+		overallRevenue > 0 ? (lastMonthRevenue / overallRevenue) * 100 : 0;
+
+	return {
+		orders: {
+			lastMonth: newOrdersCount.length,
+			overAll: totalOrdersCount,
+			percentage: orderPercentage,
+		},
+		users: {
+			lastMonth: newUserCount,
+			overAll: totalUserCount,
+			percentage: userPercentage,
+		},
+		revenues: {
+			overAll: overallRevenue,
+			lastMonth: lastMonthRevenue,
+			percentage: revenuePercentage,
+		},
+	};
 };

@@ -74,3 +74,32 @@ export const readProducts = async ({
 		total,
 	};
 };
+
+export const getBestSellingProducts = async (take: number = 5) => {
+	let products = await prisma.product.findMany({
+		select: {
+			_count: {
+				select: {
+					orderItem: true,
+				},
+			},
+			id: true,
+			name: true,
+			images: true,
+			price: true,
+		},
+		orderBy: {
+			orderItem: {
+				_count: "desc",
+			},
+		},
+		take,
+	});
+
+	products = products.filter((product) => product._count.orderItem > 0);
+
+	return products.map((product) => ({
+		...product,
+		sold: product._count.orderItem,
+	}));
+};
