@@ -1,5 +1,7 @@
 import {
 	createOrder,
+	getLastMonthData,
+	getMonthlyRevenue,
 	readOrders,
 	readOrdersByUser,
 	updateOrder,
@@ -105,9 +107,26 @@ export const createOrderResolver = async (
 			throw new GraphQLError("Failed to create order");
 		}
 
-		console.log(order);
-
 		return order;
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readMonthlyRevenueResolver = async (
+	_: never,
+	{ year }: { year?: number }
+) => {
+	try {
+		return await getMonthlyRevenue(year);
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readLastMonthDataResolver = async () => {
+	try {
+		return await getLastMonthData();
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);
 	}
