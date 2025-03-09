@@ -1,4 +1,5 @@
 import { Cart } from "./cart.js";
+import { Notification } from "./notification.js";
 import { Order } from "./order.js";
 
 export interface User {
@@ -15,6 +16,8 @@ export interface User {
 	address: UserAddress | null;
 	role: UserRole;
 	status: UserStatus;
+
+	notifications: Notification[];
 
 	orders: Order[];
 	cart: Cart;

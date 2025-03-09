@@ -1,3 +1,5 @@
+import { Review } from "./review";
+
 export interface Product {
 	readonly id: string;
 	name: string;
@@ -8,6 +10,7 @@ export interface Product {
 
 	status: ProductStatus;
 	category: ProductCategory;
+	reviews: Review[];
 
 	createdAt: Date;
 	updatedAt: Date;

@@ -3,6 +3,7 @@ export * from "./customize.js";
 export * from "./order.js";
 export * from "./product.js";
 export * from "./bouquet-item.js";
+export * from "./notification.js";
 
 import { Dispatch, SetStateAction, SVGProps } from "react";
 import { User, UserRole } from "./user.js";
