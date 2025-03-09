@@ -65,6 +65,9 @@ export const readProducts = async ({
 		where,
 		skip: pagination ? pagination.limit * pagination?.page : undefined,
 		take: pagination ? pagination.limit : undefined,
+		include: {
+			reviews: true,
+		},
 	});
 
 	const total = await prisma.product.count({ where });
@@ -149,3 +152,44 @@ export const getProductSummary = async () => {
 		giftPercentage: total > 0 ? (giftCount / total) * 100 : 0,
 	};
 };
+// Function to get products ordered by a user that haven't been reviewed yet
+export async function getUnReviewedProductsByUser(userId: string) {
+	// Find all completed orders by this user
+
+	const reviews = await prisma.review.findMany({
+		where: { userId },
+		select: {
+			productId: true,
+		},
+	});
+
+	const completedOrders = await prisma.order.findMany({
+		where: {
+			customerID: userId,
+			status: "COMPLETED",
+		},
+		include: {
+			orderItems: {
+				include: {
+					product: true,
+				},
+			},
+		},
+	});
+
+	const reviewsIds = reviews.map((review) => review.productId);
+	const products = completedOrders.flatMap((t) =>
+		t.orderItems.map((f) => f.product)
+	);
+
+	const filtered = products.filter(
+		(product) => !reviewsIds.includes(product?.id!)
+	);
+
+	// Remove duplicates by using a Map with product IDs as keys
+	const uniqueProducts = Array.from(
+		new Map(filtered.map((product) => [product!.id, product])).values()
+	);
+
+	return uniqueProducts;
+}

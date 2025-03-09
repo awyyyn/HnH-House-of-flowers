@@ -9,3 +9,4 @@ export * from "./product-model.js";
 export * from "./pre-order.js";
 export * from "./order-model.js";
 export * from "./message-model.js";
+export * from "./review-model.js";

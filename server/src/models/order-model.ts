@@ -122,6 +122,9 @@ export const updateOrder = async (
 		where: {
 			id,
 		},
+		include: {
+			customer: true,
+		},
 	});
 
 	return updatedOrder;
@@ -264,7 +267,11 @@ export const readOrdersByUser = async (userId: string) => {
 		include: {
 			orderItems: {
 				include: {
-					product: true,
+					product: {
+						include: {
+							reviews: true,
+						},
+					},
 				},
 			},
 			payment: true,
