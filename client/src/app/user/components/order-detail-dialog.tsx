@@ -24,6 +24,8 @@ import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatOrderDate } from "@/lib/utils";
 import { format, formatDate } from "date-fns";
 import { Order } from "@/types";
+import { useAuth } from "@/contexts";
+import { Link } from "react-router-dom";
 // import type { OrderWithItems } from "./types";
 
 interface OrderDetailDialogProps {
@@ -32,6 +34,7 @@ interface OrderDetailDialogProps {
 	open: boolean;
 	onClose: () => void;
 	showCustomer?: boolean;
+	showReviewButton?: boolean;
 }
 
 export default function OrderDetailDialog({
@@ -39,6 +42,7 @@ export default function OrderDetailDialog({
 	open,
 	onClose,
 	showCustomer,
+	showReviewButton = false,
 }: OrderDetailDialogProps) {
 	const getStatusStep = () => {
 		const statuses = ["PENDING", "PROCESSING", "SHIPPED", "COMPLETED"];
@@ -46,6 +50,7 @@ export default function OrderDetailDialog({
 		if (order.status === "READY_FOR_PICKUP") return 2; // Same level as SHIPPED
 		return statuses.indexOf(order.status);
 	};
+	const { user } = useAuth();
 
 	const statusStep = getStatusStep();
 
@@ -273,15 +278,27 @@ export default function OrderDetailDialog({
 										</div>
 									)}
 								</div>
-								<div className="flex-1">
-									<h4 className="font-medium">
-										{item.product?.name || "Product"}
-									</h4>
-									<div className="flex justify-between mt-1">
+								<div className="flex-1 flex justify-between">
+									<div className="flex flex-col mt-1">
+										<h4 className="font-medium">
+											{item.product?.name || "Product"}
+										</h4>
 										<p className="text-sm text-muted-foreground">
 											Qty: {item.quantity}
 										</p>
+									</div>
+									<div className="flex items-end justify-end flex-col mt-1">
 										<p className="font-medium">{formatCurrency(item.price)}</p>
+										{showReviewButton &&
+											!item.product?.reviews
+												.map((review) => review.id)
+												.includes(user.id) && (
+												<Button size="sm" asChild>
+													<Link to={`/add-review/${item.product?.id}`}>
+														Write a Review
+													</Link>
+												</Button>
+											)}
 									</div>
 								</div>
 							</div>

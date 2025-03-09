@@ -13,6 +13,8 @@ export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
 export { default as Helmet } from "./custom/helmet";
 export * from "./custom/empty-state";
+export * from "./custom/notification-dropdown";
+export * from "./custom/theme-switcher";
 export * from "./aceternity/sparkle";
 export * from "./aceternity/aurora";
 export * from "./ui/toggle-group";

@@ -13,7 +13,7 @@ import { useTheme } from "@/contexts";
 import { Moon, Sun } from "lucide-react";
 import { SidebarMenuButton } from "../ui/sidebar";
 
-export default function ThemeSwitcher({
+export function ThemeSwitcher({
 	showLabel = false,
 	isMobile = false,
 	isAdmin = false,

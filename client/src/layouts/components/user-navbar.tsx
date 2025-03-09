@@ -10,6 +10,8 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	Badge,
+	NotificationDropdown,
+	ThemeSwitcher,
 } from "@/components";
 import { cn } from "@/lib/utils";
 import {
@@ -22,15 +24,22 @@ import {
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import ThemeSwitcher from "@/components/custom/theme-switcher";
 import { useAtomValue } from "jotai";
-import { cartAtom } from "@/states";
+import { cartAtom, notificationAtom } from "@/states";
 import { IconPackages } from "@tabler/icons-react";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
 	const { isAuthenticated, logout, role } = useAuth();
 	const cart = useAtomValue(cartAtom);
+	const notifications = useAtomValue(notificationAtom);
+
+	const unreadCount = notifications.filter(
+		(notification) =>
+			notification.toShop === false &&
+			notification.read === false &&
+			notification.type === "MESSAGE"
+	).length;
 
 	return (
 		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
@@ -73,10 +82,15 @@ export function Navbar({ className }: { className?: string }) {
 									<Button
 										size="icon"
 										variant="ghost"
-										className="rounded-full"
+										className="rounded-full relative"
 										asChild>
-										<Link to="/chat">
+										<Link to="/chat" className="relative">
 											<MessageCircle />
+											{unreadCount > 0 && (
+												<Badge
+													variant="destructive"
+													className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 p-0 flex items-center justify-center rounded-full"></Badge>
+											)}
 										</Link>
 									</Button>
 									<Button
@@ -95,6 +109,7 @@ export function Navbar({ className }: { className?: string }) {
 											<ShoppingBag />
 										</Link>
 									</Button>
+									<NotificationDropdown />
 								</>
 							)}
 						</>
@@ -153,10 +168,15 @@ export function Navbar({ className }: { className?: string }) {
 						<Button
 							size="icon"
 							variant="ghost"
-							className="rounded-full"
+							className="rounded-full relative"
 							asChild>
 							<Link to="/chat">
 								<MessageCircle />
+								{unreadCount > 0 && (
+									<Badge
+										variant="destructive"
+										className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 p-0 flex items-center justify-center rounded-full"></Badge>
+								)}
 							</Link>
 						</Button>
 						<Button
@@ -175,6 +195,7 @@ export function Navbar({ className }: { className?: string }) {
 								<ShoppingBag />
 							</Link>
 						</Button>
+						<NotificationDropdown />
 					</>
 				)}
 				<ThemeSwitcher />

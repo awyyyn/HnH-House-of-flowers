@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-	BookOpen,
+	Bell,
 	Flower,
 	Flower2,
 	LayoutDashboard,
@@ -26,6 +26,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts";
+import { NavSystem } from "./nav-projects";
 
 const data = {
 	navMain: [
@@ -51,11 +52,6 @@ const data = {
 			],
 		},
 		{
-			title: "Users",
-			url: "/users",
-			icon: Users,
-		},
-		{
 			title: "Orders",
 			url: "#",
 			icon: Package,
@@ -74,11 +70,7 @@ const data = {
 				},
 			],
 		},
-		{
-			title: "Messages",
-			url: "/messages",
-			icon: MessagesSquare,
-		},
+
 		{
 			title: "Bouquet Items",
 			url: "#",
@@ -88,15 +80,40 @@ const data = {
 					title: "Add Item",
 					url: "/bouquet-items/add-item",
 				},
-				// {
-				// 	title: "Customize Orders",
-				// 	url: "/bouquet-items/customize-orders",
-				// },
 				{
 					title: "List",
 					url: "/bouquet-items",
 				},
 			],
+		},
+	],
+	navSecondary: [
+		{
+			title: "Support",
+			url: "#",
+			icon: LifeBuoy,
+		},
+		{
+			title: "Feedback",
+			url: "#",
+			icon: Send,
+		},
+	],
+	systems: [
+		{
+			title: "Users",
+			url: "/users",
+			icon: Users,
+		},
+		{
+			title: "Messages",
+			url: "/messages",
+			icon: MessagesSquare,
+		},
+		{
+			title: "Notifications",
+			url: "/notifications",
+			icon: Bell,
 		},
 		{
 			title: "Admins",
@@ -114,12 +131,6 @@ const data = {
 				},
 			],
 		},
-		// {
-		// 	title: "Notifications",
-		// 	url: "/notifications",
-		// 	icon: Bell,
-		// },
-		// {
 		// 	title: "Settings",
 		// 	url: "#",
 		// 	icon: Settings2,
@@ -143,35 +154,6 @@ const data = {
 		// 	],
 		// },
 	],
-	navSecondary: [
-		{
-			title: "Support",
-			url: "#",
-			icon: LifeBuoy,
-		},
-		{
-			title: "Feedback",
-			url: "#",
-			icon: Send,
-		},
-	],
-	// projects: [
-	// 	{
-	// 		name: "Design Engineering",
-	// 		url: "#",
-	// 		icon: Frame,
-	// 	},
-	// 	{
-	// 		name: "Sales & Marketing",
-	// 		url: "#",
-	// 		icon: PieChart,
-	// 	},
-	// 	{
-	// 		name: "Travel",
-	// 		url: "#",
-	// 		icon: Map,
-	// 	},
-	// ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -198,7 +180,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain role={role} items={data.navMain} />
-				{/* <NavProjects projects={data.projects} /> */}
+				<NavSystem role={role} systems={data.systems} />
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
