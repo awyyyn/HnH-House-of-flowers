@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
 	Calendar,
 	ChevronDown,
@@ -45,12 +45,16 @@ import { OrdersSkeleton } from "./components/order-skeleton";
 
 export default function Orders() {
 	const router = useNavigate();
-	const [searchQuery, setSearchQuery] = useState("");
+	const [params] = useSearchParams();
+	const [searchQuery, setSearchQuery] = useState(params.get("orderId") || "");
 	const [statusFilter, setStatusFilter] = useState<string>("all");
 	const [sortBy, setSortBy] = useState<string>("newest");
 	const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 	const { loading, data } = useQuery<{ orders: Order[] }>(
-		READ_ORDERS_BY_USER_QUERY
+		READ_ORDERS_BY_USER_QUERY,
+		{
+			fetchPolicy: "no-cache",
+		}
 	);
 
 	// Filter orders based on search query and status
@@ -206,17 +210,27 @@ export default function Orders() {
 
 			<Tabs defaultValue="all" className="w-full">
 				<TabsList className="grid grid-cols-5 mb-4">
-					<TabsTrigger value="all">All ({sortedOrders.length})</TabsTrigger>
-					<TabsTrigger value="pending">
+					<TabsTrigger value="all" className="data-[state=active]:text-white">
+						All ({sortedOrders.length})
+					</TabsTrigger>
+					<TabsTrigger
+						className="data-[state=active]:text-white"
+						value="pending">
 						Pending ({pendingOrders.length})
 					</TabsTrigger>
-					<TabsTrigger value="shipped">
+					<TabsTrigger
+						className="data-[state=active]:text-white"
+						value="shipped">
 						Shipped ({shippedOrders.length})
 					</TabsTrigger>
-					<TabsTrigger value="completed">
+					<TabsTrigger
+						className="data-[state=active]:text-white"
+						value="completed">
 						Completed ({completedOrders.length})
 					</TabsTrigger>
-					<TabsTrigger value="cancelled">
+					<TabsTrigger
+						className="data-[state=active]:text-white"
+						value="cancelled">
 						Cancelled ({cancelledOrders.length})
 					</TabsTrigger>
 				</TabsList>
@@ -244,6 +258,7 @@ export default function Orders() {
 
 			{selectedOrderData && (
 				<OrderDetailDialog
+					showReviewButton={selectedOrderData.status === "COMPLETED"}
 					order={selectedOrderData}
 					open={!!selectedOrder}
 					onClose={() => setSelectedOrder(null)}
@@ -278,7 +293,7 @@ export default function Orders() {
 					<div className="flex flex-col sm:flex-row justify-between gap-2">
 						<div>
 							<CardTitle className="text-base flex items-center gap-2">
-								Order #{order.formattedId}
+								Order {order.formattedId}
 								{order.isPreOrder && (
 									<Badge variant="outline" className="bg-blue-50 text-blue-700">
 										Pre-Order
@@ -317,7 +332,6 @@ export default function Orders() {
 						<div>
 							<p className="text-sm font-medium">Payment Method</p>
 							<p className="text-sm text-muted-foreground capitalize">
-								{" "}
 								{order.typeOfPayment.toLowerCase()}
 							</p>
 						</div>

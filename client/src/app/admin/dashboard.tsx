@@ -7,7 +7,6 @@ import {
 	CardHeader,
 	CardTitle,
 	Helmet,
-	Progress,
 	Table,
 	TableBody,
 	TableCell,
@@ -92,11 +91,6 @@ export default function Dashboard() {
 						value="products"
 						className="data-[state=active]:text-white">
 						Products
-					</TabsTrigger>
-					<TabsTrigger
-						value="recent"
-						className="data-[state=active]:text-white">
-						Recent Orders
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="overview" className="space-y-4">
@@ -314,160 +308,6 @@ export default function Dashboard() {
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle>Low Stock Alert</CardTitle>
-								<CardDescription>Products that need reordering</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className="space-y-4">
-									{[
-										{ name: "Spring Mix", stock: 12, threshold: 15 },
-										{ name: "Lily Arrangement", stock: 8, threshold: 10 },
-										{ name: "White Roses", stock: 5, threshold: 20 },
-										{ name: "Orchid Plant", stock: 3, threshold: 10 },
-										{ name: "Gift Wrapping", stock: 7, threshold: 25 },
-									].map((product) => (
-										<div
-											key={product.name}
-											className="flex items-center justify-between">
-											<div className="flex items-center gap-2">
-												<div
-													className={`w-2 h-2 rounded-full ${
-														product.stock === 0
-															? "bg-destructive"
-															: "bg-amber-500"
-													}`}></div>
-												<span className="text-sm font-medium">
-													{product.name}
-												</span>
-											</div>
-											<div className="flex items-center gap-2">
-												<span className="text-sm text-muted-foreground">
-													{product.stock} left
-												</span>
-												<Button variant="outline" size="sm">
-													Reorder
-												</Button>
-											</div>
-										</div>
-									))}
-								</div>
-							</CardContent>
-						</Card>
-					</div>
-				</TabsContent>
-				<TabsContent value="recent" className="space-y-4">
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between">
-							<div>
-								<CardTitle>Recent Orders</CardTitle>
-								<CardDescription>
-									A list of recent orders from your store.
-								</CardDescription>
-							</div>
-							<Button size="sm" asChild>
-								<Link to="/orders">View All</Link>
-							</Button>
-						</CardHeader>
-						<CardContent>
-							<div className="rounded-md border">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead className="w-[100px]">Order</TableHead>
-											<TableHead>Customer</TableHead>
-											<TableHead>Products</TableHead>
-											<TableHead>Date</TableHead>
-											<TableHead>Total</TableHead>
-											<TableHead>Status</TableHead>
-											<TableHead className="text-right">Actions</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{[
-											{
-												id: "ORD-2024-1234",
-												customer: "Sarah Johnson",
-												products: "Rose Bouquet (x1)",
-												date: "Mar 14, 2024",
-												total: "$64.99",
-												status: "Delivered",
-											},
-											{
-												id: "ORD-2024-1233",
-												customer: "Michael Brown",
-												products: "Spring Mix (x1)",
-												date: "Mar 14, 2024",
-												total: "$49.99",
-												status: "Processing",
-											},
-											{
-												id: "ORD-2024-1232",
-												customer: "James Wilson",
-												products: "Tulip Arrangement (x1)",
-												date: "Mar 13, 2024",
-												total: "$39.99",
-												status: "Shipped",
-											},
-											{
-												id: "ORD-2024-1231",
-												customer: "Emily Davis",
-												products: "Lily Arrangement (x1)",
-												date: "Mar 13, 2024",
-												total: "$59.99",
-												status: "Processing",
-											},
-											{
-												id: "ORD-2024-1230",
-												customer: "Alex Rodriguez",
-												products: "Sunflower Bouquet (x1)",
-												date: "Mar 12, 2024",
-												total: "$54.99",
-												status: "Delivered",
-											},
-											{
-												id: "ORD-2024-1229",
-												customer: "Sophia Anderson",
-												products: "Daisy Bouquet (x1)",
-												date: "Mar 12, 2024",
-												total: "$44.99",
-												status: "Shipped",
-											},
-										].map((order) => (
-											<TableRow key={order.id}>
-												<TableCell className="font-medium">
-													{order.id}
-												</TableCell>
-												<TableCell>{order.customer}</TableCell>
-												<TableCell>{order.products}</TableCell>
-												<TableCell>{order.date}</TableCell>
-												<TableCell>{order.total}</TableCell>
-												<TableCell>
-													<Badge
-														variant={
-															order.status === "Delivered"
-																? "outline"
-																: order.status === "Shipped"
-																? "secondary"
-																: "default"
-														}>
-														{order.status}
-													</Badge>
-												</TableCell>
-												<TableCell className="text-right">
-													<Button variant="ghost" size="sm">
-														View
-													</Button>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</div>
-						</CardContent>
-					</Card>
-					<div className="grid gap-4 md:grid-cols-2">
-						<Card>
-							<CardHeader>
 								<CardTitle>Order Summary</CardTitle>
 								<CardDescription>Order status breakdown</CardDescription>
 							</CardHeader>
@@ -481,52 +321,6 @@ export default function Dashboard() {
 											key={order.status}
 										/>
 									))}
-								</div>
-							</CardContent>
-						</Card>
-						<Card>
-							<CardHeader>
-								<CardTitle>Delivery Performance</CardTitle>
-								<CardDescription>Average delivery times</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className="space-y-4">
-									<div className="space-y-2">
-										<div className="flex items-center justify-between">
-											<div className="text-sm font-medium">
-												Same Day Delivery
-											</div>
-											<div className="text-sm text-muted-foreground">
-												92% on time
-											</div>
-										</div>
-										<Progress value={92} className="h-2" />
-									</div>
-									<div className="space-y-2">
-										<div className="flex items-center justify-between">
-											<div className="text-sm font-medium">
-												Next Day Delivery
-											</div>
-											<div className="text-sm text-muted-foreground">
-												96% on time
-											</div>
-										</div>
-										<Progress value={96} className="h-2" />
-									</div>
-									<div className="space-y-2">
-										<div className="flex items-center justify-between">
-											<div className="text-sm font-medium">
-												Standard Delivery
-											</div>
-											<div className="text-sm text-muted-foreground">
-												98% on time
-											</div>
-										</div>
-										<Progress value={98} className="h-2" />
-									</div>
-									<div className="pt-2 text-xs text-muted-foreground">
-										Average delivery time: 1.2 days
-									</div>
 								</div>
 							</CardContent>
 						</Card>
