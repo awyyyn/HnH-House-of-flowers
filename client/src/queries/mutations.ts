@@ -287,3 +287,29 @@ export const UPDATE_ORDER_MUTATION = gql`
 		}
 	}
 `;
+
+export const UPDATE_NOTIFICATION_MUTATION = gql`
+	mutation ($id: ID) {
+		notification: updateNotification(id: $id)
+	}
+`;
+
+export const DELETE_NOTIFICATION_MUTATION = gql`
+	mutation ($id: ID) {
+		notification: deleteNotification(id: $id)
+	}
+`;
+export const CREATE_REVIEW_MUTATION = gql`
+	mutation ($rate: Int!, $productId: String!, $comment: String) {
+		review: createReview(
+			rate: $rate
+			productId: $productId
+			comment: $comment
+		) {
+			id
+			userId
+			rating
+			comment
+		}
+	}
+`;

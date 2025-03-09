@@ -150,9 +150,14 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 				quantity
 				productId
 				product {
+					id
 					images
+					reviews {
+						id
+					}
 				}
 			}
+
 			payment {
 				id
 				checkoutUrl
@@ -298,6 +303,39 @@ export const DASHBOARD_QUERY = gql`
 			count
 			status
 			percentage
+		}
+	}
+`;
+
+export const READ_NOTIFICATION_QUERY = gql`
+	query ReadNotifications($pagination: PaginationInput) {
+		readNotifications(pagination: $pagination) {
+			total
+			data {
+				createdAt
+				id
+				message
+				title
+				type
+				user {
+					id
+					firstName
+					lastName
+				}
+				idToGo
+			}
+			hasNextPage
+		}
+	}
+`;
+export const READ_UNREVIEW_PRODUCT_QUERY = gql`
+	${productFragment}
+	query ($id: ID!) {
+		product(id: $id) {
+			...ProductFragment
+		}
+		products: unReviewedProducts {
+			...ProductFragment
 		}
 	}
 `;
