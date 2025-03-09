@@ -38,6 +38,8 @@ import CheckoutPage from "./app/user/checkout";
 import CheckoutSuccess from "./app/user/checkout-success";
 import CheckoutError from "./app/user/checkout-error";
 import AddOrder from "./app/admin/add-order";
+import Notification from "./app/notification";
+import ReviewPage from "./app/user/review";
 
 export default function App() {
 	const publicRoutes = [
@@ -190,6 +192,10 @@ export default function App() {
 						element: <Customize />,
 					},
 					{
+						path: "add-review/:id",
+						element: <ReviewPage />,
+					},
+					{
 						path: "my-orders",
 						element: <UserOrders />,
 					},
@@ -284,6 +290,10 @@ export default function App() {
 				{
 					path: "account",
 					element: <Account />,
+				},
+				{
+					path: "notifications",
+					element: <Notification />,
 				},
 			],
 		},

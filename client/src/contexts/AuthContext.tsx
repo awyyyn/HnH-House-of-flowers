@@ -9,7 +9,7 @@ import { AuthContextProps, JWTDecoded, User } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import { useToast } from "@/hooks/use-toast";
 import { useSetAtom } from "jotai";
-import { cartAtom } from "@/states";
+import { cartAtom, notificationAtom } from "@/states";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
@@ -33,6 +33,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	const [user, setUser] = useState<User>(null!);
 	const [loading, setLoading] = useState(true);
 	const setCart = useSetAtom(cartAtom);
+	const setNotification = useSetAtom(notificationAtom);
 	const { toast } = useToast();
 
 	useEffect(() => {
@@ -70,6 +71,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				const data = await response.json();
 
 				setUser(data.data.user);
+				console.log(data.data, "qq");
+				setNotification(data.data.user.notifications || []);
 				if (data.data.user.role === "USER") {
 					setCart(data.data.user.cart);
 				}
@@ -103,6 +106,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			setCart(loggedInUser.cart);
 		}
 		setUser(loggedInUser);
+
+		setNotification(loggedInUser.notifications || []);
 		setValues({ isAuthenticated: true, role: decoded.role });
 	};
 
