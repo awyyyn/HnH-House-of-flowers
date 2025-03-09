@@ -32,11 +32,20 @@ import {
 	readBestSellingProductResolver,
 	readProductsSummaryResolver,
 	readOrdersSummaryResolver,
+	notificationSentSubscription,
+	unReviewedProductsResolver,
 } from "./resolvers/index.js";
+import {
+	deleteNotificationResolver,
+	readNotificationsResolver,
+	updateNotificationResolver,
+} from "./resolvers/notification-resolver.js";
+import { createReviewResolver } from "./resolvers/review-resolver.js";
 
 export const resolvers = {
 	Subscription: {
 		messageSent: messageSentSubscription,
+		notificationSent: notificationSentSubscription,
 	},
 	Query: {
 		user: userResolver,
@@ -54,6 +63,8 @@ export const resolvers = {
 		readBestSellingProducts: readBestSellingProductResolver,
 		productsSummary: readProductsSummaryResolver,
 		ordersSummary: readOrdersSummaryResolver,
+		readNotifications: readNotificationsResolver,
+		unReviewedProducts: unReviewedProductsResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
@@ -73,6 +84,9 @@ export const resolvers = {
 		createCheckoutSession: createCheckoutSessionResolver,
 		updateOrder: updateOrderResolver,
 		createOrder: createOrderResolver,
+		updateNotification: updateNotificationResolver,
+		deleteNotification: deleteNotificationResolver,
+		createReview: createReviewResolver,
 	},
 	// Mutation: {},
 };

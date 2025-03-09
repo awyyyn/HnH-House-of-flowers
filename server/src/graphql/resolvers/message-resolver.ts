@@ -72,3 +72,16 @@ export const messageSentSubscription = {
 		}
 	),
 };
+
+export const notificationSentSubscription = {
+	subscribe: withFilter(
+		() => pubsub.asyncIterableIterator(["NOTIFICATION_SENT"]),
+		(payload: any, variables: any) => {
+			return (
+				payload.notificationSent.userId === variables.userId ||
+				variables.role === "ADMIN" ||
+				variables.role === "SUPER_ADMIN"
+			);
+		}
+	),
+};

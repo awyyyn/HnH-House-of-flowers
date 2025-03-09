@@ -3,6 +3,7 @@ import { gql } from "graphql-tag";
 export const typeDefs = gql`
 	type Subscription {
 		messageSent(userId: ID!, role: UserRole): Message
+		notificationSent(userId: ID!, role: UserRole): Notification
 	}
 
 	type Query {
@@ -43,6 +44,12 @@ export const typeDefs = gql`
 		readBestSellingProducts(take: Int): [TopSellingProduct]
 		productsSummary: ProductSummary
 		ordersSummary: [OrderSummary]
+		readReviews(
+			id: String!
+			pagination: PaginationInput
+		): ReviewPaginationResult
+		readNotifications(pagination: PaginationInput): NotificationPaginationResult
+		unReviewedProducts: [Product]
 	}
 
 	type Mutation {
@@ -88,6 +95,14 @@ export const typeDefs = gql`
 			preOrder: Boolean
 		): Order
 		updateOrder(id: ID!, status: OrderStatus): Order
+		createReview(
+			rate: Int!
+			images: [String]
+			productId: String!
+			comment: String
+		): Review
+		updateNotification(id: ID): String!
+		deleteNotification(id: ID): String!
 	}
 
 	type ProductSummary {
@@ -184,6 +199,18 @@ export const typeDefs = gql`
 	type ProductPaginationResult {
 		total: Int!
 		data: [Product]
+		hasNextPage: Boolean!
+	}
+
+	type ReviewPaginationResult {
+		total: Int!
+		data: [Review]
+		hasNextPage: Boolean!
+	}
+
+	type NotificationPaginationResult {
+		total: Int!
+		data: [Notification]
 		hasNextPage: Boolean!
 	}
 
@@ -299,6 +326,7 @@ export const typeDefs = gql`
 		stock: Int!
 		status: ProductStatus!
 		category: ProductCategory!
+		reviews: [Review]
 
 		createdAt: String!
 		updatedAt: String!
@@ -426,5 +454,40 @@ export const typeDefs = gql`
 		SUCCESS
 		FAILED
 		CANCELLED
+	}
+
+	type Notification {
+		id: ID!
+		userId: String!
+		user: User!
+		title: String!
+		message: String!
+		type: NotificationType!
+		read: Boolean!
+		toShop: Boolean!
+		idToGo: String!
+
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	enum NotificationType {
+		ORDER
+		MESSAGE
+		PRE_ORDER
+		REVIEW
+	}
+
+	type Review {
+		id: ID!
+		userId: String!
+		user: User!
+		productId: String!
+		product: Product!
+		rating: Int!
+		comment: String
+		images: [String]
+		createdAt: String
+		updatedAt: String
 	}
 `;

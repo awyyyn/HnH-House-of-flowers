@@ -1,6 +1,7 @@
 import {
 	createProduct,
 	getBestSellingProducts,
+	getUnReviewedProductsByUser,
 	getProductSummary,
 	readProduct,
 	readProducts,
@@ -39,7 +40,8 @@ export const productsResolver = async (
 		pagination,
 		category,
 		status = ["DISCONTINUED", "IN_STOCK", "OUT_OF_STOCK", "PRE_ORDER"],
-	}: ProductsPaginationArgs
+	}: ProductsPaginationArgs,
+	app: AppContext
 ) => {
 	try {
 		return await readProducts({ filter, pagination, category, status });
@@ -104,6 +106,19 @@ export const readBestSellingProductResolver = async (
 export const readProductsSummaryResolver = async (_: never) => {
 	try {
 		return await getProductSummary();
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+// export const readProducts
+export const unReviewedProductsResolver = async (
+	_: never,
+	__: never,
+	app: AppContext
+) => {
+	try {
+		return await getUnReviewedProductsByUser(app.id);
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);
 	}
