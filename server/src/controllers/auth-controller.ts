@@ -16,6 +16,7 @@ import {
 } from "../services/index.js";
 import { Request, Response } from "express";
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
+import { readNotifications } from "@/models/notification-model.js";
 
 export const loginController = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
@@ -54,6 +55,10 @@ export const loginController = async (req: Request, res: Response) => {
 		});
 
 		const cart = await readCart(user.id);
+		const notifications = await readNotifications({
+			role: user.role,
+			userId: user.id,
+		});
 
 		res.status(200).json({
 			message: "Login successful",
@@ -62,6 +67,7 @@ export const loginController = async (req: Request, res: Response) => {
 				user: {
 					...user,
 					cart,
+					notifications: notifications.data,
 				},
 			},
 		});
@@ -265,6 +271,11 @@ export const meController = async (req: Request, res: Response) => {
 			id: user.id,
 		});
 
+		const { data } = await readNotifications({
+			role: user.role,
+			userId: user.id,
+		});
+
 		res.status(200).json({
 			message: "Login successful",
 			data: {
@@ -272,6 +283,7 @@ export const meController = async (req: Request, res: Response) => {
 				user: {
 					...user,
 					cart,
+					notifications: data,
 				},
 			},
 		});
