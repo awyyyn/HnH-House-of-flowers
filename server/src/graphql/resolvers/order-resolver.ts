@@ -1,5 +1,5 @@
-import { createNotification } from "@/models/notification-model.js";
 import {
+	createNotification,
 	createOrder,
 	getLastMonthData,
 	getMonthlyRevenue,
@@ -7,10 +7,10 @@ import {
 	readOrders,
 	readOrdersByUser,
 	updateOrder,
-} from "@/models/order-model.js";
-import { pubsub } from "@/services/pubsub.js";
-import { AppContext, OrderFilter, OrderStatus } from "@/types/index.js";
-import { generateNotificationContent } from "@/utils/index.js";
+} from "../../models/index.js";
+import { pubsub } from "../../services/pubsub.js";
+import { AppContext, OrderFilter, OrderStatus } from "../../types/index.js";
+import { generateNotificationContent } from "../../utils/index.js";
 import { GraphQLError } from "graphql";
 import { v4 as uuidv4 } from "uuid";
 

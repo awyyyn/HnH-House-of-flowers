@@ -1,12 +1,11 @@
+import { GraphQLError } from "graphql";
 import {
 	createBouquetItem,
 	readBouquetItem,
 	readBouquetItems,
 	updateBouquetItem,
-} from "@/models/bouquet-items-model.js";
-
+} from "../../models/index.js";
 import { BouquetItem } from "../../types/index.js";
-import { GraphQLError } from "graphql";
 
 type BouquetItemInput = Omit<BouquetItem, "id" | "createdAt" | "updatedAt">;
 

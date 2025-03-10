@@ -2,8 +2,8 @@ import {
 	deleteNotification,
 	readNotifications,
 	updateNotification,
-} from "@/models/notification-model.js";
-import { AppContext, UserPaginationArgs } from "@/types/index.js";
+} from "../../models/index.js";
+import { AppContext, UserPaginationArgs } from "../../types/index.js";
 import { GraphQLError } from "graphql";
 
 export const updateNotificationResolver = async (

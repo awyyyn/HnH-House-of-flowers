@@ -1,8 +1,6 @@
-import { environment } from "@/environments/environment.js";
+import { environment } from "../environments/environment.js";
 
 export const createCheckoutSession = async () => {
-	const response = "Session created";
-
 	const url = "https://api.paymongo.com/v1/checkout_sessions";
 	const options = {
 		method: "POST",

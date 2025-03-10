@@ -1,5 +1,5 @@
-import { prisma } from "@/services/prisma.js";
-import { Payment } from "@/types/payment.js";
+import { prisma } from "../services/prisma.js";
+import { Payment } from "../types/payment.js";
 
 export const updatePayment = async (
 	id: string,

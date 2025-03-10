@@ -1,5 +1,5 @@
-import { createReview, readReview } from "@/models/review-model.js";
-import { AppContext, UserPaginationArgs } from "@/types/index.js";
+import { createReview, readReview } from "../../models/index.js";
+import { AppContext, UserPaginationArgs } from "../../types/index.js";
 import { GraphQLError } from "graphql";
 
 export const createReviewResolver = async (

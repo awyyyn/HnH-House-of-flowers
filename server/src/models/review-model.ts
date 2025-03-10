@@ -1,5 +1,5 @@
-import { prisma } from "@/services/prisma.js";
 import { Review } from "@prisma/client";
+import { prisma } from "../services/prisma.js";
 
 export const createReview = async ({
 	comment,

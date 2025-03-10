@@ -1,5 +1,5 @@
-import { updatePayment } from "@/models/payment.-model.js";
 import { Request, Response } from "express";
+import { updatePayment } from "../models/index.js";
 
 export const paymongoWebhook = async (req: Request, res: Response) => {
 	const event = req.body.data;

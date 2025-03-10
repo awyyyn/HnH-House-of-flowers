@@ -8,6 +8,7 @@ import {
 	createCart,
 	readCart,
 	sendForgotPasswordOTP,
+	readNotifications,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -16,7 +17,6 @@ import {
 } from "../services/index.js";
 import { Request, Response } from "express";
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
-import { readNotifications } from "@/models/notification-model.js";
 
 export const loginController = async (req: Request, res: Response) => {
 	const { email, password } = req.body;

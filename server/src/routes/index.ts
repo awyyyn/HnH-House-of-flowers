@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authRoutes } from "./auth-routes.js";
-import { paymongoWebhook } from "@/controllers/webhook-controller.js";
+import { paymongoWebhook } from "../controllers/webhook-controller.js";
 
 export const routes = Router();
 

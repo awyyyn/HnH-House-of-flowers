@@ -1,6 +1,6 @@
-import { prisma } from "@/services/prisma.js";
-import { UserRole } from "@/types/user.js";
 import { Notification, Prisma } from "@prisma/client";
+import { prisma } from "../services/prisma.js";
+import { UserRole } from "../types/user.js";
 
 export const createNotification = async ({
 	message,
