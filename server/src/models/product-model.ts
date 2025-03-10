@@ -72,8 +72,26 @@ export const readProducts = async ({
 
 	const total = await prisma.product.count({ where });
 
+	let productsWithAverageRating = await Promise.all(
+		products.map(async (product) => {
+			const avg = await prisma.review.aggregate({
+				_avg: {
+					rating: true,
+				},
+				where: {
+					productId: product.id,
+				},
+			});
+
+			return {
+				...product,
+				avg: avg._avg?.rating || 0,
+			};
+		})
+	);
+
 	return {
-		data: products,
+		data: productsWithAverageRating,
 		hasNextPage: products.length === pagination?.limit,
 		total,
 	};
@@ -171,7 +189,11 @@ export async function getUnReviewedProductsByUser(userId: string) {
 		include: {
 			orderItems: {
 				include: {
-					product: true,
+					product: {
+						include: {
+							reviews: true,
+						},
+					},
 				},
 			},
 		},

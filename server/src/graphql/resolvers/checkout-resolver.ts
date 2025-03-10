@@ -46,25 +46,25 @@ export const createCheckoutSessionResolver = async (
 			checkoutUrl: "no-url",
 		};
 
+		await Promise.all(
+			line_items.map(async (item) => {
+				const product = await readProduct(item.id);
+				if (!product) {
+					throw new GraphQLError("Product not found");
+				}
+
+				if (product.stock < item.quantity) {
+					throw new GraphQLError("Product out of stock");
+				}
+
+				await updateProduct(product.id, {
+					stock: product.stock - item.quantity,
+				});
+			})
+		);
+
 		if (typeOfPayment === "GCASH") {
 			const url = "https://api.paymongo.com/v1/checkout_sessions";
-
-			await Promise.all(
-				line_items.map(async (item) => {
-					const product = await readProduct(item.id);
-					if (!product) {
-						throw new GraphQLError("Product not found");
-					}
-
-					if (product.stock < item.quantity) {
-						throw new GraphQLError("Product out of stock");
-					}
-
-					await updateProduct(product.id, {
-						stock: product.stock - item.quantity,
-					});
-				})
-			);
 
 			const options = {
 				method: "POST",

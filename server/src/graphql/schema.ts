@@ -324,6 +324,8 @@ export const typeDefs = gql`
 		price: Float!
 		images: [String]
 		stock: Int!
+		avg: Float
+
 		status: ProductStatus!
 		category: ProductCategory!
 		reviews: [Review]
