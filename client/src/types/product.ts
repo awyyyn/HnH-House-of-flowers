@@ -7,6 +7,7 @@ export interface Product {
 	price: number;
 	images: string[];
 	stock: number;
+	avg: number;
 
 	status: ProductStatus;
 	category: ProductCategory;
