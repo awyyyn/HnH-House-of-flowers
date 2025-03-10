@@ -193,7 +193,6 @@ model Product {
   images       String[]
   // tags        String[]
   stock       Int    @default(1)
-  avgRating   Float  @default(0.0)
 
   reviews Review[]
 
