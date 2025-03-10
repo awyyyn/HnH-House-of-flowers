@@ -43,7 +43,8 @@ export function NotificationDropdown() {
 		id: string,
 		isRead: boolean,
 		type: NotificationType,
-		userId: string
+		userId: string,
+		toGoId: string
 	) => {
 		try {
 			if (!isRead) {
@@ -56,7 +57,8 @@ export function NotificationDropdown() {
 			if (type === "MESSAGE") {
 				link = user.role === "USER" ? "/chat" : `/messages/${userId}`;
 			} else if (type === "ORDER") {
-				link = user.role === "USER" ? `/my-orders/${id}` : `/orders`;
+				link =
+					user.role === "USER" ? `/my-orders?orderId=${toGoId}` : `/orders`;
 			} else if (type === "REVIEW") {
 				//
 			}
@@ -128,7 +130,8 @@ export function NotificationDropdown() {
 										notification.id,
 										notification.read,
 										notification.type,
-										notification.userId
+										notification.userId,
+										notification.idToGo
 									)
 								}>
 								<div className="flex items-start justify-between w-full">

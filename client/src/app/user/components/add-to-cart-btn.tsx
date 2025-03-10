@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Minus, Plus, ShoppingCart, Zap } from "lucide-react";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Product } from "@/types";
@@ -9,12 +9,14 @@ import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
 import { useAtom } from "jotai";
 import { cartAtom } from "@/states";
+import { CheckoutModal } from "./buy-now-modal";
 
 export default function AddToCartInline(product: Product) {
 	const { user } = useAuth();
 	const [cart, setCart] = useAtom(cartAtom);
 	const [quantity, setQuantity] = useState(1);
 	const [addToCart, { loading }] = useMutation(ADD_TO_CART_MUTATION);
+
 	const { toast } = useToast();
 
 	const decrementQuantity = () => {
@@ -69,11 +71,6 @@ export default function AddToCartInline(product: Product) {
 		}
 	};
 
-	const handleBuyNow = () => {
-		console.log(`Buying ${quantity} item(s) now`);
-		// Here you would typically call a function to process the immediate purchase
-	};
-
 	return (
 		<div className="flex items-center space-x-2">
 			{product.status === "IN_STOCK" && (
@@ -114,14 +111,8 @@ export default function AddToCartInline(product: Product) {
 							<ShoppingCart className="mr-2 h-3 w-3" />
 							Add to Cart
 						</Button>
-						<Button
-							onClick={handleBuyNow}
-							size="sm"
-							className="h-8"
-							disabled={loading || product.stock === 0}>
-							<Zap className="mr-2 h-3 w-3" />
-							Buy Now
-						</Button>
+
+						<CheckoutModal product={product} quantity={quantity} />
 					</div>
 				</>
 			)}

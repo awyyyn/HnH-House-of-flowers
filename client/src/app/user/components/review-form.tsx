@@ -52,9 +52,6 @@ export default function ProductReviewForm({
 	product,
 	products,
 }: ProductReviewFormProps) {
-	// const router = useNavigate();
-	// const [images, setImages] = useState<string[]>([]);
-	// const [previewImages, setPreviewImages] = useState<string[]>([]);
 	const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 	const [selectedProduct, setSelectedProduct] = useState<Product>(product);
 	const [createReview, { loading }] = useMutation(CREATE_REVIEW_MUTATION);
