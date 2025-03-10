@@ -36,7 +36,6 @@ const CheckoutPage = () => {
 	const footerHeight = 320; // Adjust this value based on your footer's actual height
 
 	const handleSubmit = async () => {
-		console.log("object");
 		try {
 			const data = await checkout({
 				variables: {
@@ -79,7 +78,6 @@ const CheckoutPage = () => {
 				);
 			}
 		} catch (err) {
-			console.log(`error qqq`, err);
 			toast({
 				title: "An error occurred",
 				description: (err as Error).message,

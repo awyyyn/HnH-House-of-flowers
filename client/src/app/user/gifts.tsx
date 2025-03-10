@@ -30,7 +30,6 @@ export default function Gifts() {
 
 	if (loading) return <CardSkeleton />;
 
-	console.log(data);
 	return (
 		<>
 			<Helmet title="Gifts" />

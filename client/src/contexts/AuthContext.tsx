@@ -71,7 +71,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				const data = await response.json();
 
 				setUser(data.data.user);
-				console.log(data.data, "qq");
 				setNotification(data.data.user.notifications || []);
 				if (data.data.user.role === "USER") {
 					setCart(data.data.user.cart);

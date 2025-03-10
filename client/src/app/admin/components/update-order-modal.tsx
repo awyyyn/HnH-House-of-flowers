@@ -129,7 +129,7 @@ const OrderStatusUpdateModal: FC<OrderStatusUpdateModalProps> = ({
 							<Select
 								value={status}
 								onValueChange={(value) => {
-									console.log(setStatus(value as OrderStatus));
+									setStatus(value as OrderStatus);
 								}}>
 								<SelectTrigger>
 									<SelectValue placeholder="Select new status" />

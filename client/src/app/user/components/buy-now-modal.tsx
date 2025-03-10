@@ -84,7 +84,6 @@ export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
 				navigate("/my-orders");
 			}
 		} catch (err) {
-			console.log(`error qqq`, err);
 			toast({
 				title: "An error occurred",
 				description: (err as Error).message,
@@ -93,16 +92,10 @@ export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
 		}
 	};
 
-	const handleBuyNow = () => {
-		console.log(`Buying ${quantity} item(s) now`);
-		// Here you would typically call a function to process the immediate purchase
-	};
-
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
-					onClick={handleBuyNow}
 					size="sm"
 					className="h-8"
 					disabled={loading || product.stock === 0}>

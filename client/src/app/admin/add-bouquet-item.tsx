@@ -201,8 +201,6 @@ export default function BouquetItemForm() {
 		return luminance > 0.5 ? "#000000" : "#ffffff";
 	};
 
-	console.log(form.formState.errors, "qq");
-
 	// Handle form submission
 	async function onSubmit(values: FormValues) {
 		// Remove the currentColor field from the submitted data
