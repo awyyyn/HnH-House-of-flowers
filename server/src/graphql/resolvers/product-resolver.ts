@@ -40,8 +40,7 @@ export const productsResolver = async (
 		pagination,
 		category,
 		status = ["DISCONTINUED", "IN_STOCK", "OUT_OF_STOCK", "PRE_ORDER"],
-	}: ProductsPaginationArgs,
-	app: AppContext
+	}: ProductsPaginationArgs
 ) => {
 	try {
 		return await readProducts({ filter, pagination, category, status });
