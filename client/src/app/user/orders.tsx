@@ -179,7 +179,7 @@ export default function Orders() {
 	}
 
 	return (
-		<div className="space-y-6 relative ">
+		<div className="space-y-6 relative pb-8">
 			{updatingOrder && (
 				<div className="fixed top-0 left-0 w-screen h-screen bg-black/50 z-50 flex items-center justify-center">
 					<div className="bg-white p-6 rounded-lg shadow-lg text-center">
@@ -344,7 +344,7 @@ export default function Orders() {
 		}
 
 		return ordersList.map((order: Order) => (
-			<Card key={order.id} className={"overflow-hidden"}>
+			<Card key={order.id} className={"overflow-hidden "}>
 				<CardHeader className="bg-muted/30 pb-4">
 					<div className="flex flex-col sm:flex-row justify-between gap-2">
 						<div>

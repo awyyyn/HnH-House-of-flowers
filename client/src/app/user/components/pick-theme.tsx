@@ -14,7 +14,7 @@ export default function PickTheme({
 }: PickThemeProps) {
 	return (
 		<ScrollArea className="  md:min-h-[60dvh] max-h-[80dvh] md:min-w-[50%] xl:min-w-[50dvw] min-w-screen min-h-[50dvh]  overflow-y-auto  border p-5s scroll-p-5 rounded-lg">
-			<div className="grid grid-cols-1  gap-1 sm:grid-cols-2 md:grid-cols-3  lg:gap-5 auto-auto-flow p-5">
+			<div className="grid grid-cols-1 overflow-auto  gap-1 sm:grid-cols-2 md:grid-cols-3  lg:gap-5 auto-auto-flow p-5">
 				{wrappers.map((wrapper, index) => (
 					// <div
 					// className="hover:shadow-md"
