@@ -45,7 +45,7 @@ export default function Customize() {
 		tie: "",
 		tieColor: "",
 		note: "",
-		paymentMethod: "COP",
+		paymentMethod: "ONLINE_PAYMENT",
 		delivery: "PICKUP",
 	});
 	const { data } = useQuery<{
@@ -194,12 +194,7 @@ export default function Customize() {
 											setValues((p) => ({
 												...p,
 												delivery: value as DeliveryMethod,
-												paymentMethod:
-													p.paymentMethod === "ONLINE_PAYMENT"
-														? "ONLINE_PAYMENT"
-														: value === "PICKUP"
-														? "COP"
-														: "COD",
+												paymentMethod: "ONLINE_PAYMENT",
 											}))
 										}
 										value={values.delivery}
@@ -225,15 +220,6 @@ export default function Customize() {
 										}
 										value={values.paymentMethod}
 										type="single">
-										{values.delivery === "PICKUP" ? (
-											<ToggleGroupItem value="COP" aria-label="Toggle bold">
-												<p>COP</p>
-											</ToggleGroupItem>
-										) : (
-											<ToggleGroupItem value="COD" aria-label="Toggle bold">
-												<p>COD</p>
-											</ToggleGroupItem>
-										)}
 										<ToggleGroupItem
 											value="ONLINE_PAYMENT"
 											aria-label="Toggle italic">
@@ -303,8 +289,7 @@ export default function Customize() {
 										tie: "",
 										tieColor: "",
 										note: "",
-										paymentMethod: "COP",
-
+										paymentMethod: "ONLINE_PAYMENT",
 										delivery: "PICKUP",
 									});
 									setActiveStep(0);
