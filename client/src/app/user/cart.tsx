@@ -42,13 +42,13 @@ export default function CartPage() {
 	const hasSelectedItems = selectedItems.size > 0;
 
 	// Handle select all
-	const handleSelectAll = (checked: boolean) => {
-		if (checked) {
-			setSelectedItems(new Set(cart.items.map((item) => item.id)));
-		} else {
-			setSelectedItems(new Set());
-		}
-	};
+	// const handleSelectAll = (checked: boolean) => {
+	// 	if (checked) {
+	// 		setSelectedItems(new Set(cart.items.map((item) => item.id)));
+	// 	} else {
+	// 		setSelectedItems(new Set());
+	// 	}
+	// };
 
 	// Handle individual item selection
 	const handleSelectItem = (itemId: string, checked: boolean) => {
@@ -62,8 +62,8 @@ export default function CartPage() {
 	};
 
 	// Check if all items are selected
-	const isAllSelected =
-		cart.items.length > 0 && selectedItems.size === cart.items.length;
+	// const isAllSelected =
+	// 	cart.items.length > 0 && selectedItems.size === cart.items.length;
 
 	return (
 		<>

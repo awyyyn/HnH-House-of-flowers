@@ -305,6 +305,7 @@ export const getMonthlyRevenue = async (year?: number) => {
 			// Fetch orders for that specific month
 			const orders = await prisma.order.findMany({
 				where: {
+					status: "COMPLETED",
 					orderDate: {
 						gte: startDate,
 						lte: endDate,
