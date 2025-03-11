@@ -33,12 +33,20 @@ import {
 	TabsList,
 	TabsTrigger,
 	Separator,
+	AlertDialog,
+	AlertDialogContent,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogCancel,
+	AlertDialogAction,
 } from "@/components";
 // import type { OrderStatus } from "./types";
 import { formatCurrency } from "@/lib/utils";
 import OrderDetailDialog from "./components/order-detail-dialog";
-import { useQuery } from "@apollo/client";
-import { READ_ORDERS_BY_USER_QUERY } from "@/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { READ_ORDERS_BY_USER_QUERY, UPDATE_ORDER_MUTATION } from "@/queries";
 import { Order, OrderStatus } from "@/types";
 import { format, formatDate } from "date-fns";
 import { OrdersSkeleton } from "./components/order-skeleton";
@@ -56,6 +64,10 @@ export default function Orders() {
 			fetchPolicy: "no-cache",
 		}
 	);
+	const [cancelOrder, { loading: updatingOrder }] = useMutation(
+		UPDATE_ORDER_MUTATION
+	);
+	const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
 
 	// Filter orders based on search query and status
 	const filteredOrders = useMemo(() => {
@@ -143,6 +155,21 @@ export default function Orders() {
 		setSelectedOrder(orderId);
 	};
 
+	const confirmCancelOrder = async () => {
+		try {
+			//
+			await cancelOrder({
+				variables: {
+					id: orderToCancel,
+					status: "CANCELLED",
+				},
+				refetchQueries: [READ_ORDERS_BY_USER_QUERY],
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const selectedOrderData = selectedOrder
 		? filteredOrders.find((order: Order) => order.id === selectedOrder)
 		: null;
@@ -152,7 +179,15 @@ export default function Orders() {
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 relative ">
+			{updatingOrder && (
+				<div className="fixed top-0 left-0 w-screen h-screen bg-black/50 z-50 flex items-center justify-center">
+					<div className="bg-white p-6 rounded-lg shadow-lg text-center">
+						<div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+						<p className="font-medium">Cancelling your order...</p>
+					</div>
+				</div>
+			)}
 			<div className="flex flex-col sm:flex-row gap-4 justify-between">
 				<div className="relative w-full sm:w-72">
 					<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -264,6 +299,27 @@ export default function Orders() {
 					onClose={() => setSelectedOrder(null)}
 				/>
 			)}
+			<AlertDialog
+				open={!!orderToCancel}
+				onOpenChange={(open) => !open && setOrderToCancel(null)}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Cancel Order</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to cancel this order? This action cannot be
+							undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>No, keep order</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmCancelOrder}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+							Yes, cancel order
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 
@@ -288,7 +344,7 @@ export default function Orders() {
 		}
 
 		return ordersList.map((order: Order) => (
-			<Card key={order.id} className="overflow-hidden">
+			<Card key={order.id} className={"overflow-hidden"}>
 				<CardHeader className="bg-muted/30 pb-4">
 					<div className="flex flex-col sm:flex-row justify-between gap-2">
 						<div>
@@ -338,13 +394,26 @@ export default function Orders() {
 					</div>
 				</CardContent>
 				<Separator />
-				<CardFooter className="flex justify-between py-4">
+				<CardFooter className="flex flex-wrap gap-2 justify-between py-4">
 					<div className="font-medium">
 						Total: {formatCurrency(order.totalPrice)}
 					</div>
-					<Button variant="outline" onClick={() => handleViewDetails(order.id)}>
-						View Details
-					</Button>
+					<div className="flex gap-2 flex-wrap">
+						{order.status === "PENDING" && (
+							<Button
+								className="w-full sm:w-fit"
+								variant="destructive"
+								onClick={() => setOrderToCancel(order.id)}>
+								Cancel Order
+							</Button>
+						)}
+						<Button
+							className="w-full sm:w-fit"
+							variant="outline"
+							onClick={() => handleViewDetails(order.id)}>
+							View Details
+						</Button>
+					</div>
 				</CardFooter>
 			</Card>
 		));

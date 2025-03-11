@@ -124,7 +124,11 @@ export function NotificationDropdown() {
 					<>
 						{notifications.slice(0, 5).map((notification) => {
 							const timeAgo = formatDistanceToNow(
-								new Date(notification.createdAt),
+								new Date(
+									!isNaN(Number(notification.createdAt))
+										? Number(notification.createdAt)
+										: notification.createdAt
+								),
 								{
 									addSuffix: true,
 								}
