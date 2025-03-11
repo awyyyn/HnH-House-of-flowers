@@ -20,6 +20,7 @@ import {
 	UPDATE_NOTIFICATION_MUTATION,
 } from "@/queries";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
 function NotificationPanel() {
 	const [notifications, setNotifications] = useAtom(notificationAtom);
@@ -129,63 +130,71 @@ function NotificationPanel() {
 			<CardContent className="max-h-[78vh] overflow-auto">
 				{notifications.length > 0 ? (
 					<div className="space-y-4">
-						{notifications.map((notification) => (
-							<div
-								onClick={() =>
-									handleNotificationClick(
-										notification.id,
-										notification.read,
-										notification.type,
-										notification.userId
-									)
+						{notifications.map((notification) => {
+							const timeAgo = formatDistanceToNow(
+								new Date(notification.createdAt),
+								{
+									addSuffix: true,
 								}
-								key={notification.id}
-								className={cn(
-									"flex items-start gap-3 p-3 rounded-lg transition-colors",
-									notification.read ? "bg-background" : "bg-muted"
-								)}>
-								<div className="mt-1">{getTypeIcon(notification.type)}</div>
-								<div className="flex-1 space-y-1">
-									<div className="flex items-center justify-between">
-										<p className="font-medium text-sm">{notification.title}</p>
-										<div className="flex items-center gap-1">
+							);
+							return (
+								<div
+									onClick={() =>
+										handleNotificationClick(
+											notification.id,
+											notification.read,
+											notification.type,
+											notification.userId
+										)
+									}
+									key={notification.id}
+									className={cn(
+										"flex items-start gap-3 p-3 rounded-lg transition-colors",
+										notification.read ? "bg-background" : "bg-muted"
+									)}>
+									<div className="mt-1">{getTypeIcon(notification.type)}</div>
+									<div className="flex-1 space-y-1">
+										<div className="flex items-center justify-between">
+											<p className="font-medium text-sm">
+												{notification.title}
+											</p>
+											<div className="flex items-center gap-1">
+												{!notification.read && (
+													<Badge variant="secondary" className="h-5 px-1.5">
+														New
+													</Badge>
+												)}
+												<Button
+													disabled={loading || deleting}
+													variant="ghost"
+													size="icon"
+													className="h-6 w-6"
+													onClick={() => removeNotification(notification.id)}>
+													<X className="h-3 w-3" />
+													<span className="sr-only">Dismiss</span>
+												</Button>
+											</div>
+										</div>
+										<p className="text-sm text-muted-foreground">
+											{notification.message}
+										</p>
+										<div className="flex items-center justify-between mt-2">
+											<p className="text-xs text-muted-foreground">{timeAgo}</p>
 											{!notification.read && (
-												<Badge variant="secondary" className="h-5 px-1.5">
-													New
-												</Badge>
+												<Button
+													disabled={loading || deleting}
+													variant="ghost"
+													size="sm"
+													className="h-6 text-xs"
+													onClick={() => markAsRead(notification.id)}>
+													Mark as read
+												</Button>
 											)}
-											<Button
-												disabled={loading || deleting}
-												variant="ghost"
-												size="icon"
-												className="h-6 w-6"
-												onClick={() => removeNotification(notification.id)}>
-												<X className="h-3 w-3" />
-												<span className="sr-only">Dismiss</span>
-											</Button>
 										</div>
 									</div>
-									<p className="text-sm text-muted-foreground">
-										{notification.message}
-									</p>
-									<div className="flex items-center justify-between mt-2">
-										<p className="text-xs text-muted-foreground">
-											{notification.createdAt}
-										</p>
-										{!notification.read && (
-											<Button
-												disabled={loading || deleting}
-												variant="ghost"
-												size="sm"
-												className="h-6 text-xs"
-												onClick={() => markAsRead(notification.id)}>
-												Mark as read
-											</Button>
-										)}
-									</div>
 								</div>
-							</div>
-						))}
+							);
+						})}
 					</div>
 				) : (
 					<div className="flex flex-col items-center justify-center py-8 text-center">

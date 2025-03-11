@@ -19,6 +19,7 @@ import { UPDATE_NOTIFICATION_MUTATION } from "@/queries";
 import { NOTIFICATION_SENT_SUBSCRIPTION } from "@/queries/subscriptions";
 import { useAuth } from "@/contexts";
 import { NotificationType } from "@/types";
+import { formatDistanceToNow } from "date-fns";
 
 export function NotificationDropdown() {
 	const { user } = useAuth();
@@ -121,35 +122,43 @@ export function NotificationDropdown() {
 				<DropdownMenuSeparator />
 				{notifications.length > 0 ? (
 					<>
-						{notifications.slice(0, 5).map((notification) => (
-							<DropdownMenuItem
-								key={notification.id}
-								className="flex flex-col items-start p-3 cursor-pointer"
-								onClick={() =>
-									handleNotificationClick(
-										notification.id,
-										notification.read,
-										notification.type,
-										notification.userId,
-										notification.idToGo
-									)
-								}>
-								<div className="flex items-start justify-between w-full">
-									<p
-										className={`text-sm ${
-											notification.read ? "" : "font-medium"
-										}`}>
-										{notification.message}
+						{notifications.slice(0, 5).map((notification) => {
+							const timeAgo = formatDistanceToNow(
+								new Date(notification.createdAt),
+								{
+									addSuffix: true,
+								}
+							);
+							return (
+								<DropdownMenuItem
+									key={notification.id}
+									className="flex flex-col items-start p-3 cursor-pointer"
+									onClick={() =>
+										handleNotificationClick(
+											notification.id,
+											notification.read,
+											notification.type,
+											notification.userId,
+											notification.idToGo
+										)
+									}>
+									<div className="flex items-start justify-between w-full">
+										<p
+											className={`text-sm ${
+												notification.read ? "" : "font-medium"
+											}`}>
+											{notification.message}
+										</p>
+										{!notification.read && (
+											<div className="h-2 w-2 rounded-full bg-blue-500 mt-1 ml-2" />
+										)}
+									</div>
+									<p className="text-xs text-muted-foreground mt-1">
+										{timeAgo}
 									</p>
-									{!notification.read && (
-										<div className="h-2 w-2 rounded-full bg-blue-500 mt-1 ml-2" />
-									)}
-								</div>
-								<p className="text-xs text-muted-foreground mt-1">
-									{notification.createdAt}
-								</p>
-							</DropdownMenuItem>
-						))}
+								</DropdownMenuItem>
+							);
+						})}
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
 							asChild
