@@ -1,7 +1,8 @@
 import * as React from "react";
 import {
-	BookOpen,
+	Bell,
 	Flower,
+	Flower2,
 	LayoutDashboard,
 	LifeBuoy,
 	MessagesSquare,
@@ -25,6 +26,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts";
+import { NavSystem } from "./nav-projects";
 
 const data = {
 	navMain: [
@@ -35,7 +37,7 @@ const data = {
 			isActive: true,
 		},
 		{
-			title: "Flowers",
+			title: "Products",
 			url: "#",
 			icon: Flower,
 			items: [
@@ -50,24 +52,68 @@ const data = {
 			],
 		},
 		{
+			title: "Orders",
+			url: "#",
+			icon: Package,
+			items: [
+				{
+					title: "Add",
+					url: "/orders/add",
+				},
+				{
+					title: "List",
+					url: "/orders",
+				},
+				{
+					title: "Pre-Orders",
+					url: "/orders/pre-orders",
+				},
+			],
+		},
+
+		{
+			title: "Bouquet Items",
+			url: "#",
+			icon: Flower2,
+			items: [
+				{
+					title: "Add Item",
+					url: "/bouquet-items/add-item",
+				},
+				{
+					title: "List",
+					url: "/bouquet-items",
+				},
+			],
+		},
+	],
+	navSecondary: [
+		{
+			title: "Support",
+			url: "#",
+			icon: LifeBuoy,
+		},
+		{
+			title: "Feedback",
+			url: "#",
+			icon: Send,
+		},
+	],
+	systems: [
+		{
 			title: "Users",
 			url: "/users",
 			icon: Users,
 		},
 		{
-			title: "Pre-Orders",
-			url: "/pre-orders",
-			icon: BookOpen,
-		},
-		{
-			title: "Orders",
-			url: "/orders",
-			icon: Package,
-		},
-		{
 			title: "Messages",
 			url: "/messages",
 			icon: MessagesSquare,
+		},
+		{
+			title: "Notifications",
+			url: "/notifications",
+			icon: Bell,
 		},
 		{
 			title: "Admins",
@@ -85,12 +131,6 @@ const data = {
 				},
 			],
 		},
-		// {
-		// 	title: "Notifications",
-		// 	url: "/notifications",
-		// 	icon: Bell,
-		// },
-		// {
 		// 	title: "Settings",
 		// 	url: "#",
 		// 	icon: Settings2,
@@ -114,35 +154,6 @@ const data = {
 		// 	],
 		// },
 	],
-	navSecondary: [
-		{
-			title: "Support",
-			url: "#",
-			icon: LifeBuoy,
-		},
-		{
-			title: "Feedback",
-			url: "#",
-			icon: Send,
-		},
-	],
-	// projects: [
-	// 	{
-	// 		name: "Design Engineering",
-	// 		url: "#",
-	// 		icon: Frame,
-	// 	},
-	// 	{
-	// 		name: "Sales & Marketing",
-	// 		url: "#",
-	// 		icon: PieChart,
-	// 	},
-	// 	{
-	// 		name: "Travel",
-	// 		url: "#",
-	// 		icon: Map,
-	// 	},
-	// ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -169,7 +180,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain role={role} items={data.navMain} />
-				{/* <NavProjects projects={data.projects} /> */}
+				<NavSystem role={role} systems={data.systems} />
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>

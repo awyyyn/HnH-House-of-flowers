@@ -6,6 +6,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	Helmet,
 	Input,
 	InputOTP,
 	InputOTPGroup,
@@ -233,6 +234,7 @@ export default function ForgotPassword() {
 
 	return (
 		<>
+			<Helmet title="Forgot Password" />
 			{icons[step]}
 			<h1 className="text-black dark:text-white text-2xl">{header[step]}</h1>
 			<p className="text-black/60 dark:text-white/60 text-sm md:max-w-[80%] md:mx-auto">

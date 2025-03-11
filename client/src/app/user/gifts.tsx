@@ -6,6 +6,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "./components/pagination";
 import CardSkeleton from "./components/card-skeleton";
 import ProductCard from "./components/product-card";
+import { EmptyState, Helmet } from "@/components";
+import { PackageSearch } from "lucide-react";
 
 export default function Gifts() {
 	const [params] = useSearchParams();
@@ -17,6 +19,7 @@ export default function Gifts() {
 		{
 			variables: {
 				category: "GIFT",
+				status: ["IN_STOCK", "PRE_ORDER"],
 				pagination: {
 					page: page - 1,
 					limit: 10,
@@ -29,22 +32,33 @@ export default function Gifts() {
 
 	return (
 		<>
-			<div className="grid grid-cols-6 sm:grid-cols-9 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
-				{data?.products.data.map((product) => (
-					<ProductCard {...product} key={`product-card-${product.id}`} />
-				))}
-			</div>
-			<div className="my-5">
-				<PaginationComponent
-					currentPage={page}
-					onPageChange={(pg) => {
-						setPage(pg);
-						navigate(`/gifts?page=${pg}`);
-					}}
-					pageSize={10}
-					totalItems={data?.products.total ?? 0}
+			<Helmet title="Gifts" />
+			{data?.products.data.length === 0 ? (
+				<EmptyState
+					description="We're currently updating our inventory. Please check back soon for new products."
+					icon={PackageSearch}
+					title="No products available"
 				/>
-			</div>
+			) : (
+				<>
+					<div className="grid grid-cols-6 sm:grid-cols-9 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
+						{data?.products.data.map((product) => (
+							<ProductCard {...product} key={`product-card-${product.id}`} />
+						))}
+					</div>
+					<div className="my-5">
+						<PaginationComponent
+							currentPage={page}
+							onPageChange={(pg) => {
+								setPage(pg);
+								navigate(`/gifts?page=${pg}`);
+							}}
+							pageSize={10}
+							totalItems={data?.products.total ?? 0}
+						/>
+					</div>
+				</>
+			)}
 		</>
 	);
 }

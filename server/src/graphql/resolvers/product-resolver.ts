@@ -1,5 +1,8 @@
 import {
 	createProduct,
+	getBestSellingProducts,
+	getUnReviewedProductsByUser,
+	getProductSummary,
 	readProduct,
 	readProducts,
 	updateProduct,
@@ -32,7 +35,12 @@ export const createProductResolver = async (
 
 export const productsResolver = async (
 	_: never,
-	{ filter, pagination, category, status }: ProductsPaginationArgs
+	{
+		filter,
+		pagination,
+		category,
+		status = ["DISCONTINUED", "IN_STOCK", "OUT_OF_STOCK", "PRE_ORDER"],
+	}: ProductsPaginationArgs
 ) => {
 	try {
 		return await readProducts({ filter, pagination, category, status });
@@ -72,6 +80,44 @@ export const productResolver = async (_: never, { id }: { id: string }) => {
 		}
 
 		return product;
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readBestSellingProductResolver = async (
+	_: never,
+	{ take }: { take?: number }
+) => {
+	try {
+		const product = await getBestSellingProducts(take);
+
+		if (!product) {
+			throw new GraphQLError("Product not found");
+		}
+
+		return product;
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+export const readProductsSummaryResolver = async (_: never) => {
+	try {
+		return await getProductSummary();
+	} catch (error) {
+		throw new GraphQLError((error as GraphQLError).message);
+	}
+};
+
+// export const readProducts
+export const unReviewedProductsResolver = async (
+	_: never,
+	__: never,
+	app: AppContext
+) => {
+	try {
+		return await getUnReviewedProductsByUser(app.id);
 	} catch (error) {
 		throw new GraphQLError((error as GraphQLError).message);
 	}

@@ -1,3 +1,5 @@
+import { Review } from "./review";
+
 export interface Product {
 	readonly id: string;
 	name: string;
@@ -5,9 +7,11 @@ export interface Product {
 	price: number;
 	images: string[];
 	stock: number;
+	avg: number;
 
 	status: ProductStatus;
 	category: ProductCategory;
+	reviews: Review[];
 
 	createdAt: Date;
 	updatedAt: Date;

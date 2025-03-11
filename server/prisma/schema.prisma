@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model User {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   email       String     @unique
@@ -24,6 +26,9 @@ model User {
 
   orders Order[]
   cart Cart?
+  payments Payment[]
+  notifications Notification[]
+  reviews Review[]
 
   messagesSent     Message[] @relation(name: "SentMessages")
   messagesReceived Message[] @relation(name: "ReceivedMessages")
@@ -39,7 +44,6 @@ type address {
   zone String?
   street String
   city String
-  province String
 }
 
 enum UserStatus {
@@ -56,28 +60,56 @@ enum UserRole {
 
 model Order {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  customerID String      @db.ObjectId
-  customer   User        @relation(fields: [customerID], references: [id])
+  formattedId String @unique
+  customerID String?      @db.ObjectId
+  customer   User?        @relation(fields: [customerID], references: [id])
   status     OrderStatus @default(PENDING)
   totalPrice Float
+ 
+
+  payment Payment? 
+  typeOfDelivery typeOfDelivery
+  typeOfPayment  typeOfPayment  
+  isPreOrder Boolean @default(false)
 
   orderItems OrderItem[]
-
   // TimeStamps
   orderDate    DateTime  @default(now())
-  preOrderData DateTime?
-  deliveryDate DateTime?
+  processedAt  DateTime?
+  shippedAt    DateTime?
+  forPickup  DateTime?
+  cancelledAt  DateTime?
+  completedAt  DateTime?
 
   @@map("orders")
+}
+
+enum typeOfPayment {
+  CASH
+  GCASH
+}
+
+enum typeOfDelivery {
+  PICKUP
+  DELIVERY
+}
+ 
+
+type BouquetItems {
+  subFlowers String[]
+  mainFlower String
+  wrapper String
+  tie String
 }
 
 model Customize {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  description String?
-  price       Float?
 
-  orderItem OrderItem?
+  note String?
+  totalPrice Float
+
+  bouquetItems BouquetItems
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -93,22 +125,64 @@ model OrderItem {
   price    Float
   quantity Int
 
-  productId   String?    @unique @db.ObjectId
+  productId   String?      @db.ObjectId
   product     Product?   @relation(fields: [productId], references: [id])
-  isCustomize Boolean    @default(false)
-  customizeId String?    @unique @db.ObjectId
-  customize   Customize? @relation(fields: [customizeId], references: [id])
 
   @@map("order_items")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model Payment {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  checkoutUrl String
+  status     PaymentStatus
+  paymentId String @unique
+  orderId   String @db.ObjectId @unique
+  order     Order  @relation(fields: [orderId], references: [id])
+  userId    String? @db.ObjectId
+  user      User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
 }
 
 enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
-  DELIVERED
+  COMPLETED
   CANCELLED
   READY_FOR_PICKUP
+}
+
+model BouquetItem {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String
+  price Float
+  svg String[]
+  colors String[] @default([])
+  type BouquetItemType
+  isAvailable Boolean @default(true)
+  
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bouquet_flowers")
+}
+
+enum BouquetItemType {
+  WRAPPER
+  TIE
+  FLOWER
+  SUB_FLOWER
 }
 
 model Product {
@@ -119,6 +193,8 @@ model Product {
   images       String[]
   // tags        String[]
   stock       Int    @default(1)
+
+  reviews Review[]
 
 
   status   ProductStatus   @default(IN_STOCK)
@@ -181,9 +257,9 @@ model Cart {
 
 model CartItem {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId // Unique item ID
-  cartId     String  @db.ObjectId  // Cart ID (foreign key to Cart model)
+  cartId     String  @db.ObjectId   // Cart ID (foreign key to Cart model)
   cart       Cart     @relation(fields: [cartId], references: [id])
-  productId  String   @db.ObjectId
+  productId  String   @db.ObjectId 
   product    Product  @relation(fields: [productId], references: [id])
   quantity   Int      // Quantity of the product in the cart
 
@@ -207,3 +283,48 @@ model Message {
 }
  
  
+model Notification {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId
+  user        User   @relation(fields: [userId], references: [id])
+  message     String
+  title      String
+  type        NotificationType
+  read        Boolean @default(false)
+  idToGo      String
+
+  toShop      Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  ORDER
+  MESSAGE
+  PRE_ORDER
+  REVIEW
+}
+
+model Review {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String @db.ObjectId
+  user       User   @relation(fields: [userId], references: [id])
+  productId  String @db.ObjectId
+  product    Product @relation(fields: [productId], references: [id])
+  rating     Int
+  comment    String?
+  images     String[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+
+
+  @@unique([userId, productId])
+
+
+  @@map("reviews")
+}

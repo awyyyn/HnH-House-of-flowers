@@ -1,8 +1,13 @@
 import { prisma } from "../services/prisma.js";
+import { BouquetItemType } from "./bouquet-item.js";
+import { OrderDeliveryType, OrderPaymentType, OrderStatus } from "./order.js";
 import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
 export * from "./user.js";
 export * from "./product.js";
+export * from "./cart.js";
+export * from "./bouquet-item.js";
+export * from "./order.js";
 
 export interface UserFilter {
 	filter?: string;
@@ -13,14 +18,37 @@ export interface UserFilter {
 	status?: UserStatus;
 	role?: UserRole;
 }
+
 export interface ProductFilter {
 	filter?: string;
 	pagination?: {
 		page: number;
 		limit: number;
 	};
-	status?: ProductStatus;
+	status?: ProductStatus[];
 	category?: ProductCategory;
+}
+
+export interface BouquetItemFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	isAvailable?: boolean;
+	type?: BouquetItemType[];
+}
+
+export interface OrderFilter {
+	filter?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+	};
+	isPreOrder?: boolean;
+	status?: OrderStatus[];
+	typeOfPayment?: OrderPaymentType;
+	typeOfDelivery?: OrderDeliveryType;
 }
 
 export interface PaginationResult<T> {
@@ -48,7 +76,7 @@ export interface UserPaginationArgs {
 
 export interface ProductsPaginationArgs {
 	filter?: string;
-	status?: ProductStatus;
+	status?: ProductStatus[];
 	category?: ProductCategory;
 	pagination?: {
 		page: number;
@@ -72,7 +100,6 @@ export interface UpdateUserInput {
 	address: {
 		zone: string;
 		city: string;
-		province: string;
 		street: string;
 	} | null;
 }

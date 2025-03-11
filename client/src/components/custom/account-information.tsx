@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FileUpload } from "./file-upload";
 import { useAuth } from "@/contexts";
 import { Button } from "../ui/button";
-import { provinces as allProvinces, barangays } from "psgc";
 import {
 	Form,
 	FormControl,
@@ -23,6 +22,7 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER_MUTATION } from "@/queries";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import places from "../../../places.json";
 
 const accountInformationSchema = z.object({
 	firstName: z.string().nonempty(),
@@ -38,7 +38,6 @@ const accountInformationSchema = z.object({
 	zone: z.string().optional(),
 	street: z.string(),
 	city: z.string(),
-	province: z.string(),
 });
 
 interface Choices {
@@ -66,26 +65,40 @@ export default function AccountInformation({
 			birthDate: user?.birthDate ?? "",
 			photo: user?.photo ?? "",
 			city: user?.address?.city ?? "",
-			province: user?.address?.province ?? "",
 			street: user?.address?.street ?? "",
 			zone: user?.address?.zone ?? "",
 		},
 	});
 	const navigate = useNavigate();
-	const [cities, setCities] = useState<Choices[]>([]);
 	const [streets, setStreets] = useState<Choices[]>([]);
 	const { toast } = useToast();
 
-	const provinces = useMemo(
+	const citiesMunicipalities = useMemo(
 		() =>
-			allProvinces.all().map((p) => ({
-				value: p.name,
-				id: p.name,
-				label: p.name,
-				cities: p.municipalities.map((m) => m.name),
+			places.map((place) => ({
+				id: place.name,
+				label: place.name,
+				value: place.name,
 			})),
 		[]
 	);
+
+	useEffect(() => {
+		if (form.getValues("city")) {
+			const brgys =
+				places
+					.find((place) => place.name === form.getValues("city"))
+					?.barangays.flat() ?? [];
+
+			setStreets(
+				brgys.map((brgy) => ({
+					id: brgy,
+					label: brgy,
+					value: brgy,
+				}))
+			);
+		}
+	}, []);
 
 	const handleSubmit = async (
 		values: z.infer<typeof accountInformationSchema>
@@ -101,7 +114,6 @@ export default function AccountInformation({
 						birthDate: values.birthDate,
 						photo: values.photo,
 						address: {
-							province: values.province,
 							city: values.city,
 							street: values.street,
 							zone: values.zone,
@@ -163,17 +175,15 @@ export default function AccountInformation({
 					<div className="grid grid-cols-1 gap-5 w-full gap md:grid-cols-2">
 						<div
 							className={`rounded-full ${
-								uploading ? "border-transparent " : "border-dashed shadow-md"
-							} ${
 								!isEditing && "border-transparent"
-							} group border-2 group relative overflow-hidden h-[200px] w-[200px]  mx-auto   `}>
+							} group border-2 border-dashed shadow-md group relative overflow-hidden h-[200px] w-[200px]  mx-auto   `}>
 							{uploading && (
 								<div className="h-full w-full flex justify-center items-center bg-white object-cover absolute z-[99] transition-all">
 									<Loader className="animate-spin" />
 								</div>
 							)}
 							{isEditing && (
-								<div className="group-hover:z-[56] z-50 h-full w-full absolute ">
+								<div className="group-hover:z-[56] group-hover:opacity-100 opacity-0  transition-all duration-300  z-50 h-full w-full absolute ">
 									<FileUpload
 										showText
 										onFileUpload={(files) => {
@@ -214,7 +224,7 @@ export default function AccountInformation({
 								<img
 									src={form.getValues("photo") ?? user.photo}
 									alt="profile"
-									className={`h-full w-full bg-white object-cover absolute z-10 transition-all ${
+									className={`h-full w-full bg-white object-contain absolute z-10 transition-all ${
 										isEditing ? "group-hover:opacity-5" : " "
 									}`}
 								/>
@@ -408,47 +418,6 @@ export default function AccountInformation({
 
 						<FormField
 							control={form.control}
-							name="province"
-							render={() => (
-								<FormItem className="flex flex-col items-start">
-									<FormLabel className="text-black dark:text-white ">
-										Province
-									</FormLabel>
-									<FormControl>
-										<div className="w-full">
-											{isEditing ? (
-												<Combobox
-													name="province"
-													handleSelect={(value) => {
-														form.setValue("province", value);
-														form.setValue("city", "");
-														form.setValue("street", "");
-														const cities = provinces.find(
-															(p) => p.value === value
-														);
-														form.clearErrors("province");
-														setCities(
-															cities?.cities.map((c) => ({
-																value: c,
-																id: c,
-																label: c,
-															})) ?? []
-														);
-													}}
-													readonly={!isEditing || form.formState.isSubmitting}
-													choices={provinces}
-												/>
-											) : (
-												<Input readOnly value={user?.address?.province} />
-											)}
-										</div>
-									</FormControl>
-									<FormMessage className="dark:text-primary" />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
 							name="street"
 							render={() => (
 								<FormItem className="flex flex-col items-start">
@@ -459,35 +428,35 @@ export default function AccountInformation({
 										<div className="w-full">
 											{isEditing ? (
 												<Combobox
+													defaultValue={form.getValues("city")}
 													name="city or municipality"
-													readonly={
-														!form.getValues("province") ||
-														!isEditing ||
-														form.formState.isSubmitting
-													}
+													readonly={!isEditing || form.formState.isSubmitting}
 													handleSelect={(value) => {
 														form.setValue("city", value);
 														form.setValue("street", "");
 														form.clearErrors("city");
+
+														const brgys =
+															places
+																.find((place) => place.name === value)
+																?.barangays.flat() ?? [];
+
 														setStreets(
-															barangays
-																.all()
-																.filter(
-																	(f) =>
-																		f.citymun.toLowerCase() ===
-																		value.toLowerCase()
-																)
-																.map((b) => ({
-																	value: b.name,
-																	id: b.name,
-																	label: b.name,
-																})) ?? []
+															brgys.map((brgy) => ({
+																id: brgy,
+																label: brgy,
+																value: brgy,
+															}))
 														);
 													}}
-													choices={cities}
+													choices={citiesMunicipalities}
 												/>
 											) : (
-												<Input readOnly value={user?.address?.city} />
+												<Input
+													readOnly
+													className="border-none"
+													value={user?.address?.city}
+												/>
 											)}
 										</div>
 									</FormControl>
@@ -504,9 +473,10 @@ export default function AccountInformation({
 										Barangay / Street
 									</FormLabel>
 									<FormControl>
-										<div className="w-full">
+										<div className="w-full ">
 											{isEditing ? (
 												<Combobox
+													defaultValue={form.getValues("street")}
 													name="street"
 													readonly={
 														form.formState.isSubmitting ||
@@ -520,7 +490,11 @@ export default function AccountInformation({
 													choices={streets}
 												/>
 											) : (
-												<Input readOnly value={user?.address?.street} />
+												<Input
+													className="border-none"
+													readOnly
+													value={user?.address?.street}
+												/>
 											)}
 										</div>
 									</FormControl>

@@ -8,6 +8,7 @@ import {
 	Input,
 	Form,
 	InputWithIcon,
+	Helmet,
 } from "@/components";
 import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
@@ -70,11 +71,18 @@ export default function Register() {
 			}
 
 			login(data.data.accessToken, data.data.user);
-			if (data.data.user.role === "USER") {
-				navigate("/");
-			} else {
-				navigate("/dashboard");
+
+			if (data.data.user.phoneNumber === null || !data.data.user.phoneNumber) {
+				return navigate("/set-up-account");
 			}
+
+			if (
+				data.data.user.status === "UNVERIFIED" ||
+				!data.data.user.verifiedAt
+			) {
+				return navigate("/verify-account");
+			}
+
 			toast({
 				title: "Logged in successfully",
 				description: "You have successfully logged in",
@@ -94,6 +102,7 @@ export default function Register() {
 
 	return (
 		<>
+			<Helmet title="Register" />
 			<Flower className="text-primary mx-auto " size={50} />
 			<h1 className="text-black dark:text-white text-2xl">Sign up</h1>
 			<p className="text-black/60 dark:text-white/60 text-sm">

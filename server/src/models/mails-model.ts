@@ -92,3 +92,67 @@ export const sendAccountVerificationOTP = async ({
 
 	await transporter.sendMail(mailOptions);
 };
+
+export const sendChangeEmailOTP = async ({ email, otp }: RegistrationLink) => {
+	const mailOptions = {
+		from: environment.EMAIL,
+		sender: {
+			name: "H&H - House of Flowers",
+			address: environment.EMAIL!,
+		},
+		to: email,
+		subject: "Change Email OTP",
+		html: `
+            <h1 style={h1}>Verify Your New Email Address</h1>
+            <p style={text}>Hello,</p>
+            <p style={text}>You've requested to change your email address. Please use the following OTP to verify your new email address:</p>
+            <section style={codeContainer}>
+                <p>
+                OTP: <span style="font-weight: bold">${otp}</span>
+                </p>
+            </section>
+            <p style={text}>
+                Please enter the OTP above in the verification page to complete your email change process.
+            </p>
+            <hr />
+            <p style={footer}>
+                If you didn't request this change or have any questions, please contact our support team immediately.
+            </p>
+        `,
+	};
+
+	await transporter.sendMail(mailOptions);
+};
+
+export const sendForgotPasswordOTP = async ({
+	email,
+	otp,
+}: RegistrationLink) => {
+	const mailOptions = {
+		from: environment.EMAIL,
+		sender: {
+			name: "H&H - House of Flowers",
+			address: environment.EMAIL!,
+		},
+		to: email,
+		subject: "Forgot Password OTP",
+		html: `
+            <h1 style={h1}>Reset Your Password</h1>
+            <p style={text}>Hello,</p>
+            <p style={text}>
+                We received a request to reset your password. Please use the following OTP to proceed:
+            </p>
+            <section style={codeContainer}>
+                <p>
+                OTP: <span style="font-weight: bold">${otp}</span>
+                </p>
+            </section>
+            <hr/>
+            <p style={footer}>
+                If you did not request a password reset, please ignore this email.
+            </p>
+        `,
+	};
+
+	await transporter.sendMail(mailOptions);
+};

@@ -7,6 +7,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 	Separator,
+	NotificationDropdown,
 } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Suspense } from "react";
@@ -29,8 +30,8 @@ export default function AdminLayout({
 				<AppSidebar />
 			</Suspense>
 			<main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100sdvh] h-auto ">
-				<header className="flex z-20  shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
-					<div className="flex items-center gap-2 px-4">
+				<header className="flex justify-between pr-5 lg:pr-10 z-20  shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
+					<div className="flex   items-center gap-2 px-4">
 						<SidebarTrigger className="md:hidden flex justify-center" />
 						<Separator
 							orientation="vertical"
@@ -68,6 +69,7 @@ export default function AdminLayout({
 							</BreadcrumbList>
 						</Breadcrumb>
 					</div>
+					<NotificationDropdown />
 				</header>
 				<div className="p-2 md:p-4  ">{children ? children : <Outlet />}</div>
 			</main>

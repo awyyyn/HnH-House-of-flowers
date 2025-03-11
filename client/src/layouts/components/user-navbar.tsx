@@ -9,17 +9,37 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	Badge,
+	NotificationDropdown,
+	ThemeSwitcher,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
+import {
+	ChevronDown,
+	LogOut,
+	MessageCircle,
+	ShoppingBag,
+	User,
+} from "lucide-react";
 import { UserDrawer } from "./user-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import ThemeSwitcher from "@/components/custom/theme-switcher";
+import { useAtomValue } from "jotai";
+import { cartAtom, notificationAtom } from "@/states";
+import { IconPackages } from "@tabler/icons-react";
 
 export function Navbar({ className }: { className?: string }) {
 	const [active, setActive] = useState<string | null>(null);
 	const { isAuthenticated, logout, role } = useAuth();
+	const cart = useAtomValue(cartAtom);
+	const notifications = useAtomValue(notificationAtom);
+
+	const unreadCount = notifications.filter(
+		(notification) =>
+			notification.toShop === false &&
+			notification.read === false &&
+			notification.type === "MESSAGE"
+	).length;
 
 	return (
 		<div className="container -translate-x-[50%] left-[50%] fixed top-2 md:top-5 flex items-center  justify-between z-50 px-2 md:px-0  ">
@@ -31,24 +51,70 @@ export function Navbar({ className }: { className?: string }) {
 							<UserDrawer />
 						</div>
 					)}
-					<TextGenerateEffect className="text-lg  " words="House of Flowers" />
+					<Link to="/">
+						<TextGenerateEffect
+							className="text-lg  "
+							words="House of Flowers"
+						/>
+					</Link>
 				</div>
-				{!isAuthenticated && (
-					<div className="flex md:hidden items-center gap-1">
-						<Link to="/auth/login">
-							<Button size="sm">Sign In</Button>
-						</Link>
+				<div className="flex gap-2  md:hidden">
+					<ThemeSwitcher />
+					{!isAuthenticated ? (
+						<div className="flex  items-center gap-1">
+							<Link to="/auth/login">
+								<Button size="sm">Sign In</Button>
+							</Link>
 
-						<Link to="/auth/register">
-							<Button
-								size="sm"
-								className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
-								variant="outline">
-								Sign Up
-							</Button>
-						</Link>
-					</div>
-				)}
+							<Link to="/auth/register">
+								<Button
+									size="sm"
+									className="transition-all duration-300 text-primary border-primary hover:bg-primary dark:text-white dark:hover:bg-transparent hover:text-white"
+									variant="outline">
+									Sign Up
+								</Button>
+							</Link>
+						</div>
+					) : (
+						<>
+							{isAuthenticated && role === "USER" && (
+								<>
+									<Button
+										size="icon"
+										variant="ghost"
+										className="rounded-full relative"
+										asChild>
+										<Link to="/chat" className="relative">
+											<MessageCircle />
+											{unreadCount > 0 && (
+												<Badge
+													variant="destructive"
+													className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 p-0 flex items-center justify-center rounded-full"></Badge>
+											)}
+										</Link>
+									</Button>
+									<Button
+										size="icon"
+										variant="ghost"
+										asChild
+										className="rounded-full">
+										<Link to="/cart" className="relative ">
+											{cart.items.length > 0 && (
+												<Badge
+													variant="default"
+													className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full">
+													{cart.items.length}
+												</Badge>
+											)}
+											<ShoppingBag />
+										</Link>
+									</Button>
+									<NotificationDropdown />
+								</>
+							)}
+						</>
+					)}
+				</div>
 			</div>
 			<div
 				className={cn(
@@ -62,37 +128,31 @@ export function Navbar({ className }: { className?: string }) {
 					<Link to={"/customize"}>
 						<MenuItem setActive={setActive} active={null} item="Customize" />
 					</Link>
-					{/* <MenuItem setActive={setActive} active={active} item="Services">
-						<div className="flex flex-col space-y-4 text-sm">
-							<HoveredLink href="/web-dev">Web Development</HoveredLink>
-							<HoveredLink href="/interface-design">
-								Interface Design
-							</HoveredLink>
-							<HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-							<HoveredLink href="/branding">Branding</HoveredLink>
-						</div>
-					</MenuItem> */}
 					<MenuItem setActive={setActive} active={active} item="Products">
 						<div className="text-sm grid grid-cols-2 gap-10 p-4 z-[101]">
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Flowers"
 								href="/flowers"
 								src="https://images.pexels.com/photos/697259/pexels-photo-697259.jpeg?cs=srgb&dl=pexels-hieu-697259.jpg&fm=jpg"
 								description="Browse our fresh and beautiful flowers for every occasion."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Bouquets"
 								href="/bouquets"
 								src="https://www.floretflowers.com/wp-content/uploads/2016/02/Floret_Market-Bouquets-14.jpg"
 								description="Discover our artfully arranged bouquets perfect for gifts and celebrations."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Chocolates"
 								href="/chocolates"
 								src="https://www.thespruceeats.com/thmb/FhHcgQni8lgV0griUeDJMTAszxI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chocolate_hero1-d62e5444a8734f8d8fe91f5631d51ca5.jpg"
 								description="Indulge in our premium quality chocolates, a sweet treat for any moment."
 							/>
 							<ProductItem
+								handleClose={() => setActive(null)}
 								title="Gifts"
 								href="/gifts"
 								src="https://www.realsimple.com/thmb/1nO0GmEuF87RSxFBmTWtfo6TZW0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/the-best-gift-giver-GettyImages-1706575747-2089a300e6594496b7f558585a4baefb.jpg"
@@ -105,9 +165,37 @@ export function Navbar({ className }: { className?: string }) {
 			<div className="hidden pl-5 dark:bg-black dark:border dark:border-zinc-800 md:flex items-center gap-2 p-2 rounded-full backdrop-blur-lg bg-white/80">
 				{isAuthenticated && role === "USER" && (
 					<>
-						<Link to="/chat">
-							<MessageCircle />
-						</Link>
+						<Button
+							size="icon"
+							variant="ghost"
+							className="rounded-full relative"
+							asChild>
+							<Link to="/chat">
+								<MessageCircle />
+								{unreadCount > 0 && (
+									<Badge
+										variant="destructive"
+										className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 p-0 flex items-center justify-center rounded-full"></Badge>
+								)}
+							</Link>
+						</Button>
+						<Button
+							size="icon"
+							variant="ghost"
+							asChild
+							className="rounded-full">
+							<Link to="/cart" className="relative ">
+								{cart.items.length > 0 && (
+									<Badge
+										variant="default"
+										className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full">
+										{cart.items.length}
+									</Badge>
+								)}
+								<ShoppingBag />
+							</Link>
+						</Button>
+						<NotificationDropdown />
 					</>
 				)}
 				<ThemeSwitcher />
@@ -142,6 +230,12 @@ export function Navbar({ className }: { className?: string }) {
 								<Link to="/account">
 									<User />
 									<span>Profile</span>
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link to="/my-orders">
+									<IconPackages />
+									<span>Orders</span>
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={logout}>

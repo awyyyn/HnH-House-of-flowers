@@ -36,7 +36,7 @@ export function FileUpload({
 				<p
 					className={`${
 						showText ? "block" : "hidden"
-					} text-sm text-muted-foreground`}>
+					} text-sm text-center text-muted-foreground`}>
 					Drag & drop files here, or click to select files
 				</p>
 			)}

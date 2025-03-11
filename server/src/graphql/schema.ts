@@ -3,6 +3,7 @@ import { gql } from "graphql-tag";
 export const typeDefs = gql`
 	type Subscription {
 		messageSent(userId: ID!, role: UserRole): Message
+		notificationSent(userId: ID!, role: UserRole): Notification
 	}
 
 	type Query {
@@ -16,12 +17,39 @@ export const typeDefs = gql`
 		products(
 			category: ProductCategory
 			filter: String
-			status: ProductStatus
+			status: [ProductStatus]
 			pagination: PaginationInput
 		): ProductPaginationResult
 		product(id: ID!): Product
 		readMessages(userId: ID!): [Message]
 		adminMessages: UsersPaginationResult
+		bouquetItems(
+			filter: String
+			type: [BouquetItemType]
+			pagination: PaginationInput
+			isAvailable: Boolean
+		): BouquetItemPaginationResult
+		orders(
+			filter: String
+			pagination: PaginationInput
+			typeOfDelivery: OrderDeliveryType
+			typeOfPayment: OrderPaymentType
+			status: [OrderStatus]
+			isPreOrder: Boolean
+		): OrdersPaginationResult
+		bouquetItem(id: ID!): BouquetItem
+		readOrdersByUser: [Order]
+		readMonthlyRevenue(year: Int): [MonthlyRevenue]
+		lastMonthData: LastMonth
+		readBestSellingProducts(take: Int): [TopSellingProduct]
+		productsSummary: ProductSummary
+		ordersSummary: [OrderSummary]
+		readReviews(
+			id: String!
+			pagination: PaginationInput
+		): ReviewPaginationResult
+		readNotifications(pagination: PaginationInput): NotificationPaginationResult
+		unReviewedProducts: [Product]
 	}
 
 	type Mutation {
@@ -46,11 +74,98 @@ export const typeDefs = gql`
 			price: Float!
 			quantity: Int!
 			productId: String!
-			cartId: String!
+			cartId: String
 		): CartItem
 		updateCartItem(id: ID!, price: Float!, quantity: Int!): CartItem
 		removeToCart(id: ID!): CartItem
 		sendMessage(receiverId: String!, content: String!): Message
+		createBouquetItem(data: BouquetItemInput!): BouquetItem
+		updateBouquetItem(id: ID!, data: BouquetItemInput!): BouquetItem
+		createCheckoutSession(
+			line_items: [LineItemInput!]!
+			totalPrice: Float!
+			typeOfDelivery: OrderDeliveryType!
+			typeOfPayment: OrderPaymentType!
+			preOrder: Boolean
+			fromCartItem: Boolean
+		): Order
+		createOrder(
+			line_items: [LineItemInput!]!
+			totalPrice: Float!
+			preOrder: Boolean
+		): Order
+		updateOrder(id: ID!, status: OrderStatus): Order
+		createReview(
+			rate: Int!
+			images: [String]
+			productId: String!
+			comment: String
+		): Review
+		updateNotification(id: ID): String!
+		deleteNotification(id: ID): String!
+	}
+
+	type ProductSummary {
+		total: Int!
+		bouquetCount: Int!
+		chocolateCount: Int!
+		flowerCount: Int!
+		giftCount: Int!
+		bouquetPercentage: Float!
+		flowerPercentage: Float!
+		chocolatePercentage: Float!
+		giftPercentage: Float!
+	}
+
+	type OrderSummary {
+		count: Int!
+		status: OrderStatus!
+		percentage: Float!
+	}
+
+	enum OrderPaymentType {
+		CASH
+		GCASH
+	}
+
+	enum OrderDeliveryType {
+		PICKUP
+		DELIVERY
+	}
+
+	type MonthlyRevenue {
+		year: Int!
+		month: String!
+		revenue: Float!
+	}
+
+	type LastMonth {
+		orders: LastMonthItem!
+		revenues: LastMonthItem!
+		users: LastMonthItem!
+	}
+
+	type TopSellingProduct {
+		id: ID!
+		images: [String]
+		price: Float!
+		name: String!
+		sold: Int!
+	}
+
+	type LastMonthItem {
+		lastMonth: Int!
+		overAll: Int!
+		percentage: Float!
+	}
+
+	input LineItemInput {
+		cartItemId: String
+		amount: Float!
+		id: String!
+		name: String!
+		images: [String]!
+		quantity: Int!
 	}
 
 	input UpdateUserInput {
@@ -87,6 +202,30 @@ export const typeDefs = gql`
 		hasNextPage: Boolean!
 	}
 
+	type ReviewPaginationResult {
+		total: Int!
+		data: [Review]
+		hasNextPage: Boolean!
+	}
+
+	type NotificationPaginationResult {
+		total: Int!
+		data: [Notification]
+		hasNextPage: Boolean!
+	}
+
+	type BouquetItemPaginationResult {
+		total: Int!
+		data: [BouquetItem]
+		hasNextPage: Boolean!
+	}
+
+	type OrdersPaginationResult {
+		total: Int!
+		data: [Order]
+		hasNextPage: Boolean!
+	}
+
 	"""
 	User type
 	"""
@@ -116,14 +255,12 @@ export const typeDefs = gql`
 		zone: String
 		street: String
 		city: String
-		province: String
 	}
 
 	input AddressInput {
 		zone: String
 		street: String
 		city: String
-		province: String
 	}
 
 	enum UserRole {
@@ -140,31 +277,42 @@ export const typeDefs = gql`
 
 	type OrderItem {
 		id: ID!
-		order: Order!
+		order: Order
+		orderId: String
 		price: Float!
 		quantity: Int!
-		isCustomize: Boolean!
-		customize: Customize
+
+		productId: String
+		product: Product
 	}
 
 	type Order {
 		id: ID!
-		customer: User!
+		customer: User
 		status: OrderStatus!
+		formattedId: String!
 		totalPrice: Float!
+		isPreOrder: Boolean!
 
 		orderItems: [OrderItem]
 
+		payment: Payment
+		typeOfDelivery: OrderDeliveryType
+		typeOfPayment: OrderPaymentType
+
 		orderDate: String!
-		preOrderDate: String
-		deliveryDate: String
+		processedAt: String
+		shippedAt: String
+		forPickup: String
+		cancelledAt: String
+		completedAt: String
 	}
 
 	enum OrderStatus {
 		PENDING
 		PROCESSING
 		SHIPPED
-		DELIVERED
+		COMPLETED
 		CANCELLED
 		READY_FOR_PICKUP
 	}
@@ -176,8 +324,11 @@ export const typeDefs = gql`
 		price: Float!
 		images: [String]
 		stock: Int!
+		avg: Float
+
 		status: ProductStatus!
 		category: ProductCategory!
+		reviews: [Review]
 
 		createdAt: String!
 		updatedAt: String!
@@ -189,7 +340,7 @@ export const typeDefs = gql`
 		price: Float!
 		images: [String]
 		stock: Int!
-		status: ProductStatus!
+		status: [ProductStatus]!
 		category: ProductCategory!
 	}
 
@@ -210,9 +361,11 @@ export const typeDefs = gql`
 	type Customize {
 		id: ID!
 		name: String!
-		description: String
-		price: String
-		orderItem: OrderItem
+		note: String
+
+		totalPrice: Float
+		bouquetItems: BouquetItems
+
 		createdAt: String!
 		updatedAt: String!
 	}
@@ -248,5 +401,95 @@ export const typeDefs = gql`
 		cart: Cart!
 
 		price: Float!
+	}
+
+	type BouquetItem {
+		id: ID!
+		name: String!
+		price: Float!
+		svg: [String]
+		colors: [String]
+		type: BouquetItemType!
+		isAvailable: Boolean!
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	enum BouquetItemType {
+		WRAPPER
+		TIE
+		FLOWER
+		SUB_FLOWER
+	}
+
+	type BouquetItems {
+		subFlowers: [String]
+		mainFlower: String
+		wrapper: String
+		tie: String
+	}
+
+	input BouquetItemInput {
+		name: String!
+		price: Float!
+		svg: [String]
+		colors: [String]
+		type: BouquetItemType!
+		isAvailable: Boolean!
+	}
+
+	type Payment {
+		id: ID!
+		checkoutUrl: String!
+		status: PaymentStatus!
+		paymentId: String!
+		orderId: String!
+		order: Order!
+		userId: String
+		user: User
+
+		createdAt: String!
+	}
+
+	enum PaymentStatus {
+		PENDING
+		SUCCESS
+		FAILED
+		CANCELLED
+	}
+
+	type Notification {
+		id: ID!
+		userId: String!
+		user: User!
+		title: String!
+		message: String!
+		type: NotificationType!
+		read: Boolean!
+		toShop: Boolean!
+		idToGo: String!
+
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	enum NotificationType {
+		ORDER
+		MESSAGE
+		PRE_ORDER
+		REVIEW
+	}
+
+	type Review {
+		id: ID!
+		userId: String!
+		user: User!
+		productId: String!
+		product: Product!
+		rating: Int!
+		comment: String
+		images: [String]
+		createdAt: String
+		updatedAt: String
 	}
 `;

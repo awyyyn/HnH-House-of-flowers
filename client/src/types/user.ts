@@ -1,3 +1,5 @@
+import { Cart } from "./cart.js";
+import { Notification } from "./notification.js";
 import { Order } from "./order.js";
 
 export interface User {
@@ -15,7 +17,10 @@ export interface User {
 	role: UserRole;
 	status: UserStatus;
 
+	notifications: Notification[];
+
 	orders: Order[];
+	cart: Cart;
 
 	createdAt: Date;
 	updatedAt: Date;
@@ -24,7 +29,6 @@ export interface UserAddress {
 	zone: string;
 	street: string;
 	city: string;
-	province: string;
 }
 
 export type UserRole = "SUPER_ADMIN" | "ADMIN" | "USER";

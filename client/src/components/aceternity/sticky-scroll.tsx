@@ -21,7 +21,7 @@ export const StickyScroll = ({
 			<div className=" w-full    max-w-sm">{leftContent}</div>
 			<div
 				className={cn(
-					"  rounded-md  bg-white   sticky pb-10 min-h-[400px] md:min-h-fit top-0 md:top-10  overflow-hidden  ",
+					"  rounded-md  bg-white dark:bg-zinc-800  sticky pb-10 min-h-[400px] md:min-h-fit top-0 md:top-10  overflow-hidden  ",
 					contentClassName
 				)}>
 				<div className="scale-75 sm:scale-80 md:scale-100">{rightContent}</div>

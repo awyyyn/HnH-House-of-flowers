@@ -5,6 +5,10 @@ import {
 	createToken,
 	readToken,
 	sendAccountVerificationOTP,
+	createCart,
+	readCart,
+	sendForgotPasswordOTP,
+	readNotifications,
 } from "../models/index.js";
 import {
 	comparePassword,
@@ -50,11 +54,21 @@ export const loginController = async (req: Request, res: Response) => {
 			id: user.id,
 		});
 
+		const cart = await readCart(user.id);
+		const notifications = await readNotifications({
+			role: user.role,
+			userId: user.id,
+		});
+
 		res.status(200).json({
 			message: "Login successful",
 			data: {
 				accessToken,
-				user,
+				user: {
+					...user,
+					cart,
+					notifications: notifications.data,
+				},
 			},
 		});
 	} catch (err) {
@@ -97,12 +111,16 @@ export const registerController = async (req: Request, res: Response) => {
 
 		const otp = await createToken(newUser.email);
 		await sendAccountVerificationOTP({ email: newUser.email, otp: otp.token });
+		const cart = await createCart({ userId: newUser.id });
 
 		res.status(200).json({
 			message: "Register successful",
 			data: {
 				accessToken,
-				user: newUser,
+				user: {
+					...newUser,
+					cart: cart,
+				},
 			},
 		});
 	} catch (err) {
@@ -145,7 +163,8 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 			return;
 		}
 
-		await createToken(user.email);
+		const token = await createToken(user.email);
+		await sendForgotPasswordOTP({ email: user.email, otp: token.token });
 
 		res.status(200).json({
 			message: "OTP sent to email",
@@ -243,6 +262,8 @@ export const meController = async (req: Request, res: Response) => {
 			return;
 		}
 
+		const cart = await readCart(user.id);
+
 		// Generate token
 		const accessToken = await generateAccessToken({
 			email: user.email,
@@ -250,11 +271,20 @@ export const meController = async (req: Request, res: Response) => {
 			id: user.id,
 		});
 
+		const { data } = await readNotifications({
+			role: user.role,
+			userId: user.id,
+		});
+
 		res.status(200).json({
 			message: "Login successful",
 			data: {
 				accessToken,
-				user,
+				user: {
+					...user,
+					cart,
+					notifications: data,
+				},
 			},
 		});
 	} catch (err) {

@@ -9,6 +9,7 @@ import {
 	updateUser,
 	readToken,
 	createToken,
+	sendChangeEmailOTP,
 } from "../../models/index.js";
 import {
 	AppContext,
@@ -162,7 +163,8 @@ export const sendChangeEmailOTPResolver = async (
 			);
 		}
 
-		await createToken(newEmail);
+		const token = await createToken(newEmail);
+		await sendChangeEmailOTP({ email: newEmail, otp: token.token });
 
 		return "OTP sent successfully";
 	} catch (error) {

@@ -11,6 +11,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
+	Helmet,
 } from "@/components";
 import { useQuery } from "@apollo/client";
 import { GET_PRODUCTS_QUERY } from "@/queries";
@@ -135,8 +136,9 @@ export default function ProductsPage() {
 
 	return (
 		<>
+			<Helmet title="Product" />
 			<div className="flex justify-between items-center py-2">
-				<h1 className="text-4xl">List of admins</h1>
+				<h1 className="text-4xl">List of products</h1>
 			</div>
 			<DataTable
 				loading={loading}

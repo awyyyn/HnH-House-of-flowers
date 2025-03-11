@@ -36,8 +36,16 @@ RichTextEditorProps) => {
 	const editor = useEditor({
 		autofocus: false,
 		extensions: [
-			BulletExe,
-			ListItemExe,
+			BulletExe.configure({
+				HTMLAttributes: {
+					class: "pl-5 ml-10 ",
+				},
+			}),
+			ListItemExe.configure({
+				HTMLAttributes: {
+					class: "pl-5 ml-10",
+				},
+			}),
 			OrderedListExe,
 			StarterKit.configure({
 				heading: {
@@ -52,7 +60,7 @@ RichTextEditorProps) => {
 			},
 		},
 		editable: editable,
-		// injectCSS: true,
+		injectCSS: true,
 		content: content
 			? `${generateHTML(JSON.parse(String(content)), [
 					UnderlineExe,

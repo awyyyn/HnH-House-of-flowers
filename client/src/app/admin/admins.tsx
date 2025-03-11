@@ -11,6 +11,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
+	Helmet,
 } from "@/components";
 import { useQuery } from "@apollo/client";
 import { getUsersQuery } from "@/queries";
@@ -144,6 +145,7 @@ export default function UsersPage() {
 
 	return (
 		<>
+			<Helmet title="Admins" />
 			<div className="flex justify-between items-center py-2">
 				<h1 className="text-4xl">List of admins</h1>
 			</div>
@@ -152,6 +154,7 @@ export default function UsersPage() {
 				pagination={pagination}
 				setPagination={setPagination}
 				columns={columns}
+				filterName="email"
 				data={data?.users.data ?? []}
 				rowCount={data?.users.total ?? 0}
 			/>

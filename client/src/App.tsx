@@ -12,6 +12,7 @@ import UsersPage from "./app/admin/users";
 import AdminsPage from "./app/admin/admins";
 import Orders from "./app/admin/orders";
 import PreOrders from "./app/admin/pre-orders";
+import UserOrders from "./app/user/orders";
 import AddAdmin from "./app/admin/add-admin";
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
@@ -30,6 +31,15 @@ import Messages from "./app/admin/messages";
 import MessagesMobile from "./app/admin/messages-mobile";
 import Conversation from "./app/admin/conversation";
 import Chat from "./app/user/chat";
+import CartPage from "./app/user/cart";
+import BouquetsItems from "./app/admin/bouquet-items";
+import AddBouquetItem from "./app/admin/add-bouquet-item";
+import CheckoutPage from "./app/user/checkout";
+import CheckoutSuccess from "./app/user/checkout-success";
+import CheckoutError from "./app/user/checkout-error";
+import AddOrder from "./app/admin/add-order";
+import Notification from "./app/notification";
+import ReviewPage from "./app/user/review";
 
 export default function App() {
 	const publicRoutes = [
@@ -65,11 +75,20 @@ export default function App() {
 					},
 					{
 						path: "orders",
-						element: <Orders />,
-					},
-					{
-						path: "pre-orders",
-						element: <PreOrders />,
+						children: [
+							{
+								path: "add",
+								element: <AddOrder />,
+							},
+							{
+								index: true,
+								element: <Orders />,
+							},
+							{
+								path: "pre-orders",
+								element: <PreOrders />,
+							},
+						],
 					},
 					{
 						path: "messages",
@@ -82,6 +101,19 @@ export default function App() {
 							{
 								path: ":userId",
 								element: <Conversation />,
+							},
+						],
+					},
+					{
+						path: "bouquet-items",
+						children: [
+							{
+								index: true,
+								element: <BouquetsItems />,
+							},
+							{
+								path: "add-item",
+								element: <AddBouquetItem />,
 							},
 						],
 					},
@@ -160,6 +192,31 @@ export default function App() {
 						element: <Customize />,
 					},
 					{
+						path: "add-review/:id",
+						element: <ReviewPage />,
+					},
+					{
+						path: "my-orders",
+						element: <UserOrders />,
+					},
+					{
+						path: "checkout",
+						children: [
+							{
+								index: true,
+								element: <CheckoutPage />,
+							},
+							{
+								path: "success",
+								element: <CheckoutSuccess />,
+							},
+							{
+								path: "error",
+								element: <CheckoutError />,
+							},
+						],
+					},
+					{
 						path: "chat",
 						element: <Chat />,
 					},
@@ -215,6 +272,10 @@ export default function App() {
 							},
 						],
 					},
+					{
+						path: "cart",
+						element: <CartPage />,
+					},
 				],
 			},
 		],
@@ -229,6 +290,10 @@ export default function App() {
 				{
 					path: "account",
 					element: <Account />,
+				},
+				{
+					path: "notifications",
+					element: <Notification />,
 				},
 			],
 		},

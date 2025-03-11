@@ -16,8 +16,14 @@ export default function ProductCard(product: Product) {
 				/>
 				<Badge
 					className="absolute bottom-2 right-2 capitalize"
-					variant={productStatusColorMap[product.status]}>
-					{product.status.toLowerCase().split("_").join(" ")}
+					variant={
+						productStatusColorMap[
+							product.stock === 0 ? "OUT_OF_STOCK" : product.status
+						]
+					}>
+					{product.stock === 0
+						? "Out of stock"
+						: product.status.toLowerCase().split("_").join(" ")}
 				</Badge>
 			</div>
 			<div className="p-2">

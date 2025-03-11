@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { productFragment, userFragment } from "./fragments";
+import {
+	bouquetItemFragment,
+	productFragment,
+	userFragment,
+} from "./fragments";
 
 export const CREATE_ADMIN_MUTATION = gql`
 	${userFragment}
@@ -120,6 +124,192 @@ export const SEND_MESSAGE_MUTATION = gql`
 			content
 			createdAt
 			updatedAt
+		}
+	}
+`;
+
+export const ADD_TO_CART_MUTATION = gql`
+	${productFragment}
+	mutation (
+		$price: Float!
+		$quantity: Int!
+		$productId: String!
+		$cartId: String
+	) {
+		cartItem: addToCart(
+			price: $price
+			quantity: $quantity
+			productId: $productId
+			cartId: $cartId
+		) {
+			id
+			product {
+				...ProductFragment
+			}
+			productId
+			quantity
+			cartId
+			price
+		}
+	}
+`;
+
+export const REMOVE_TO_CART_MUTATION = gql`
+	mutation ($id: ID!) {
+		cartItem: removeToCart(id: $id) {
+			id
+			productId
+			quantity
+			cartId
+			price
+		}
+	}
+`;
+
+export const CREATE_BOUQUET_ITEM_MUTATION = gql`
+	${bouquetItemFragment}
+	mutation ($data: BouquetItemInput!) {
+		bouquetItem: createBouquetItem(data: $data) {
+			...BouquetItemFragment
+		}
+	}
+`;
+
+export const UPDATE_BOUQUET_ITEM_MUTATION = gql`
+	${bouquetItemFragment}
+	mutation UpdateBouquetItem($id: ID!, $data: BouquetItemInput!) {
+		bouquetItem: updateBouquetItem(id: $id, data: $data) {
+			...BouquetItemFragment
+		}
+	}
+`;
+
+export const CHECKOUT_MUTATION = gql`
+	mutation CreateCheckoutSession(
+		$lineItems: [LineItemInput!]!
+		$totalPrice: Float!
+		$typeOfDelivery: OrderDeliveryType!
+		$typeOfPayment: OrderPaymentType!
+		$fromCartItem: Boolean
+	) {
+		createCheckoutSession(
+			line_items: $lineItems
+			totalPrice: $totalPrice
+			typeOfDelivery: $typeOfDelivery
+			typeOfPayment: $typeOfPayment
+			fromCartItem: $fromCartItem
+		) {
+			id
+			payment {
+				checkoutUrl
+				id
+			}
+			status
+			totalPrice
+			isPreOrder
+			orderItems {
+				id
+				product {
+					images
+					name
+				}
+				price
+				quantity
+				orderId
+			}
+
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
+export const CREATE_ORDER_MUTATION = gql`
+	mutation CreateOrder(
+		$lineItems: [LineItemInput!]!
+		$totalPrice: Float!
+		$preOrder: Boolean
+	) {
+		createOrder(
+			line_items: $lineItems
+			totalPrice: $totalPrice
+			preOrder: $preOrder
+		) {
+			id
+			payment {
+				checkoutUrl
+				id
+			}
+			status
+			totalPrice
+			isPreOrder
+			orderItems {
+				id
+				product {
+					images
+					name
+				}
+				price
+				quantity
+				orderId
+			}
+
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
+export const UPDATE_ORDER_MUTATION = gql`
+	mutation Mutation($id: ID!, $status: OrderStatus) {
+		updateOrder(id: $id, status: $status) {
+			id
+			status
+			formattedId
+			totalPrice
+			isPreOrder
+			typeOfDelivery
+			typeOfPayment
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
+export const UPDATE_NOTIFICATION_MUTATION = gql`
+	mutation ($id: ID) {
+		notification: updateNotification(id: $id)
+	}
+`;
+
+export const DELETE_NOTIFICATION_MUTATION = gql`
+	mutation ($id: ID) {
+		notification: deleteNotification(id: $id)
+	}
+`;
+export const CREATE_REVIEW_MUTATION = gql`
+	mutation ($rate: Int!, $productId: String!, $comment: String) {
+		review: createReview(
+			rate: $rate
+			productId: $productId
+			comment: $comment
+		) {
+			id
+			userId
+			rating
+			comment
 		}
 	}
 `;

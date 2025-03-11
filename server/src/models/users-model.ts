@@ -6,7 +6,7 @@ export const createUser = async (values: {
 	email: string;
 	password: string;
 	role: UserRole;
-}): Promise<Omit<User, "orders"> | null> => {
+}): Promise<Omit<User, "orders" | "cart"> | null> => {
 	const hashedPassword = await hashPassword(values.password);
 
 	const newUser = await prisma.user.create({

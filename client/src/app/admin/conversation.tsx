@@ -9,6 +9,7 @@ import {
 	AvatarFallback,
 	AvatarImage,
 	Button,
+	Helmet,
 	Input,
 } from "@/components";
 import { User } from "@/types";
@@ -57,6 +58,7 @@ export default function Conversation() {
 		onCompleted(data: { readMessages: Message[] }) {
 			setMessages(data?.readMessages ?? []);
 		},
+		fetchPolicy: "no-cache",
 	});
 
 	if (loading) return <div>Loading...</div>;
@@ -82,75 +84,78 @@ export default function Conversation() {
 	};
 
 	return (
-		<div className="flex flex-col h-[calc(100dvh-6rem)]">
-			{/* Header */}
-			<div className="flex items-center px-4 py-3 border-b bg-white dark:bg-zinc-950">
-				<div className="flex items-center gap-3">
-					<Avatar>
-						<AvatarImage src={user?.photo} />
-						<AvatarFallback className="capitalize">
-							{user?.firstName && user?.lastName
-								? `${user.firstName[0]}${user.lastName[0]}`
-								: "U"}
-						</AvatarFallback>
-					</Avatar>
-					<div>
-						<p className="font-medium">
-							{user?.firstName} {user?.lastName}
-						</p>
-						<p className="text-sm text-gray-500">{user?.email}</p>
-					</div>
-				</div>
-			</div>
-
-			{/* Messages */}
-			<div className="flex-1 overflow-y-auto p-4 space-y-4 bg-primary/5">
-				{messages.map((msg, index) => (
-					<div
-						key={index}
-						className={`flex ${
-							msg.senderId === userId ? "justify-start" : "justify-end"
-						}`}>
-						<div
-							className={`max-w-[70%] p-3 rounded-lg ${
-								msg.senderId === userId
-									? "bg-white dark:bg-zinc-800"
-									: "bg-primary text-white"
-							}`}>
-							{msg.content}
+		<>
+			<Helmet title={`Conversation ${user?.firstName} ${user?.lastName}`} />
+			<div className="flex flex-col h-[calc(100dvh-6rem)]">
+				{/* Header */}
+				<div className="flex items-center px-4 py-3 border-b bg-white dark:bg-zinc-950">
+					<div className="flex items-center gap-3">
+						<Avatar className="shadow-sm border border-primary/10">
+							<AvatarImage className="object-contain " src={user?.photo} />
+							<AvatarFallback className="capitalize">
+								{user?.firstName && user?.lastName
+									? `${user.firstName[0]}${user.lastName[0]}`
+									: "U"}
+							</AvatarFallback>
+						</Avatar>
+						<div>
+							<p className="font-medium">
+								{user?.firstName} {user?.lastName}
+							</p>
+							<p className="text-sm text-gray-500">{user?.email}</p>
 						</div>
 					</div>
-				))}
-				{/* Invisible div for scrolling */}
-				<div ref={messagesEndRef} />
-			</div>
+				</div>
 
-			{/* Input */}
-			<div className="p-4 border-t bg-white dark:bg-zinc-950">
-				<div className="relative flex items-center">
-					<Input
-						className="pr-12 border-none ring-1 ring-gray-200 dark:ring-gray-800 focus:ring-2 focus:ring-primary"
-						value={message}
-						onChange={(e) => setMessage(e.target.value)}
-						placeholder="Type a message"
-						onKeyDown={(e) => {
-							if (e.key === "Enter" && !e.shiftKey) {
-								e.preventDefault();
-								handleSendMessage();
-							}
-						}}
-						readOnly={messagesLoading}
-					/>
-					<Button
-						size="icon"
-						className="absolute right-0"
-						disabled={messagesLoading || !message}
-						variant="ghost"
-						onClick={handleSendMessage}>
-						<Send className="h-5 w-5 transition-colors group-hover:stroke-primary" />
-					</Button>
+				{/* Messages */}
+				<div className="flex-1 overflow-y-auto p-4 space-y-4 bg-primary/5">
+					{messages.map((msg, index) => (
+						<div
+							key={index}
+							className={`flex ${
+								msg.senderId === userId ? "justify-start" : "justify-end"
+							}`}>
+							<div
+								className={`max-w-[70%] p-3 rounded-lg ${
+									msg.senderId === userId
+										? "bg-white dark:bg-zinc-800"
+										: "bg-primary text-white"
+								}`}>
+								{msg.content}
+							</div>
+						</div>
+					))}
+					{/* Invisible div for scrolling */}
+					<div ref={messagesEndRef} />
+				</div>
+
+				{/* Input */}
+				<div className="p-4 border-t bg-white dark:bg-zinc-950">
+					<div className="relative flex items-center">
+						<Input
+							className="pr-12 border-none ring-1 ring-gray-200 dark:ring-gray-800 focus:ring-2 focus:ring-primary"
+							value={message}
+							onChange={(e) => setMessage(e.target.value)}
+							placeholder="Type a message"
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && !e.shiftKey) {
+									e.preventDefault();
+									handleSendMessage();
+								}
+							}}
+							readOnly={messagesLoading}
+						/>
+						<Button
+							size="icon"
+							className="absolute right-0"
+							disabled={messagesLoading || !message}
+							variant="ghost"
+							onClick={handleSendMessage}>
+							<Send className="h-5 w-5 transition-colors group-hover:stroke-primary" />
+						</Button>
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }

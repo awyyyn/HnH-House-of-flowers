@@ -9,13 +9,28 @@ export const createCartItem = async ({
 }: {
 	price: number;
 	userId: string;
-
 	quantity: number;
 	productId: string;
 	cartId: string;
 }) => {
-	const cartItem = await prisma.cartItem.create({
-		data: {
+	const cartI = await prisma.cartItem.findFirst({
+		where: {
+			productId: productId,
+			cartId: cartId,
+		},
+		include: { product: true },
+	});
+
+	const cartItem = await prisma.cartItem.upsert({
+		update: {
+			quantity: {
+				increment: quantity,
+			},
+			price: cartI
+				? Number(cartI?.product.price) * (Number(cartI?.quantity) + quantity)
+				: price,
+		},
+		create: {
 			price,
 			quantity,
 			product: {
@@ -29,10 +44,16 @@ export const createCartItem = async ({
 						userId: userId,
 					},
 					where: {
-						id: cartId,
+						userId: userId,
 					},
 				},
 			},
+		},
+		where: {
+			id: String(cartI?.id ?? "67a9dcc94a3fe402bd3c79b9"),
+		},
+		include: {
+			product: true,
 		},
 	});
 

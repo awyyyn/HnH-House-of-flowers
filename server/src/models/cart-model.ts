@@ -9,6 +9,9 @@ export const createCart = async ({ userId }: { userId: string }) => {
 				},
 			},
 		},
+		include: {
+			items: true,
+		},
 	});
 
 	return cart;
@@ -22,7 +25,11 @@ export const readCart = async (userId: string) => {
 			},
 		},
 		include: {
-			items: true,
+			items: {
+				include: {
+					product: true,
+				},
+			},
 		},
 	});
 

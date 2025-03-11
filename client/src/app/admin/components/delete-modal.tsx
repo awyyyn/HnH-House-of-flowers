@@ -55,6 +55,7 @@ export default function DeleteUserModal({
 				variables.reason = input;
 			}
 			await mutate({ variables });
+			onClose();
 		} catch (err) {
 			toast({
 				title: "Something went wrong!",
@@ -133,7 +134,7 @@ export default function DeleteUserModal({
 						disabled={loading || !input || (unblock && input !== "confirm")}>
 						{loading ? (
 							<Loader className="animate-spin" />
-						) : unblock ? (
+						) : !unblock ? (
 							isAdmin ? (
 								"Ban"
 							) : (

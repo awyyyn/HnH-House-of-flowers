@@ -20,3 +20,25 @@ export const MESSAGE_SENT_SUBSCRIPTION = gql`
 		}
 	}
 `;
+
+export const NOTIFICATION_SENT_SUBSCRIPTION = gql`
+	subscription NotificationSent($userId: ID!, $role: UserRole) {
+		notificationSent(userId: $userId, role: $role) {
+			id
+			userId
+			user {
+				lastName
+				firstName
+				id
+			}
+			title
+			idToGo
+			message
+			type
+			read
+			toShop
+			createdAt
+			updatedAt
+		}
+	}
+`;

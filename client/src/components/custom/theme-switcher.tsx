@@ -13,7 +13,7 @@ import { useTheme } from "@/contexts";
 import { Moon, Sun } from "lucide-react";
 import { SidebarMenuButton } from "../ui/sidebar";
 
-export default function ThemeSwitcher({
+export function ThemeSwitcher({
 	showLabel = false,
 	isMobile = false,
 	isAdmin = false,
@@ -37,9 +37,10 @@ export default function ThemeSwitcher({
 					</SidebarMenuButton>
 				) : (
 					<Button
-						size="sm"
+						// size="sm"
+						size="icon"
 						variant="ghost"
-						className="capitalize data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+						className="capitalize rounded-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
 						{theme === "dark" ? <Moon /> : <Sun />}
 						{showLabel ? (theme === "dark" ? "Dark mode" : "Light mode") : null}
 					</Button>

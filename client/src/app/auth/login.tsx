@@ -9,6 +9,7 @@ import {
 	Form,
 	FormDescription,
 	InputWithIcon,
+	Helmet,
 } from "@/components";
 import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +63,17 @@ export default function Login() {
 
 			login(data.data.accessToken, data.data.user);
 
+			if (data.data.user.phoneNumber === null || !data.data.user.phoneNumber) {
+				return navigate("/set-up-account");
+			}
+
+			if (
+				data.data.user.status === "UNVERIFIED" ||
+				!data.data.user.verifiedAt
+			) {
+				return navigate("/verify-account");
+			}
+
 			if (data.data.user.role === "USER") {
 				navigate("/");
 			} else {
@@ -87,6 +99,7 @@ export default function Login() {
 
 	return (
 		<>
+			<Helmet title="Login" />
 			<Flower className="text-primary mx-auto " size={50} />
 			<h1 className="text-black dark:text-white text-2xl">Log in</h1>
 			<p className="text-black/60 dark:text-white/60 text-sm">

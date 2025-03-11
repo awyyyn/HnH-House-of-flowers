@@ -16,7 +16,6 @@ export const userFragment = gql`
 		birthDate
 		address {
 			city
-			province
 			street
 			zone
 		}
@@ -35,6 +34,19 @@ export const productFragment = gql`
 		stock
 		status
 		category
+		createdAt
+		updatedAt
+	}
+`;
+export const bouquetItemFragment = gql`
+	fragment BouquetItemFragment on BouquetItem {
+		id
+		name
+		price
+		svg
+		colors
+		type
+		isAvailable
 		createdAt
 		updatedAt
 	}
