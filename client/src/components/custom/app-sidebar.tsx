@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
 	Bell,
+	Cog,
 	Flower,
 	Flower2,
 	LayoutDashboard,
@@ -84,6 +85,10 @@ const data = {
 					title: "List",
 					url: "/bouquet-items",
 				},
+				{
+					title: "Orders",
+					url: "/bouquet-items/orders",
+				},
 			],
 		},
 	],
@@ -131,28 +136,29 @@ const data = {
 				},
 			],
 		},
-		// 	title: "Settings",
-		// 	url: "#",
-		// 	icon: Settings2,
-		// 	items: [
-		// 		{
-		// 			title: "General",
-		// 			url: "#",
-		// 		},
-		// 		{
-		// 			title: "Team",
-		// 			url: "#",
-		// 		},
-		// 		{
-		// 			title: "Billing",
-		// 			url: "#",
-		// 		},
-		// 		{
-		// 			title: "Limits",
-		// 			url: "#",
-		// 		},
-		// 	],
-		// },
+		{
+			title: "Settings",
+			url: "/settings",
+			icon: Cog,
+			// items: [
+			// 	{
+			// 		title: "General",
+			// 		url: "#",
+			// 	},
+			// 	{
+			// 		title: "Team",
+			// 		url: "#",
+			// 	},
+			// 	{
+			// 		title: "Billing",
+			// 		url: "#",
+			// 	},
+			// 	{
+			// 		title: "Limits",
+			// 		url: "#",
+			// 	},
+			// ],
+		},
 	],
 };
 
@@ -166,8 +172,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
 							<a href="#">
-								<div className="flex aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-									<Flower className="size-4" />
+								<div className="flex bg-primary aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg   text-sidebar-primary-foreground">
+									<Flower className="size-4 " />
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-semibold">HnH</span>
