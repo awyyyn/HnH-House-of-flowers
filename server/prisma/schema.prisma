@@ -71,6 +71,8 @@ model Order {
   typeOfDelivery typeOfDelivery
   typeOfPayment  typeOfPayment  
   isPreOrder Boolean @default(false)
+  customizeId String? @db.ObjectId
+  customize Customize? @relation(fields: [customizeId], references: [id])
 
   orderItems OrderItem[]
   // TimeStamps
@@ -110,6 +112,9 @@ model Customize {
   totalPrice Float
 
   bouquetItems BouquetItems
+
+  order Order[]
+
 
   // TimeStamps
   createdAt DateTime @default(now())
