@@ -565,7 +565,7 @@ export const createCustomizeOrder = async ({
 			typeOfDelivery,
 			typeOfPayment: "GCASH",
 			payment: {
-				connect: {
+				create: {
 					checkoutUrl: payment.checkoutUrl,
 					userId,
 					status: "PENDING",
@@ -584,6 +584,10 @@ export const createCustomizeOrder = async ({
 					id: customizeBouquet.id,
 				},
 			},
+		},
+		include: {
+			payment: true,
+			customize: true,
 		},
 	});
 

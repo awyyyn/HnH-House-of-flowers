@@ -34,6 +34,7 @@ import {
 	readOrdersSummaryResolver,
 	notificationSentSubscription,
 	unReviewedProductsResolver,
+	checkoutCustomizeBouquetResolver,
 } from "./resolvers/index.js";
 import {
 	deleteNotificationResolver,
@@ -87,6 +88,7 @@ export const resolvers = {
 		updateNotification: updateNotificationResolver,
 		deleteNotification: deleteNotificationResolver,
 		createReview: createReviewResolver,
+		createCustomBouquet: checkoutCustomizeBouquetResolver,
 	},
 	// Mutation: {},
 };
