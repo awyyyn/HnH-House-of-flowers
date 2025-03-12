@@ -7,6 +7,7 @@ import {
 	updateProduct,
 	createOrder,
 	removeCartItem,
+	createCustomizeOrder,
 } from "../../models/index.js";
 import {
 	OrderDeliveryType,
@@ -131,6 +132,46 @@ export const createCheckoutSessionResolver = async (
 		}
 
 		return order;
+	} catch (err) {
+		console.log(err);
+		throw new GraphQLError((err as GraphQLError).message);
+	}
+};
+
+export const checkoutCustomizeBouquetResolver = async (
+	_: never,
+	{
+		mainFlower,
+		subFlowers,
+		tie,
+		totalPrice,
+		typeOfDelivery,
+		wrapper,
+		note,
+	}: {
+		mainFlower: string;
+		subFlowers: string[];
+		wrapper: string;
+		tie: string;
+		totalPrice: number;
+		note?: string;
+		typeOfDelivery: OrderDeliveryType;
+	},
+	app: AppContext
+) => {
+	try {
+		const name = `CUSTOMIZE_${Date.now()}`;
+		return await createCustomizeOrder({
+			mainFlower,
+			name,
+			subFlowers,
+			tie,
+			totalPrice,
+			typeOfDelivery,
+			userId: app.id,
+			wrapper,
+			note,
+		});
 	} catch (err) {
 		console.log(err);
 		throw new GraphQLError((err as GraphQLError).message);
