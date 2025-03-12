@@ -103,6 +103,15 @@ export const typeDefs = gql`
 		): Review
 		updateNotification(id: ID): String!
 		deleteNotification(id: ID): String!
+		createCustomBouquet(
+			mainFlower: String!
+			subFlowers: [String]
+			wrapper: String!
+			tie: String!
+			totalPrice: Float!
+			note: String
+			typeOfDelivery: OrderDeliveryType!
+		): Order
 	}
 
 	type ProductSummary {
