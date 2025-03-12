@@ -15,6 +15,8 @@ import {
 	OrderFilter,
 } from "../types/index.js";
 import { PaymentStatus } from "../types/payment.js";
+import { createCustomizeBouquet } from "./customize-order-model.js";
+import { environment } from "src/environments/environment.js";
 
 export const createOrder = async ({
 	userId,
@@ -468,4 +470,126 @@ export const getOrderSummary = async () => {
 			percentage: Number(percentage.toFixed(2)),
 		};
 	});
+};
+
+export const createCustomizeOrder = async ({
+	mainFlower,
+	name,
+	subFlowers,
+	tie,
+	totalPrice,
+	wrapper,
+	note,
+	typeOfDelivery,
+	userId,
+}: {
+	name: string;
+	mainFlower: string;
+	subFlowers: string[];
+	wrapper: string;
+	tie: string;
+	totalPrice: number;
+	note?: string;
+	typeOfDelivery: OrderDeliveryType;
+	userId: string;
+}) => {
+	const unixTimestamp = getUnixTime(new Date()); // Get current Unix timestamp
+	const formattedId = `ORD${unixTimestamp.toString().padStart(10, "0")}`;
+
+	const url = "https://api.paymongo.com/v1/checkout_sessions";
+
+	const options = {
+		method: "POST",
+		headers: {
+			accept: "application/json",
+			"Content-Type": "application/json",
+			authorization: `Basic ${process.env.PAYMONGO_SECRET}`,
+		},
+		body: JSON.stringify({
+			data: {
+				attributes: {
+					send_email_receipt: true,
+					show_description: true,
+					show_line_items: true,
+					description: "Payment for custom bouquet",
+					line_items: [
+						{
+							currency: "PHP",
+							quantity: 1,
+							amount: totalPrice * 100,
+							name: name,
+							description: "Information about the custom bouquet",
+							images: [
+								"https://img.freepik.com/premium-vector/giving-flowers-bouquet-present-icon_98396-113210.jpg",
+							],
+						},
+					],
+					payment_method_types: ["gcash"],
+					success_url: `${environment.CLIENT_URL}/checkout/success`,
+					cancel_url: `${environment.CLIENT_URL}/checkout/cancel`,
+				},
+			},
+		}),
+	};
+
+	const response = await fetch(url, options);
+	const data = await response.json();
+
+	if (response.status !== 200) {
+		throw new Error("Failed to order");
+	}
+
+	const payment = {
+		checkoutUrl: data.data.attributes.checkout_url,
+		id: data.data.id,
+	};
+
+	const customizeBouquet = await createCustomizeBouquet({
+		mainFlower,
+		name,
+		subFlowers,
+		tie,
+		totalPrice,
+		wrapper,
+		note,
+	});
+
+	if (!customizeBouquet) {
+		throw new Error("Failed to create customize bouquet");
+	}
+
+	const order = await prisma.order.create({
+		data: {
+			formattedId,
+			totalPrice,
+			typeOfDelivery,
+			typeOfPayment: "GCASH",
+			payment: {
+				connect: {
+					checkoutUrl: payment.checkoutUrl,
+					userId,
+					status: "PENDING",
+					paymentId: payment.id,
+				},
+			},
+			isPreOrder: true,
+			status: "PENDING",
+			customer: {
+				connect: {
+					id: userId,
+				},
+			},
+			customize: {
+				connect: {
+					id: customizeBouquet.id,
+				},
+			},
+		},
+	});
+
+	if (!order) {
+		throw new Error("Failed to create order");
+	}
+
+	return order;
 };
