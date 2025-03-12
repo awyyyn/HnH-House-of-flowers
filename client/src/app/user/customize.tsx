@@ -19,14 +19,17 @@ import {
 } from "@/types";
 import { DatePicker } from "@/components/custom/date-picker";
 import { add } from "date-fns";
-import { useQuery } from "@apollo/client";
-import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+	CREATE_CUSTOM_BOUQUET_MUTATION,
+	GET_ALL_BOUQUET_ITEMS_QUERY,
+} from "@/queries";
+import { useToast } from "@/hooks/use-toast";
 
 const steps = [
 	{ title: "Step 1", description: "Choose a theme" },
 	{ title: "Step 2", description: "Customize your theme" },
-	{ title: "Step 3", description: "Review" },
-	{ title: "Step 4", description: "Finish" },
+	{ title: "Step 3", description: "Finish" },
 ];
 
 function prepareSvgForColorization(svg: string): string {
@@ -36,7 +39,11 @@ function prepareSvgForColorization(svg: string): string {
 }
 
 export default function Customize() {
+	const { toast } = useToast();
 	const [activeStep, setActiveStep] = useState(0);
+	const [createOrder, { loading }] = useMutation(
+		CREATE_CUSTOM_BOUQUET_MUTATION
+	);
 	const [values, setValues] = useState<CustomizationValues>({
 		wrapper: "",
 		wrapperColor: "",
@@ -68,8 +75,49 @@ export default function Customize() {
 	const ties =
 		data?.bouquetItems.data.filter((item) => item.type === "TIE") ?? [];
 
-	const handleNext = () => {
+	const handleNext = async () => {
 		setActiveStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
+		if (activeStep === 2) {
+			try {
+				//
+				const order = await createOrder({
+					variables: {
+						mainFlower: values.mainFlower,
+						wrapper: values.wrapper,
+						tie: values.tie,
+						totalPrice: 110,
+						typeOfDelivery: values.delivery,
+						subFlowers: values.additionalFlower,
+						note: values.note,
+					},
+				});
+				toast({
+					title: "Order Placed!",
+					description: "Please wait for the admin to confirm your order",
+					variant: "success",
+				});
+
+				setTimeout(() => {
+					toast({
+						title: "Redirecting to payment page",
+						description: "Please wait...",
+						variant: "success",
+					});
+				}, 3000);
+
+				setTimeout(() => {
+					window.location.replace(
+						order.data.createCustomBouquet.payment.checkoutUrl
+					);
+				}, 8000);
+			} catch (err) {
+				toast({
+					title: "Error Occurred!",
+					description: (err as Error).message,
+					variant: "destructive",
+				});
+			}
+		}
 	};
 
 	const handlePrevious = () => {
@@ -267,13 +315,15 @@ export default function Customize() {
 	return (
 		<>
 			<Helmet title="Customize" />
-			<div className="sm:h-scrseen md:w-scrseen grid place-content-center gap-2 p-5">
-				<div className="flex min-w-[95dvw]   sm:min-w-[100dvw] md:min-w-fit   flex-col">
+			<div className="   gap-2 p-5">
+				<div className="flex      flex-col">
 					<Stepper activeStep={activeStep} items={steps}></Stepper>
 				</div>
 				{renderStep(activeStep)}
-				<div className="flex justify-between">
-					<Button onClick={handlePrevious} disabled={activeStep === 0}>
+				<div className="flex  justify-between">
+					<Button
+						onClick={handlePrevious}
+						disabled={activeStep === 0 || loading}>
 						Previous
 					</Button>
 					<div className="flex items-center gap-2">
@@ -300,9 +350,9 @@ export default function Customize() {
 						<Button
 							onClick={handleNext}
 							disabled={
-								activeStep === 1
+								(activeStep === 1
 									? !values.mainFlower || !values.tie || !values.wrapper
-									: false
+									: false) || loading
 							}>
 							{activeStep === steps.length - 1 ? "Finish" : "Next"}
 						</Button>

@@ -45,7 +45,7 @@ export default function CustomizeFlower({
 	const LeftContent = () => {
 		return (
 			<>
-				<div className="w-[80%] max-h-[300px]   overflow-y-auto sm:w-full mx-auto space-y-3 justify-self-start">
+				<div className="w-[80%] max-h-[300px]  md:max-h-max  overflow-y-auto sm:w-full mx-auto space-y-3 justify-self-start">
 					<div className="space-y-1">
 						<h1>Wrappers</h1>
 						<ToggleGroup
