@@ -313,3 +313,42 @@ export const CREATE_REVIEW_MUTATION = gql`
 		}
 	}
 `;
+
+export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
+	mutation CreateCustomBouquet(
+		$mainFlower: String!
+		$wrapper: String!
+		$tie: String!
+		$totalPrice: Float!
+		$typeOfDelivery: OrderDeliveryType!
+		$subFlowers: [String]
+		$note: String
+	) {
+		createCustomBouquet(
+			mainFlower: $mainFlower
+			wrapper: $wrapper
+			tie: $tie
+			totalPrice: $totalPrice
+			typeOfDelivery: $typeOfDelivery
+			subFlowers: $subFlowers
+			note: $note
+		) {
+			id
+			status
+			formattedId
+			totalPrice
+			isPreOrder
+			payment {
+				checkoutUrl
+			}
+			typeOfDelivery
+			typeOfPayment
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
