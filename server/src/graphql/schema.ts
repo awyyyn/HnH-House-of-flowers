@@ -310,6 +310,9 @@ export const typeDefs = gql`
 		typeOfDelivery: OrderDeliveryType
 		typeOfPayment: OrderPaymentType
 
+		customizeId: String
+		customize: Customize
+
 		orderDate: String!
 		processedAt: String
 		shippedAt: String

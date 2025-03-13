@@ -276,6 +276,7 @@ export const readOrdersByUser = async (userId: string) => {
 					},
 				},
 			},
+			customize: true,
 			payment: true,
 			customer: true,
 		},
