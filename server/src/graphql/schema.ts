@@ -435,6 +435,7 @@ export const typeDefs = gql`
 		subFlowers: [String]
 		mainFlower: String
 		wrapper: String
+		wrapperColor: String
 		tie: String
 	}
 

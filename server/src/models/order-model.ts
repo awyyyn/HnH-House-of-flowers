@@ -482,6 +482,7 @@ export const createCustomizeOrder = async ({
 	note,
 	typeOfDelivery,
 	userId,
+	wrapperColor,
 }: {
 	name: string;
 	mainFlower: string;
@@ -492,6 +493,7 @@ export const createCustomizeOrder = async ({
 	note?: string;
 	typeOfDelivery: OrderDeliveryType;
 	userId: string;
+	wrapperColor: string;
 }) => {
 	const unixTimestamp = getUnixTime(new Date()); // Get current Unix timestamp
 	const formattedId = `ORD${unixTimestamp.toString().padStart(10, "0")}`;
@@ -552,6 +554,7 @@ export const createCustomizeOrder = async ({
 		totalPrice,
 		wrapper,
 		note,
+		wrapperColor,
 	});
 
 	if (!customizeBouquet) {

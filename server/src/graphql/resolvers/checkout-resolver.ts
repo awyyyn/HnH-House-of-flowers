@@ -148,6 +148,7 @@ export const checkoutCustomizeBouquetResolver = async (
 		typeOfDelivery,
 		wrapper,
 		note,
+		wrapperColor,
 	}: {
 		mainFlower: string;
 		subFlowers: string[];
@@ -156,6 +157,7 @@ export const checkoutCustomizeBouquetResolver = async (
 		totalPrice: number;
 		note?: string;
 		typeOfDelivery: OrderDeliveryType;
+		wrapperColor: string;
 	},
 	app: AppContext
 ) => {
@@ -171,6 +173,7 @@ export const checkoutCustomizeBouquetResolver = async (
 			userId: app.id,
 			wrapper,
 			note,
+			wrapperColor,
 		});
 	} catch (err) {
 		console.log(err);
