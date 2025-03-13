@@ -23,11 +23,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatOrderDate } from "@/lib/utils";
 import { format, formatDate } from "date-fns";
-import { Order } from "@/types";
+import { BouquetItem, Order } from "@/types";
 import { useAuth } from "@/contexts";
 import { Link } from "react-router-dom";
-import CustomizePreview from "./customize-preview";
-// import type { OrderWithItems } from "./types";
+import { lazy, Suspense } from "react";
+import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
+import { useQuery } from "@apollo/client";
+
+const CustomizePreview = lazy(() => import("./customize-preview"));
 
 interface OrderDetailDialogProps {
 	// order: OrderWithItems;
@@ -51,9 +54,32 @@ export default function OrderDetailDialog({
 		if (order.status === "READY_FOR_PICKUP") return 2; // Same level as SHIPPED
 		return statuses.indexOf(order.status);
 	};
+	const { data, loading } = useQuery<{
+		bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
+	}>(GET_ALL_BOUQUET_ITEMS_QUERY, {
+		variables: {
+			isAvailable: true,
+		},
+		fetchPolicy: "no-cache",
+	});
+
 	const { user } = useAuth();
 
 	const statusStep = getStatusStep();
+
+	const wrappers =
+		data?.bouquetItems.data.filter((item) => item.type === "WRAPPER") ?? [];
+
+	const flowers =
+		data?.bouquetItems.data.filter((item) => item.type === "FLOWER") ?? [];
+
+	const subFlowers =
+		data?.bouquetItems.data.filter((item) => item.type === "SUB_FLOWER") ?? [];
+
+	const ties =
+		data?.bouquetItems.data.filter((item) => item.type === "TIE") ?? [];
+
+	if (loading) return null;
 
 	return (
 		<Dialog open={open} onOpenChange={(open) => !open && onClose()}>
@@ -263,13 +289,19 @@ export default function OrderDetailDialog({
 					<h3 className="font-medium mb-4">Order Items</h3>
 					{order.isPreOrder && order.customize ? (
 						<div className="space-y-4">
-							<CustomizePreview
-								additionalFlowers={order.customize?.bouquetItems.subFlowers}
-								mainFlower={order.customize?.bouquetItems.mainFlower}
-								wrapper={order.customize?.bouquetItems.wrapper}
-								wrapperColor={order.customize?.bouquetItems.wrapperColor}
-								tie={order.customize?.bouquetItems.tie}
-							/>
+							<Suspense fallback={<p>Loading...</p>}>
+								<CustomizePreview
+									flowers={flowers}
+									subFlowers={subFlowers}
+									ties={ties}
+									wrappers={wrappers}
+									additionalFlowers={order.customize?.bouquetItems.subFlowers}
+									mainFlower={order.customize?.bouquetItems.mainFlower}
+									wrapper={order.customize?.bouquetItems.wrapper}
+									wrapperColor={order.customize?.bouquetItems.wrapperColor}
+									tie={order.customize?.bouquetItems.tie}
+								/>
+							</Suspense>
 						</div>
 					) : (
 						<div className="space-y-4">

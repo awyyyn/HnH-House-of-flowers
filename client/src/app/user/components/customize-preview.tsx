@@ -1,7 +1,5 @@
 import { AuroraBackground } from "@/components";
-import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
 import { BouquetItem } from "@/types";
-import { useQuery } from "@apollo/client";
 
 function prepareSvgForColorization(svg: string): string {
 	// Replace fill and stroke attributes with currentColor
@@ -15,33 +13,21 @@ export default function CustomizePreview({
 	tie,
 	wrapper,
 	wrapperColor,
+	flowers,
+	subFlowers,
+	ties,
+	wrappers,
 }: {
 	mainFlower: string;
 	additionalFlowers: string[];
 	wrapper: string;
 	wrapperColor: string;
 	tie: string;
+	ties: BouquetItem[];
+	wrappers: BouquetItem[];
+	flowers: BouquetItem[];
+	subFlowers: BouquetItem[];
 }) {
-	const { data } = useQuery<{
-		bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
-	}>(GET_ALL_BOUQUET_ITEMS_QUERY, {
-		variables: {
-			isAvailable: true,
-		},
-	});
-
-	const wrappers =
-		data?.bouquetItems.data.filter((item) => item.type === "WRAPPER") ?? [];
-
-	const flowers =
-		data?.bouquetItems.data.filter((item) => item.type === "FLOWER") ?? [];
-
-	const subFlowers =
-		data?.bouquetItems.data.filter((item) => item.type === "SUB_FLOWER") ?? [];
-
-	const ties =
-		data?.bouquetItems.data.filter((item) => item.type === "TIE") ?? [];
-
 	return (
 		<AuroraBackground showRadialGradient={false} className="">
 			<div className=" relative flex  w-[350px] h-[350px]   overflow-hidden  rounded-xl bg-clip-content">
@@ -76,9 +62,9 @@ export default function CustomizePreview({
 								color: wrapperColor,
 							}}
 							dangerouslySetInnerHTML={{
-								// __html: prepareSvgForColorization(wrapper.svg[0]),
+								// __html: prepareSvgForColorization(wrapper?.svg[0]),
 								__html: prepareSvgForColorization(
-									wrappers.find((wrpper) => wrpper.id === wrapper)!.svg[0]
+									wrappers.find((wrpper) => wrpper.id === wrapper)?.svg[0] || ""
 								),
 							}}
 						/>
@@ -92,9 +78,9 @@ export default function CustomizePreview({
 								color: wrapperColor,
 							}}
 							dangerouslySetInnerHTML={{
-								// __html: prepareSvgForColorization(wrapper.svg[0]),
+								// __html: prepareSvgForColorization(wrapper?.svg[0]),
 								__html: prepareSvgForColorization(
-									wrappers.find((wrpper) => wrpper.id === wrapper)!.svg[1]
+									wrappers.find((wrpper) => wrpper.id === wrapper)?.svg[1] || ""
 								),
 							}}
 						/>
@@ -105,7 +91,7 @@ export default function CustomizePreview({
 						className="absolute left-[105px] z-50 top-[61px] ] w-[155spx] h-[14s2px] "
 						// style={{ color:  tieColor || "red" }}
 						dangerouslySetInnerHTML={{
-							__html: ties.find((flower) => flower.id === tie)!.svg[0],
+							__html: ties.find((flower) => flower.id === tie)?.svg[0] || "",
 						}}
 					/>
 				)}
