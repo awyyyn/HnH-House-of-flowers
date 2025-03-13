@@ -111,6 +111,7 @@ export const typeDefs = gql`
 			totalPrice: Float!
 			note: String
 			typeOfDelivery: OrderDeliveryType!
+			wrapperColor: String!
 		): Order
 	}
 

@@ -89,6 +89,7 @@ export default function Customize() {
 						typeOfDelivery: values.delivery,
 						subFlowers: values.additionalFlower,
 						note: values.note,
+						wrapperColor: values.wrapperColor,
 					},
 				});
 				toast({

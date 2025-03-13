@@ -323,6 +323,7 @@ export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
 		$typeOfDelivery: OrderDeliveryType!
 		$subFlowers: [String]
 		$note: String
+		$wrapperColor: String!
 	) {
 		createCustomBouquet(
 			mainFlower: $mainFlower
@@ -332,6 +333,7 @@ export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
 			typeOfDelivery: $typeOfDelivery
 			subFlowers: $subFlowers
 			note: $note
+			wrapperColor: $wrapperColor
 		) {
 			id
 			status
