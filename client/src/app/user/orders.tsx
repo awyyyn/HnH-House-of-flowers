@@ -8,6 +8,7 @@ import {
 	Search,
 	ShoppingBag,
 	Truck,
+	X,
 } from "lucide-react";
 import {
 	Button,
@@ -144,9 +145,11 @@ export default function Orders() {
 		const config = statusConfig[status];
 
 		return (
-			<Badge className={`${config.color} flex items-center`} variant="outline">
+			<Badge
+				className={`${config.color} capitalize flex items-center`}
+				variant="outline">
 				{config.icon}
-				{status.replace("_", " ")}
+				{status.split("_").join(" ").toLowerCase()}
 			</Badge>
 		);
 	};
@@ -197,6 +200,12 @@ export default function Orders() {
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
+					{searchQuery && (
+						<X
+							className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground cursor-pointer"
+							onClick={() => setSearchQuery("")}
+						/>
+					)}
 				</div>
 				<div className="flex gap-2">
 					<DropdownMenu>
@@ -375,8 +384,14 @@ export default function Orders() {
 						<div>
 							<p className="text-sm font-medium">Items</p>
 							<p className="text-sm text-muted-foreground">
-								{order.orderItems.length}{" "}
-								{order.orderItems.length === 1 ? "item" : "items"}
+								{order.isPreOrder ? (
+									"1 item"
+								) : (
+									<>
+										{order.orderItems.length}{" "}
+										{order.orderItems.length === 1 ? "item" : "items"}
+									</>
+								)}
 							</p>
 						</div>
 						<div>

@@ -143,6 +143,19 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 			isPreOrder
 			typeOfDelivery
 			typeOfPayment
+			customizeId
+			customize {
+				id
+				name
+				note
+				bouquetItems {
+					subFlowers
+					mainFlower
+					wrapper
+					wrapperColor
+					tie
+				}
+			}
 			orderItems {
 				id
 				orderId
