@@ -40,6 +40,7 @@ export default function Orders() {
 				page: Number(pagination.pageIndex),
 				limit: Number(pagination.pageSize),
 			},
+			isPreOrder: false,
 		},
 	});
 
