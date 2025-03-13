@@ -85,10 +85,6 @@ const data = {
 					title: "List",
 					url: "/bouquet-items",
 				},
-				{
-					title: "Orders",
-					url: "/bouquet-items/orders",
-				},
 			],
 		},
 	],

@@ -40,7 +40,6 @@ import CheckoutError from "./app/user/checkout-error";
 import AddOrder from "./app/admin/add-order";
 import Notification from "./app/notification";
 import ReviewPage from "./app/user/review";
-import BouquetOrders from "./app/admin/bouquet-orders";
 
 export default function App() {
 	const publicRoutes = [
@@ -115,10 +114,6 @@ export default function App() {
 							{
 								path: "add-item",
 								element: <AddBouquetItem />,
-							},
-							{
-								path: "orders",
-								element: <BouquetOrders />,
 							},
 						],
 					},
