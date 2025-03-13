@@ -111,7 +111,6 @@ export const GET_MESSAGES_QUERY = gql`
 `;
 
 export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
-	${bouquetItemFragment}
 	query (
 		$isAvailable: Boolean
 		$filter: String
@@ -126,7 +125,15 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 		) {
 			total
 			data {
-				...BouquetItemFragment
+				id
+				name
+				price
+				svg
+				colors
+				type
+				isAvailable
+				createdAt
+				updatedAt
 			}
 			hasNextPage
 		}
@@ -219,6 +226,19 @@ export const READ_ORDERS_QUERY = gql`
 						zone
 						city
 						street
+					}
+				}
+				customizeId
+				customize {
+					id
+					name
+					note
+					bouquetItems {
+						subFlowers
+						mainFlower
+						wrapper
+						wrapperColor
+						tie
 					}
 				}
 				status

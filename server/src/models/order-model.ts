@@ -247,6 +247,7 @@ export const readOrders = async ({
 			},
 			payment: true,
 			customer: true,
+			customize: true,
 		},
 	});
 

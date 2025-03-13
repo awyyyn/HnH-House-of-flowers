@@ -17,4 +17,5 @@ export interface BouquetItems {
 	mainFlower: string;
 	wrapper: string;
 	tie: string;
+	wrapperColor: string;
 }

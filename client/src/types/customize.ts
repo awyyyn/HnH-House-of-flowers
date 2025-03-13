@@ -1,3 +1,5 @@
+import { BouquetItems } from "./bouquet-item";
+
 export interface Customize {
 	readonly id: string;
 	name: string;
@@ -8,12 +10,4 @@ export interface Customize {
 
 	createdAt: Date;
 	updatedAt: Date;
-}
-
-export interface BouquetItems {
-	subFlowers: string[];
-	mainFlower: string;
-	wrapper: string;
-	wrapperColor: string;
-	tie: string;
 }
