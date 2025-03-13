@@ -26,6 +26,7 @@ import { format, formatDate } from "date-fns";
 import { Order } from "@/types";
 import { useAuth } from "@/contexts";
 import { Link } from "react-router-dom";
+import CustomizePreview from "./customize-preview";
 // import type { OrderWithItems } from "./types";
 
 interface OrderDetailDialogProps {
@@ -260,50 +261,64 @@ export default function OrderDetailDialog({
 				{/* Order Items */}
 				<div className="my-4">
 					<h3 className="font-medium mb-4">Order Items</h3>
-					<div className="space-y-4">
-						{order.orderItems.map((item) => (
-							<div key={item.id} className="flex gap-4">
-								<div className="h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
-									{item.product?.images?.[0] ? (
-										<img
-											src={item.product.images[0] || "/placeholder.svg"}
-											alt={item.product.name}
-											width={64}
-											height={64}
-											className="h-full w-full object-cover"
-										/>
-									) : (
-										<div className="h-full w-full flex items-center justify-center bg-muted">
-											<Package className="h-8 w-8 text-muted-foreground" />
+					{order.isPreOrder && order.customize ? (
+						<div className="space-y-4">
+							<CustomizePreview
+								additionalFlowers={order.customize?.bouquetItems.subFlowers}
+								mainFlower={order.customize?.bouquetItems.mainFlower}
+								wrapper={order.customize?.bouquetItems.wrapper}
+								wrapperColor={order.customize?.bouquetItems.wrapperColor}
+								tie={order.customize?.bouquetItems.tie}
+							/>
+						</div>
+					) : (
+						<div className="space-y-4">
+							{order.orderItems.map((item) => (
+								<div key={item.id} className="flex gap-4">
+									<div className="h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+										{item.product?.images?.[0] ? (
+											<img
+												src={item.product.images[0] || "/placeholder.svg"}
+												alt={item.product.name}
+												width={64}
+												height={64}
+												className="h-full w-full object-cover"
+											/>
+										) : (
+											<div className="h-full w-full flex items-center justify-center bg-muted">
+												<Package className="h-8 w-8 text-muted-foreground" />
+											</div>
+										)}
+									</div>
+									<div className="flex-1 flex justify-between">
+										<div className="flex flex-col mt-1">
+											<h4 className="font-medium">
+												{item.product?.name || "Product"}
+											</h4>
+											<p className="text-sm text-muted-foreground">
+												Qty: {item.quantity}
+											</p>
 										</div>
-									)}
-								</div>
-								<div className="flex-1 flex justify-between">
-									<div className="flex flex-col mt-1">
-										<h4 className="font-medium">
-											{item.product?.name || "Product"}
-										</h4>
-										<p className="text-sm text-muted-foreground">
-											Qty: {item.quantity}
-										</p>
-									</div>
-									<div className="flex items-end justify-end flex-col mt-1">
-										<p className="font-medium">{formatCurrency(item.price)}</p>
-										{showReviewButton &&
-											!item.product?.reviews
-												.map((review) => review.id)
-												.includes(user.id) && (
-												<Button size="sm" asChild>
-													<Link to={`/add-review/${item.product?.id}`}>
-														Write a Review
-													</Link>
-												</Button>
-											)}
+										<div className="flex items-end justify-end flex-col mt-1">
+											<p className="font-medium">
+												{formatCurrency(item.price)}
+											</p>
+											{showReviewButton &&
+												!item.product?.reviews
+													.map((review) => review.id)
+													.includes(user.id) && (
+													<Button size="sm" asChild>
+														<Link to={`/add-review/${item.product?.id}`}>
+															Write a Review
+														</Link>
+													</Button>
+												)}
+										</div>
 									</div>
 								</div>
-							</div>
-						))}
-					</div>
+							))}
+						</div>
+					)}
 				</div>
 
 				<Separator />
@@ -315,8 +330,13 @@ export default function OrderDetailDialog({
 						<div className="flex justify-between text-sm">
 							<span>
 								Subtotal (
-								{order.orderItems.reduce((acc, item) => acc + item.quantity, 0)}{" "}
-								items)
+								{order.isPreOrder
+									? "1 item"
+									: `${order.orderItems.reduce(
+											(acc, item) => acc + item.quantity,
+											0
+									  )}} item`}
+								)
 							</span>
 							<span>
 								{formatCurrency(
