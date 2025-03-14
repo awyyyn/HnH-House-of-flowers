@@ -5,10 +5,9 @@ import { READ_UNREVIEW_PRODUCT_QUERY } from "@/queries";
 import { Product } from "@/types";
 import { Button, Card, CardContent } from "@/components";
 import { CheckCircle2 } from "lucide-react";
+import { ReviewSkeleton } from "../skeletons";
 
 export default function ReviewPage() {
-	// In a real app, you would fetch the product data based on the ID
-	// For this example, we'll use placeholder data
 	const params = useParams();
 	const { loading, data } = useQuery(READ_UNREVIEW_PRODUCT_QUERY, {
 		variables: {
@@ -17,7 +16,7 @@ export default function ReviewPage() {
 	});
 
 	if (!params.id || loading) {
-		return null;
+		return <ReviewSkeleton />;
 	}
 
 	if (

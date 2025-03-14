@@ -1,30 +1,20 @@
 import { useRoutes } from "react-router-dom";
 import { AdminLayout, AuthLayout, UserLayout } from "./layouts";
+
 import NotFound from "./app/not-found";
 import Unauthorized from "./app/unauthorized";
 import Register from "./app/auth/register";
 import Login from "./app/auth/login";
 import ForgotPassword from "./app/auth/forgot-password";
-import Customize from "./app/user/customize";
 import Home from "./app/home";
-
-import UserOrders from "./app/user/orders";
-
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
 import VerifyAccount from "./app/verify-account";
 import SetUpAccount from "./app/set-up-account";
-
 import MessagesMobile from "./app/admin/messages-mobile";
-
-import CartPage from "./app/user/cart";
-
-import CheckoutPage from "./app/user/checkout";
 import CheckoutSuccess from "./app/user/checkout-success";
 import CheckoutError from "./app/user/checkout-error";
-
 import Notification from "./app/notification";
-import ReviewPage from "./app/user/review";
 
 import loadable from "@loadable/component";
 import {
@@ -41,6 +31,11 @@ import {
 	AddProductSkeleton,
 	ProductInfoSkeleton,
 	CardSkeleton,
+	CartSkeleton,
+	UserOrdersSkeleton,
+	ReviewSkeleton,
+	CustomizeSkeleton,
+	CheckoutSkeleton,
 } from "./app/skeletons";
 
 const Dashboard = loadable(() => import("./app/admin/dashboard"));
@@ -65,6 +60,11 @@ const ProductDetails = loadable(() => import("./app/user/product"));
 const Flowers = loadable(() => import("./app/user/flowers"));
 const Gifts = loadable(() => import("./app/user/gifts"));
 const Bouquets = loadable(() => import("./app/user/bouquets"));
+const CartPage = loadable(() => import("./app/user/cart"));
+const UserOrders = loadable(() => import("./app/user/orders"));
+const ReviewPage = loadable(() => import("./app/user/review"));
+const Customize = loadable(() => import("./app/user/customize"));
+const CheckoutPage = loadable(() => import("./app/user/checkout"));
 
 export default function App() {
 	const publicRoutes = [
@@ -221,22 +221,22 @@ export default function App() {
 				children: [
 					{
 						path: "customize",
-						element: <Customize />,
+						element: <Customize fallback={<CustomizeSkeleton />} />,
 					},
 					{
 						path: "add-review/:id",
-						element: <ReviewPage />,
+						element: <ReviewPage fallback={<ReviewSkeleton />} />,
 					},
 					{
 						path: "my-orders",
-						element: <UserOrders />,
+						element: <UserOrders fallback={<UserOrdersSkeleton />} />,
 					},
 					{
 						path: "checkout",
 						children: [
 							{
 								index: true,
-								element: <CheckoutPage />,
+								element: <CheckoutPage fallback={<CheckoutSkeleton />} />,
 							},
 							{
 								path: "success",
@@ -306,7 +306,7 @@ export default function App() {
 					},
 					{
 						path: "cart",
-						element: <CartPage />,
+						element: <CartPage fallback={<CartSkeleton />} />,
 					},
 				],
 			},

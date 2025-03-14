@@ -21,6 +21,8 @@ import {
 } from "@/queries";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import { NotificationSkeleton } from "./skeletons";
+import { Suspense } from "react";
 
 function NotificationPanel() {
 	const [notifications, setNotifications] = useAtom(notificationAtom);
@@ -97,14 +99,14 @@ function NotificationPanel() {
 		switch (type) {
 			case "MESSAGE":
 				return <Bell className="h-4 w-4 text-blue-500" />;
-			// case "MESSAGE":
-			// 	return <Clock className="h-4 w-4 text-amber-500" />;
 			case "ORDER":
 				return <Package className="h-4 w-4 text-green-500" />;
 			case "PRE_ORDER":
 				return <Package className="h-4 w-4 text-red-500" />;
 		}
 	};
+
+	if (loading || deleting) return <NotificationSkeleton />;
 
 	return (
 		<Card className="w-full border-none shadow-none mb-5  ">
@@ -213,13 +215,17 @@ export default function NotificationPage() {
 	if (role === "USER") {
 		return (
 			<UserLayout>
-				<NotificationPanel />
+				<Suspense fallback={<NotificationSkeleton />}>
+					<NotificationPanel />
+				</Suspense>
 			</UserLayout>
 		);
 	} else {
 		return (
 			<AdminLayout>
-				<NotificationPanel />
+				<Suspense fallback={<NotificationSkeleton />}>
+					<NotificationPanel />
+				</Suspense>
 			</AdminLayout>
 		);
 	}

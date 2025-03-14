@@ -13,11 +13,21 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { CartSkeleton } from "../skeletons";
+import { useQuery } from "@apollo/client";
+import { GET_PRODUCTS_QUERY } from "@/queries";
 
 export default function CartPage() {
 	const cart = useAtomValue(cartAtom);
 	const navigate = useNavigate();
 	const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+	// Fetch product data for cart items
+	const { loading } = useQuery(GET_PRODUCTS_QUERY, {
+		variables: {
+			ids: cart.items.map((item) => item.product.id),
+		},
+	});
 
 	// Calculate total only for selected items
 	const total = cart.items
@@ -41,15 +51,6 @@ export default function CartPage() {
 	const hasErrors = itemErrors.length > 0;
 	const hasSelectedItems = selectedItems.size > 0;
 
-	// Handle select all
-	// const handleSelectAll = (checked: boolean) => {
-	// 	if (checked) {
-	// 		setSelectedItems(new Set(cart.items.map((item) => item.id)));
-	// 	} else {
-	// 		setSelectedItems(new Set());
-	// 	}
-	// };
-
 	// Handle individual item selection
 	const handleSelectItem = (itemId: string, checked: boolean) => {
 		const newSelected = new Set(selectedItems);
@@ -61,9 +62,7 @@ export default function CartPage() {
 		setSelectedItems(newSelected);
 	};
 
-	// Check if all items are selected
-	// const isAllSelected =
-	// 	cart.items.length > 0 && selectedItems.size === cart.items.length;
+	if (loading) return <CartSkeleton />;
 
 	return (
 		<>
@@ -83,22 +82,6 @@ export default function CartPage() {
 				) : (
 					<>
 						<div className="border rounded-lg overflow-hidden">
-							{/* Select All Header */}
-							{/* <div className="bg-muted/50 p-4  ">
-								<div className="flex items-center gap-2">
-									<Checkbox
-										id="select-all"
-										checked={isAllSelected}
-										onCheckedChange={handleSelectAll}
-									/>
-									<label
-										htmlFor="select-all"
-										className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-										Select All Items
-									</label>
-								</div>
-							</div> */}
-
 							{/* Cart Items */}
 							<div className="divide-y">
 								{cart.items.map((item) => (
