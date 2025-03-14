@@ -42,6 +42,7 @@ import {
 import { Link } from "react-router-dom";
 import { formatCurrency } from "@/lib";
 import SummaryItem from "./components/summary-item";
+import { DashboardSkeleton } from "../skeletons/dashboard-skeleton";
 
 export default function Dashboard() {
 	const [activeTab, setActiveTab] = useState("overview");
@@ -63,7 +64,7 @@ export default function Dashboard() {
 		},
 	});
 
-	if (loading) return <div>Loading...</div>;
+	if (loading) return <DashboardSkeleton />;
 
 	return (
 		<div className="space-y-4">
