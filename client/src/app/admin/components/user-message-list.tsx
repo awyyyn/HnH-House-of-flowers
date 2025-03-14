@@ -1,3 +1,4 @@
+import { MessagingSkeletonLayoutLoading } from "@/app/skeletons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components";
 import { GET_USERS_BY_MESSAGE_QUERY } from "@/queries";
 import { User } from "@/types";
@@ -7,7 +8,7 @@ import { Link } from "react-router-dom";
 export default function UserMessageList() {
 	const { data, loading } = useQuery(GET_USERS_BY_MESSAGE_QUERY);
 
-	if (loading) return <div>Loading...</div>;
+	if (loading) return <MessagingSkeletonLayoutLoading />;
 	return (
 		<div className="space-y-2">
 			{/* {JSON.stringify(data)} */}

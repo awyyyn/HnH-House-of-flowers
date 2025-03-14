@@ -16,6 +16,7 @@ import { User } from "@/types";
 import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts";
+import { ConversationSkeletonLoading } from "../skeletons";
 
 export default function Conversation() {
 	const { role } = useAuth();
@@ -37,7 +38,10 @@ export default function Conversation() {
 	}, [messages]);
 
 	const [sendMessage, { loading: messagesLoading }] = useMutation(
-		SEND_MESSAGE_MUTATION
+		SEND_MESSAGE_MUTATION,
+		{
+			fetchPolicy: "no-cache",
+		}
 	);
 
 	useSubscription(MESSAGE_SENT_SUBSCRIPTION, {
@@ -61,7 +65,7 @@ export default function Conversation() {
 		fetchPolicy: "no-cache",
 	});
 
-	if (loading) return <div>Loading...</div>;
+	if (loading) return <ConversationSkeletonLoading />;
 
 	const handleSendMessage = async () => {
 		if (!message.trim()) return;

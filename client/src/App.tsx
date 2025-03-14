@@ -7,8 +7,7 @@ import Login from "./app/auth/login";
 import ForgotPassword from "./app/auth/forgot-password";
 import Customize from "./app/user/customize";
 import Home from "./app/home";
-import Dashboard from "./app/admin/dashboard";
-import UsersPage from "./app/admin/users";
+
 import AdminsPage from "./app/admin/admins";
 import Orders from "./app/admin/orders";
 import PreOrders from "./app/admin/pre-orders";
@@ -27,9 +26,9 @@ import Flowers from "./app/user/flowers";
 import Gifts from "./app/user/gifts";
 import Bouquets from "./app/user/bouquets";
 import ProductDetails from "./app/user/product";
-import Messages from "./app/admin/messages";
+
 import MessagesMobile from "./app/admin/messages-mobile";
-import Conversation from "./app/admin/conversation";
+
 import Chat from "./app/user/chat";
 import CartPage from "./app/user/cart";
 import BouquetsItems from "./app/admin/bouquet-items";
@@ -40,6 +39,21 @@ import CheckoutError from "./app/user/checkout-error";
 import AddOrder from "./app/admin/add-order";
 import Notification from "./app/notification";
 import ReviewPage from "./app/user/review";
+
+import loadable from "@loadable/component";
+import {
+	DashboardSkeleton,
+	MessagingSkeletonLayoutLoading,
+	ConversationSkeletonLoading,
+	UsersSkeleton,
+} from "./app/skeletons";
+import SystemSettingsSkeleton from "./app/skeletons/settings-skeleton";
+
+const Dashboard = loadable(() => import("./app/admin/dashboard"));
+const UsersPage = loadable(() => import("./app/admin/users"));
+const Settings = loadable(() => import("./app/admin/settings"));
+const Messages = loadable(() => import("./app/admin/messages"));
+const Conversation = loadable(() => import("./app/admin/conversation"));
 
 export default function App() {
 	const publicRoutes = [
@@ -66,12 +80,16 @@ export default function App() {
 				element: <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]} />,
 				children: [
 					{
-						element: <Dashboard />,
+						element: <Dashboard fallback={<DashboardSkeleton />} />,
 						path: "dashboard",
 					},
 					{
+						element: <Settings fallback={<SystemSettingsSkeleton />} />,
+						path: "settings",
+					},
+					{
 						path: "users",
-						element: <UsersPage />,
+						element: <UsersPage fallback={<UsersSkeleton />} />,
 					},
 					{
 						path: "orders",
@@ -92,7 +110,7 @@ export default function App() {
 					},
 					{
 						path: "messages",
-						element: <Messages />,
+						element: <Messages fallback={<MessagingSkeletonLayoutLoading />} />,
 						children: [
 							{
 								index: true,
@@ -100,7 +118,9 @@ export default function App() {
 							},
 							{
 								path: ":userId",
-								element: <Conversation />,
+								element: (
+									<Conversation fallback={<ConversationSkeletonLoading />} />
+								),
 							},
 						],
 					},
