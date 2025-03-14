@@ -52,6 +52,7 @@ export default function AddAdmin() {
 		});
 		form.setValue("password", generatedPassword);
 	};
+
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
 			await createAdmin({

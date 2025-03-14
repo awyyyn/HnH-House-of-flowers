@@ -4,8 +4,8 @@ import ProductForm from "./components/product-form";
 export default function AddProduct() {
 	return (
 		<>
-			<Helmet title="Add Admin" />
-			<ProductForm />;
+			<Helmet title="Add Product" />
+			<ProductForm />
 		</>
 	);
 }

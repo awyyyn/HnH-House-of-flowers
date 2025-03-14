@@ -3,21 +3,32 @@ import { Product } from "@/types";
 import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { ProductInfoSkeleton } from "../skeletons";
+import { useQuery } from "@apollo/client";
+import { GET_PRODUCT_QUERY } from "@/queries";
 
 const ProductInfo = () => {
 	const [activeImg, setActiveImg] = useState("");
-
 	const { state } = useLocation();
+	const { data, loading } = useQuery(GET_PRODUCT_QUERY, {
+		variables: { id: state.product.id },
+	});
 
 	useEffect(() => {
-		setActiveImg(state.product.images[0]);
-	}, [state.product]);
+		if (data?.product) {
+			setActiveImg(data.product.images[0]);
+		}
+	}, [data?.product]);
 
 	if (!state.product) {
 		return <Navigate to="/products" />;
 	}
 
-	const product = state.product as Product;
+	if (loading) {
+		return <ProductInfoSkeleton />;
+	}
+
+	const product = data?.product || (state.product as Product);
 
 	return (
 		<>
@@ -32,7 +43,7 @@ const ProductInfo = () => {
 					</div>
 					<div className="w-full overflow-x-auto flex gap-2 mt-2">
 						{product.images.map(
-							(img) =>
+							(img: string) =>
 								img !== activeImg && (
 									<div
 										className="img-card-sm cursor-pointer"
