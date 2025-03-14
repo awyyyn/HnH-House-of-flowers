@@ -8,35 +8,21 @@ import ForgotPassword from "./app/auth/forgot-password";
 import Customize from "./app/user/customize";
 import Home from "./app/home";
 
-import AdminsPage from "./app/admin/admins";
-import Orders from "./app/admin/orders";
-import PreOrders from "./app/admin/pre-orders";
 import UserOrders from "./app/user/orders";
-import AddAdmin from "./app/admin/add-admin";
+
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
 import VerifyAccount from "./app/verify-account";
 import SetUpAccount from "./app/set-up-account";
-import Products from "./app/admin/products";
-import AddProduct from "./app/admin/add-product";
-import EditProduct from "./app/admin/edit-product";
-import ProductInfo from "./app/admin/product-info";
-import Chocolates from "./app/user/chocolates";
-import Flowers from "./app/user/flowers";
-import Gifts from "./app/user/gifts";
-import Bouquets from "./app/user/bouquets";
-import ProductDetails from "./app/user/product";
 
 import MessagesMobile from "./app/admin/messages-mobile";
 
-import Chat from "./app/user/chat";
 import CartPage from "./app/user/cart";
-import BouquetsItems from "./app/admin/bouquet-items";
-import AddBouquetItem from "./app/admin/add-bouquet-item";
+
 import CheckoutPage from "./app/user/checkout";
 import CheckoutSuccess from "./app/user/checkout-success";
 import CheckoutError from "./app/user/checkout-error";
-import AddOrder from "./app/admin/add-order";
+
 import Notification from "./app/notification";
 import ReviewPage from "./app/user/review";
 
@@ -46,14 +32,39 @@ import {
 	MessagingSkeletonLayoutLoading,
 	ConversationSkeletonLoading,
 	UsersSkeleton,
+	AddAdminSkeleton,
+	SystemSettingsSkeleton,
+	AddOrderSkeleton,
+	AdminOrdersSkeleton,
+	BouquetItemsSkeleton,
+	AddBouquetItemSkeleton,
+	AddProductSkeleton,
+	ProductInfoSkeleton,
+	CardSkeleton,
 } from "./app/skeletons";
-import SystemSettingsSkeleton from "./app/skeletons/settings-skeleton";
 
 const Dashboard = loadable(() => import("./app/admin/dashboard"));
 const UsersPage = loadable(() => import("./app/admin/users"));
 const Settings = loadable(() => import("./app/admin/settings"));
 const Messages = loadable(() => import("./app/admin/messages"));
 const Conversation = loadable(() => import("./app/admin/conversation"));
+const AddAdmin = loadable(() => import("./app/admin/add-admin"));
+const AddOrder = loadable(() => import("./app/admin/add-order"));
+const Orders = loadable(() => import("./app/admin/orders"));
+const PreOrders = loadable(() => import("./app/admin/pre-orders"));
+const BouquetItems = loadable(() => import("./app/admin/bouquet-items"));
+const AddBouquetItem = loadable(() => import("./app/admin/add-bouquet-item"));
+const Products = loadable(() => import("./app/admin/products"));
+const AdminsPage = loadable(() => import("./app/admin/admins"));
+const AddProduct = loadable(() => import("./app/admin/add-product"));
+const EditProduct = loadable(() => import("./app/admin/edit-product"));
+const ProductInfo = loadable(() => import("./app/admin/product-info"));
+const Chat = loadable(() => import("./app/user/chat"));
+const Chocolates = loadable(() => import("./app/user/chocolates"));
+const ProductDetails = loadable(() => import("./app/user/product"));
+const Flowers = loadable(() => import("./app/user/flowers"));
+const Gifts = loadable(() => import("./app/user/gifts"));
+const Bouquets = loadable(() => import("./app/user/bouquets"));
 
 export default function App() {
 	const publicRoutes = [
@@ -74,7 +85,6 @@ export default function App() {
 
 	const adminRoutes = {
 		element: <AdminLayout />,
-
 		children: [
 			{
 				element: <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]} />,
@@ -96,15 +106,15 @@ export default function App() {
 						children: [
 							{
 								path: "add",
-								element: <AddOrder />,
+								element: <AddOrder fallback={<AddOrderSkeleton />} />,
 							},
 							{
 								index: true,
-								element: <Orders />,
+								element: <Orders fallback={<AdminOrdersSkeleton />} />,
 							},
 							{
 								path: "pre-orders",
-								element: <PreOrders />,
+								element: <PreOrders fallback={<AdminOrdersSkeleton />} />,
 							},
 						],
 					},
@@ -129,11 +139,13 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <BouquetsItems />,
+								element: <BouquetItems fallback={<BouquetItemsSkeleton />} />,
 							},
 							{
 								path: "add-item",
-								element: <AddBouquetItem />,
+								element: (
+									<AddBouquetItem fallback={<AddBouquetItemSkeleton />} />
+								),
 							},
 						],
 					},
@@ -142,19 +154,19 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <Products />,
+								element: <Products fallback={<AdminOrdersSkeleton />} />,
 							},
 							{
 								path: "add-product",
-								element: <AddProduct />,
+								element: <AddProduct fallback={<AddProductSkeleton />} />,
 							},
 							{
 								path: "edit/:id",
-								element: <EditProduct />,
+								element: <EditProduct fallback={<AddProductSkeleton />} />,
 							},
 							{
 								path: ":productId/info",
-								element: <ProductInfo />,
+								element: <ProductInfo fallback={<ProductInfoSkeleton />} />,
 							},
 						],
 					},
@@ -168,11 +180,11 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <AdminsPage />,
+								element: <AdminsPage fallback={<AdminOrdersSkeleton />} />,
 							},
 							{
 								path: "add-admin",
-								element: <AddAdmin />,
+								element: <AddAdmin fallback={<AddAdminSkeleton />} />,
 							},
 						],
 					},
@@ -238,18 +250,18 @@ export default function App() {
 					},
 					{
 						path: "chat",
-						element: <Chat />,
+						element: <Chat fallback={<ConversationSkeletonLoading />} />,
 					},
 					{
 						path: "chocolates",
 						children: [
 							{
 								index: true,
-								element: <Chocolates />,
+								element: <Chocolates fallback={<CardSkeleton />} />,
 							},
 							{
 								path: ":productId",
-								element: <ProductDetails />,
+								element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
 							},
 						],
 					},
@@ -258,11 +270,11 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <Flowers />,
+								element: <Flowers fallback={<CardSkeleton />} />,
 							},
 							{
 								path: ":productId",
-								element: <ProductDetails />,
+								element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
 							},
 						],
 					},
@@ -271,11 +283,11 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <Gifts />,
+								element: <Gifts fallback={<CardSkeleton />} />,
 							},
 							{
 								path: ":productId",
-								element: <ProductDetails />,
+								element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
 							},
 						],
 					},
@@ -284,11 +296,11 @@ export default function App() {
 						children: [
 							{
 								index: true,
-								element: <Bouquets />,
+								element: <Bouquets fallback={<CardSkeleton />} />,
 							},
 							{
 								path: ":productId",
-								element: <ProductDetails />,
+								element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
 							},
 						],
 					},

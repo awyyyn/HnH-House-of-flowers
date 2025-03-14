@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 
-export default function SystemSettingsSkeleton() {
+export function SystemSettingsSkeleton() {
 	return (
 		<Tabs defaultValue="general" className="space-y-4">
 			<TabsList className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 w-full">
