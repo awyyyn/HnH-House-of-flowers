@@ -9,7 +9,7 @@ import { AuthContextProps, JWTDecoded, User } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import { useToast } from "@/hooks/use-toast";
 import { useSetAtom } from "jotai";
-import { cartAtom, notificationAtom } from "@/states";
+import { cartAtom, notificationAtom, storeAtom } from "@/states";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
@@ -30,6 +30,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		isAuthenticated: false,
 		role: "USER",
 	});
+	const setStore = useSetAtom(storeAtom);
 	const [user, setUser] = useState<User>(null!);
 	const [loading, setLoading] = useState(true);
 	const setCart = useSetAtom(cartAtom);
@@ -85,6 +86,36 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 					variant: "destructive",
 				});
 				setValues({ isAuthenticated: false, role: "USER" });
+			} finally {
+				setLoading(false);
+			}
+		})();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			setLoading(true);
+			try {
+				const response = await fetch(`${import.meta.env.VITE_API_URL}/api`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (response.status !== 200) {
+					throw new Error("Something went wrong!");
+				}
+
+				const data = await response.json();
+
+				setStore(data);
+			} catch (err) {
+				toast({
+					title: (err as Error).message,
+					description: "Something went wrong!",
+					variant: "destructive",
+				});
 			} finally {
 				setLoading(false);
 			}
