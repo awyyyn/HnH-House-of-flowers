@@ -21,6 +21,7 @@ export interface Order {
 	customer: User | null;
 	status: OrderStatus;
 	totalPrice: number;
+	shippingFee: number | null;
 
 	payment: Payment | null;
 	typeOfPayment: OrderPaymentType;

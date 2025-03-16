@@ -4,6 +4,7 @@ export * from "./order.js";
 export * from "./product.js";
 export * from "./bouquet-item.js";
 export * from "./notification.js";
+export * from "./review.js";
 
 import { Dispatch, SetStateAction, SVGProps } from "react";
 import { User, UserRole } from "./user.js";
@@ -117,3 +118,30 @@ export interface DataTableProps<TData, TValue> {
 	pagination: DataTablePagination;
 	setPagination: Dispatch<SetStateAction<DataTablePagination>>;
 }
+
+export type StoreSettings = {
+	readonly id: string;
+	storeName: string;
+	storeEmail: string;
+	storePhone: string;
+	storeAddress: string;
+	storeDescription: string;
+	deliveryFee: number;
+	policies: Policies;
+	socialMedia: SocialMedia;
+
+	createdAt: string;
+	updatedAt: string;
+};
+
+export type Policies = {
+	privacyPolicy: string;
+	termsOfService: string;
+	returnPolicy: string;
+	shippingPolicy: string;
+};
+
+export type SocialMedia = {
+	facebook: string;
+	instagram: string;
+};
