@@ -6,7 +6,7 @@ import Unauthorized from "./app/unauthorized";
 import Register from "./app/auth/register";
 import Login from "./app/auth/login";
 import ForgotPassword from "./app/auth/forgot-password";
-import Home from "./app/home";
+
 import ProtectedRoute from "./components/custom/protected-route";
 import Account from "./app/account";
 import VerifyAccount from "./app/verify-account";
@@ -15,6 +15,7 @@ import MessagesMobile from "./app/admin/messages-mobile";
 import CheckoutSuccess from "./app/user/checkout-success";
 import CheckoutError from "./app/user/checkout-error";
 import Notification from "./app/notification";
+import PoliciesPage from "./app/policies";
 
 import loadable from "@loadable/component";
 import {
@@ -36,6 +37,7 @@ import {
 	ReviewSkeleton,
 	CustomizeSkeleton,
 	CheckoutSkeleton,
+	HomeSkeleton,
 } from "./app/skeletons";
 
 const Dashboard = loadable(() => import("./app/admin/dashboard"));
@@ -65,13 +67,16 @@ const UserOrders = loadable(() => import("./app/user/orders"));
 const ReviewPage = loadable(() => import("./app/user/review"));
 const Customize = loadable(() => import("./app/user/customize"));
 const CheckoutPage = loadable(() => import("./app/user/checkout"));
+const Home = loadable(() => import("./app/home"));
 
 export default function App() {
 	const publicRoutes = [
 		{
 			path: "/",
 			element: <UserLayout />,
-			children: [{ index: true, element: <Home /> }],
+			children: [
+				{ index: true, element: <Home fallback={<HomeSkeleton />} /> },
+			],
 		},
 		{
 			path: "unauthorized",
@@ -336,6 +341,10 @@ export default function App() {
 		{
 			path: "set-up-account",
 			element: <SetUpAccount />,
+		},
+		{
+			element: <PoliciesPage />,
+			path: "policies",
 		},
 	];
 

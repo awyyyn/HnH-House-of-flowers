@@ -86,7 +86,7 @@ export default function Customize() {
 						wrapper: values.wrapper,
 						tie: values.tie,
 						totalPrice: 110,
-						typeOfDelivery: values.delivery,
+						typeOfDelivery: values.delivery as DeliveryMethod,
 						subFlowers: values.additionalFlower,
 						note: values.note,
 						wrapperColor: values.wrapperColor,
@@ -251,7 +251,9 @@ export default function Customize() {
 										<ToggleGroupItem value="PICKUP" aria-label="Toggle bold">
 											<p>Pick up</p>
 										</ToggleGroupItem>
-										<ToggleGroupItem value="DELIVER" aria-label="Toggle italic">
+										<ToggleGroupItem
+											value="DELIVERY"
+											aria-label="Toggle italic">
 											<p>Deliver</p>
 										</ToggleGroupItem>
 									</ToggleGroup>

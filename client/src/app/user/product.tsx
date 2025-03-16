@@ -102,6 +102,11 @@ const ProductDetails = () => {
 					</div>
 				</div>
 			</div>
+			<section>
+				<div className="container px-4 py-6  ">
+					<h2 className="text-2xl font-bold tracking-tighter ">Reviews</h2>
+				</div>
+			</section>
 		</>
 	);
 };
