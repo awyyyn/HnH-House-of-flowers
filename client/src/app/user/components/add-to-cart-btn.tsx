@@ -111,11 +111,15 @@ export default function AddToCartInline(product: Product) {
 							<ShoppingCart className="mr-2 h-3 w-3" />
 							Add to Cart
 						</Button>
-
-						<CheckoutModal product={product} quantity={quantity} />
 					</div>
 				</>
 			)}
+
+			<CheckoutModal
+				product={product}
+				isPreOrder={product.status === "PRE_ORDER"}
+				quantity={quantity}
+			/>
 		</div>
 	);
 }

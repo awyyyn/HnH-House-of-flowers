@@ -8,7 +8,6 @@ import {
 	LifeBuoy,
 	MessagesSquare,
 	Package,
-	Send,
 	UserCog,
 	Users,
 } from "lucide-react";
@@ -90,14 +89,9 @@ const data = {
 	],
 	navSecondary: [
 		{
-			title: "Support",
-			url: "#",
+			title: "Policies",
+			url: "/policies",
 			icon: LifeBuoy,
-		},
-		{
-			title: "Feedback",
-			url: "#",
-			icon: Send,
 		},
 	],
 	systems: [

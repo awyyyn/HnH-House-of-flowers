@@ -371,15 +371,22 @@ export default function OrderDetailDialog({
 								)
 							</span>
 							<span>
-								{formatCurrency(
-									order.orderItems.reduce((acc, item) => acc + item.price, 0)
-								)}
+								{order.isPreOrder
+									? formatCurrency(order.totalPrice)
+									: formatCurrency(
+											order.orderItems.reduce(
+												(acc, item) => acc + item.price,
+												0
+											)
+									  )}
 							</span>
 						</div>
-						<div className="flex justify-between text-sm">
-							<span>Delivery Fee</span>
-							<span>{formatCurrency(50)}</span>
-						</div>
+						{order.shippingFee && (
+							<div className="flex justify-between text-sm">
+								<span>Delivery Fee</span>
+								<span>{formatCurrency(order.shippingFee)}</span>
+							</div>
+						)}
 						<Separator className="my-2" />
 						<div className="flex justify-between font-medium">
 							<span>Total</span>

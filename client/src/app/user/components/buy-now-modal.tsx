@@ -30,11 +30,18 @@ type DeliveryType = "PICKUP" | "DELIVERY";
 interface CheckoutModalProps {
 	product: Product;
 	quantity: number;
+	isPreOrder?: boolean;
 }
 
-export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
+export function CheckoutModal({
+	product,
+	quantity,
+	isPreOrder,
+}: CheckoutModalProps) {
 	const [open, setOpen] = useState(false);
-	const [paymentType, setPaymentType] = useState<PaymentType>("CASH");
+	const [paymentType, setPaymentType] = useState<PaymentType>(
+		isPreOrder ? "GCASH" : "CASH"
+	);
 	const [deliveryType, setDeliveryType] = useState<DeliveryType>("PICKUP");
 	const [checkout, { loading }] = useMutation(CHECKOUT_MUTATION);
 	const { toast } = useToast();
@@ -77,6 +84,7 @@ export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
 			});
 
 			if (paymentType === "GCASH") {
+				console.log(data?.data, "qqqq");
 				window.location.replace(
 					data?.data.createCheckoutSession.payment.checkoutUrl
 				);
@@ -100,7 +108,7 @@ export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
 					className="h-8"
 					disabled={loading || product.stock === 0}>
 					<Zap className="mr-2 h-3 w-3" />
-					Buy Now
+					{isPreOrder ? "Pre-Order" : "Buy Now"}
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
@@ -124,18 +132,20 @@ export function CheckoutModal({ product, quantity }: CheckoutModalProps) {
 							defaultValue={paymentType}
 							onValueChange={(value: PaymentType) => setPaymentType(value)}
 							className="grid grid-cols-2 gap-4">
-							<div>
-								<RadioGroupItem
-									value="CASH"
-									id="modal-cash"
-									className="peer sr-only"
-								/>
-								<Label
-									htmlFor="modal-cash"
-									className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-									Cash
-								</Label>
-							</div>
+							{!isPreOrder && (
+								<div>
+									<RadioGroupItem
+										value="CASH"
+										id="modal-cash"
+										className="peer sr-only"
+									/>
+									<Label
+										htmlFor="modal-cash"
+										className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+										Cash
+									</Label>
+								</div>
+							)}
 							<div>
 								<RadioGroupItem
 									value="GCASH"
