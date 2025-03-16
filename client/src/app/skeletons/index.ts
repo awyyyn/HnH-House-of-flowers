@@ -15,5 +15,7 @@ export * from "./cart-skeleton";
 export * from "./notification-skeleton";
 export * from "./orders-skeleton";
 export * from "./review-skeleton";
+export * from "./home-skeleton";
 export * from "./customize-skeleton";
 export * from "./checkout-skeleton";
+export * from "./policies-skeleton";
