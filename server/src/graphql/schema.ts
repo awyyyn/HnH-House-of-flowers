@@ -50,6 +50,7 @@ export const typeDefs = gql`
 		): ReviewPaginationResult
 		readNotifications(pagination: PaginationInput): NotificationPaginationResult
 		unReviewedProducts: [Product]
+		readSettings: StoreSettings
 	}
 
 	type Mutation {
@@ -113,6 +114,29 @@ export const typeDefs = gql`
 			typeOfDelivery: OrderDeliveryType!
 			wrapperColor: String!
 		): Order
+		configureStore(
+			id: ID
+			storePhone: String!
+			storeEmail: String!
+			storeName: String!
+			storeAddress: String!
+			storeDescription: String!
+			deliveryFee: Float!
+			socialMedia: SocialMediaInput!
+			policies: PoliciesInput!
+		): StoreSettings
+	}
+
+	input SocialMediaInput {
+		facebook: String!
+		instagram: String!
+	}
+
+	input PoliciesInput {
+		privacyPolicy: String!
+		returnPolicy: String!
+		shippingPolicy: String!
+		termsOfService: String!
 	}
 
 	type ProductSummary {
@@ -310,6 +334,8 @@ export const typeDefs = gql`
 		typeOfDelivery: OrderDeliveryType
 		typeOfPayment: OrderPaymentType
 
+		shippingFee: Float
+
 		customizeId: String
 		customize: Customize
 
@@ -505,5 +531,31 @@ export const typeDefs = gql`
 		images: [String]
 		createdAt: String
 		updatedAt: String
+	}
+
+	type StoreSettings {
+		id: ID!
+		storeName: String!
+		storeEmail: String!
+		storePhone: String!
+		storeAddress: String!
+		storeDescription: String!
+		deliveryFee: Float!
+		socialMedia: SocialMedia!
+		policies: Policies!
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	type SocialMedia {
+		facebook: String!
+		instagram: String!
+	}
+
+	type Policies {
+		privacyPolicy: String!
+		returnPolicy: String!
+		shippingPolicy: String!
+		termsOfService: String!
 	}
 `;

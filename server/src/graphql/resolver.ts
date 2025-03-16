@@ -42,6 +42,10 @@ import {
 	updateNotificationResolver,
 } from "./resolvers/notification-resolver.js";
 import { createReviewResolver } from "./resolvers/review-resolver.js";
+import {
+	readSettingsResolver,
+	settingsResolver,
+} from "./resolvers/settings-resolver.js";
 
 export const resolvers = {
 	Subscription: {
@@ -66,6 +70,7 @@ export const resolvers = {
 		ordersSummary: readOrdersSummaryResolver,
 		readNotifications: readNotificationsResolver,
 		unReviewedProducts: unReviewedProductsResolver,
+		readSettings: readSettingsResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,
@@ -89,6 +94,7 @@ export const resolvers = {
 		deleteNotification: deleteNotificationResolver,
 		createReview: createReviewResolver,
 		createCustomBouquet: checkoutCustomizeBouquetResolver,
+		configureStore: settingsResolver,
 	},
 	// Mutation: {},
 };

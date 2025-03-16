@@ -14,6 +14,7 @@ import {
 	OrderPaymentType,
 	AppContext,
 } from "../../types/index.js";
+import { getStore } from "src/models/settings-model.js";
 
 export const createCheckoutSessionResolver = async (
 	_: never,
@@ -67,6 +68,8 @@ export const createCheckoutSessionResolver = async (
 		if (typeOfPayment === "GCASH") {
 			const url = "https://api.paymongo.com/v1/checkout_sessions";
 
+			const store = await getStore();
+
 			const options = {
 				method: "POST",
 				headers: {
@@ -81,14 +84,26 @@ export const createCheckoutSessionResolver = async (
 							show_description: true,
 							show_line_items: true,
 							description: "Payment for items",
-							line_items: line_items.map((item) => ({
-								currency: "PHP",
-								quantity: item.quantity,
-								amount: item.amount * 100,
-								name: item.name,
-								description: "Information about the product",
-								images: item.images,
-							})),
+							line_items: [
+								...line_items.map((item) => ({
+									currency: "PHP",
+									quantity: item.quantity,
+									amount: item.amount * 100,
+									name: item.name,
+									description: "Information about the product",
+									images: item.images,
+								})),
+								typeOfDelivery === "DELIVERY" && {
+									currency: "PHP",
+									quantity: 1,
+									amount: Number(store?.deliveryFee || 0) * 100,
+									name: "Delivery Fee",
+									description: "Charge for delivery",
+									images: [
+										"https://cdn1.iconfinder.com/data/icons/logistics-transportation-vehicles/202/logistic-shipping-vehicles-002-512.png",
+									],
+								},
+							],
 							payment_method_types: ["gcash", "paymaya"],
 							success_url: `${environment.CLIENT_URL}/checkout/success`,
 							cancel_url: `${environment.CLIENT_URL}/checkout/cancel`,
