@@ -17,6 +17,7 @@ import {
 import { PaymentStatus } from "../types/payment.js";
 import { createCustomizeBouquet } from "./customize-order-model.js";
 import { environment } from "src/environments/environment.js";
+import { getStore } from "./settings-model.js";
 
 export const createOrder = async ({
 	userId,
@@ -27,7 +28,9 @@ export const createOrder = async ({
 	typeOfDelivery,
 	preOrder,
 	payment,
+	fee,
 }: {
+	fee?: number;
 	totalPrice: number;
 	userId?: string;
 	items: {
@@ -53,6 +56,7 @@ export const createOrder = async ({
 			totalPrice,
 			status,
 			typeOfDelivery,
+			shippingFee: fee,
 			typeOfPayment,
 			isPreOrder: preOrder,
 			formattedId: orderId,
@@ -501,6 +505,7 @@ export const createCustomizeOrder = async ({
 	const formattedId = `ORD${unixTimestamp.toString().padStart(10, "0")}`;
 
 	const url = "https://api.paymongo.com/v1/checkout_sessions";
+	const store = await getStore();
 
 	const options = {
 		method: "POST",
@@ -525,6 +530,16 @@ export const createCustomizeOrder = async ({
 							description: "Information about the custom bouquet",
 							images: [
 								"https://img.freepik.com/premium-vector/giving-flowers-bouquet-present-icon_98396-113210.jpg",
+							],
+						},
+						{
+							currency: "PHP",
+							quantity: 1,
+							amount: Number(store?.deliveryFee || 0) * 100,
+							name: "Delivery Fee",
+							description: "Charge for delivery",
+							images: [
+								"https://cdn1.iconfinder.com/data/icons/logistics-transportation-vehicles/202/logistic-shipping-vehicles-002-512.png",
 							],
 						},
 					],
@@ -556,6 +571,7 @@ export const createCustomizeOrder = async ({
 		totalPrice,
 		wrapper,
 		note,
+
 		wrapperColor,
 	});
 
@@ -568,6 +584,7 @@ export const createCustomizeOrder = async ({
 			formattedId,
 			totalPrice,
 			typeOfDelivery,
+			shippingFee: store?.deliveryFee,
 			typeOfPayment: "GCASH",
 			payment: {
 				create: {

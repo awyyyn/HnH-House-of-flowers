@@ -114,6 +114,7 @@ export const getBestSellingProducts = async (take: number = 5) => {
 			name: true,
 			images: true,
 			price: true,
+			category: true,
 		},
 		orderBy: {
 			orderItem: {
