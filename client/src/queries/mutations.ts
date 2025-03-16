@@ -354,3 +354,49 @@ export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
 		}
 	}
 `;
+
+export const UPDATE_STORE_SETTINGS_MUTATION = gql`
+	mutation (
+		$storePhone: String!
+		$storeEmail: String!
+		$storeName: String!
+		$storeAddress: String!
+		$storeDescription: String!
+		$deliveryFee: Float!
+		$socialMedia: SocialMediaInput!
+		$policies: PoliciesInput!
+		$id: ID
+	) {
+		settings: configureStore(
+			id: $id
+			storePhone: $storePhone
+			storeEmail: $storeEmail
+			storeName: $storeName
+			storeAddress: $storeAddress
+			storeDescription: $storeDescription
+			deliveryFee: $deliveryFee
+			socialMedia: $socialMedia
+			policies: $policies
+		) {
+			id
+			storeName
+			storeEmail
+			storePhone
+			storeAddress
+			storeDescription
+			deliveryFee
+			socialMedia {
+				facebook
+				instagram
+			}
+			policies {
+				privacyPolicy
+				returnPolicy
+				shippingPolicy
+				termsOfService
+			}
+			createdAt
+			updatedAt
+		}
+	}
+`;

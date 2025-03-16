@@ -1,9 +1,5 @@
 import { gql } from "@apollo/client";
-import {
-	bouquetItemFragment,
-	productFragment,
-	userFragment,
-} from "./fragments";
+import { productFragment, userFragment } from "./fragments";
 
 export const getUserQuery = gql`
 	${userFragment}
@@ -148,6 +144,7 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 			formattedId
 			totalPrice
 			isPreOrder
+			shippingFee
 			typeOfDelivery
 			typeOfPayment
 			customizeId
@@ -229,6 +226,7 @@ export const READ_ORDERS_QUERY = gql`
 					}
 				}
 				customizeId
+				shippingFee
 				customize {
 					id
 					name
@@ -369,6 +367,43 @@ export const READ_UNREVIEW_PRODUCT_QUERY = gql`
 		}
 		products: unReviewedProducts {
 			...ProductFragment
+		}
+	}
+`;
+export const READ_STORE_SETTINGS_QUERY = gql`
+	query {
+		settings: readSettings {
+			id
+			storeName
+			storeEmail
+			storePhone
+			storeDescription
+			deliveryFee
+			socialMedia {
+				facebook
+				instagram
+			}
+			policies {
+				privacyPolicy
+				returnPolicy
+				shippingPolicy
+				termsOfService
+			}
+			createdAt
+			updatedAt
+			storeAddress
+		}
+	}
+`;
+
+export const HOME_QUERY = gql`
+	query ($take: Int) {
+		topProducts: readBestSellingProducts(take: $take) {
+			id
+			images
+			price
+			name
+			sold
 		}
 	}
 `;
