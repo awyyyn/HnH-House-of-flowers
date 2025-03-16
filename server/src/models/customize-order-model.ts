@@ -16,12 +16,14 @@ export const createCustomizeBouquet = async ({
 	wrapper: string;
 	tie: string;
 	totalPrice: number;
+
 	note?: string;
 	wrapperColor: string;
 }) => {
 	const order = await prisma.customize.create({
 		data: {
 			name,
+
 			bouquetItems: {
 				mainFlower,
 				subFlowers,
