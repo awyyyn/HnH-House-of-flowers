@@ -133,11 +133,11 @@ export default function ProductReviewForm({
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)}>
-				<div className="grid gap-5 lg:grid-cols-12">
+				<div className="grid gap-5 grid-cols-1 lg:grid-cols-12">
 					{/* Product Preview */}
 					<Card className="lg:col-span-3">
 						<CardContent className="px-6 pb-6">
-							<div className="flex flex-col items-center pt-5 text-center">
+							<div className="flex flex-col  items-center pt-5 text-center">
 								<img
 									src={selectedProduct.images[0] || "/placeholder.svg"}
 									alt={selectedProduct.name}
@@ -156,7 +156,7 @@ export default function ProductReviewForm({
 					</Card>
 
 					{/* Review Form */}
-					<Card className="col-span-6">
+					<Card className="lg:col-span-6">
 						<CardContent className="p-6">
 							{showSuccess ? (
 								<>
@@ -288,7 +288,7 @@ export default function ProductReviewForm({
 							)}
 						</CardContent>
 					</Card>
-					<Card className="col-span-3">
+					<Card className="lg:col-span-3">
 						<CardHeader>
 							<h2 className="text-lg font-semibold">Pending Review</h2>
 						</CardHeader>
