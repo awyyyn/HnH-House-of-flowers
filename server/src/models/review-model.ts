@@ -45,6 +45,9 @@ export const readReview = async ({
 		},
 		skip: pagination ? pagination.limit * pagination?.page : undefined,
 		take: pagination ? pagination.limit : undefined,
+		include: {
+			user: true,
+		},
 	});
 
 	const total = await prisma.review.count({

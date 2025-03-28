@@ -41,7 +41,10 @@ import {
 	readNotificationsResolver,
 	updateNotificationResolver,
 } from "./resolvers/notification-resolver.js";
-import { createReviewResolver } from "./resolvers/review-resolver.js";
+import {
+	createReviewResolver,
+	readReviewsResolver,
+} from "./resolvers/review-resolver.js";
 import {
 	readSettingsResolver,
 	settingsResolver,
@@ -71,6 +74,7 @@ export const resolvers = {
 		readNotifications: readNotificationsResolver,
 		unReviewedProducts: unReviewedProductsResolver,
 		readSettings: readSettingsResolver,
+		readReviews: readReviewsResolver,
 	},
 	Mutation: {
 		createAdmin: createAdminResolver,

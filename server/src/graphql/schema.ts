@@ -45,7 +45,7 @@ export const typeDefs = gql`
 		productsSummary: ProductSummary
 		ordersSummary: [OrderSummary]
 		readReviews(
-			id: String!
+			productId: String!
 			pagination: PaginationInput
 		): ReviewPaginationResult
 		readNotifications(pagination: PaginationInput): NotificationPaginationResult

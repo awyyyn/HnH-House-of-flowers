@@ -407,3 +407,28 @@ export const HOME_QUERY = gql`
 		}
 	}
 `;
+
+export const READ_PRODUCT_WITH_REVIEWS = gql`
+	${productFragment}
+	query ($id: ID!, $productId: String!, $pagination: PaginationInput) {
+		reviews: readReviews(productId: $productId, pagination: $pagination) {
+			total
+			data {
+				comment
+				rating
+				images
+				id
+				user {
+					firstName
+					lastName
+					email
+				}
+			}
+			hasNextPage
+		}
+
+		product(id: $id) {
+			...ProductFragment
+		}
+	}
+`;
