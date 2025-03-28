@@ -99,7 +99,7 @@ function Policies() {
 					</TabsContent>
 
 					<TabsContent value="returns">
-						<CardHeader>
+						<CardHeader>  
 							<CardTitle>Return Policy</CardTitle>
 							<CardDescription>
 								Last updated:{" "}
