@@ -98,10 +98,20 @@ export const readProducts = async ({
 };
 
 export const getBestSellingProducts = async (take: number = 5) => {
+	console.log(sub(new Date(), { months: 1 }).toISOString());
 	let products = await prisma.product.findMany({
 		where: {
-			createdAt: {
-				gte: sub(new Date(), { months: 1 }),
+			// createdAt: {
+			// 	gte: sub(new Date(), { months: 1 }),
+			// },
+			orderItem: {
+				some: {
+					order: {
+						completedAt: {
+							gte: sub(new Date(), { months: 1 }),
+						},
+					},
+				},
 			},
 		},
 		select: {
