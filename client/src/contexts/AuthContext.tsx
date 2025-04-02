@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { useToast } from "@/hooks/use-toast";
 import { useSetAtom } from "jotai";
 import { cartAtom, notificationAtom, storeAtom } from "@/states";
+import { Loader } from "@/components/custom/loader";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
@@ -146,6 +147,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		setValues({ isAuthenticated: false, role: "USER" });
 		setLoading(false);
 	};
+
+	if (loading) return <Loader />;
 
 	return (
 		<AuthContext.Provider

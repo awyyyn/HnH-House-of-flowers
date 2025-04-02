@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components";
-import { Outlet } from "react-router-dom";
 
 export function MobileMessagingSkeletonLoading() {
 	return (
@@ -27,7 +26,7 @@ export function MessagesLayoutSkeleton() {
 		<>
 			{/* Desktop skeleton */}
 			<div className="hidden md:block">
-				<MessagingSkeletonLoading />
+				<MessagingSkeletonLayoutLoading />
 			</div>
 
 			{/* Mobile skeleton */}

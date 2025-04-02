@@ -12,7 +12,6 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 	Helmet,
-	Skeleton,
 } from "@/components";
 import { useQuery } from "@apollo/client";
 import { getUsersQuery } from "@/queries";

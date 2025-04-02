@@ -3,7 +3,7 @@ import { getBestSellingProducts } from "src/models/product-model.js";
 import { readReviews } from "src/models/review-model.js";
 import { getStore } from "src/models/settings-model.js";
 
-export const readStoreController = async (req: Request, res: Response) => {
+export const readStoreController = async (_: Request, res: Response) => {
 	try {
 		const store = await getStore();
 

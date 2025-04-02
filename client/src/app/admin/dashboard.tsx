@@ -55,7 +55,7 @@ export default function Dashboard() {
 		productsSummary: ProductSummary;
 	}>(DASHBOARD_QUERY, {
 		variables: {
-			// year: 2025,
+			year: 2025,
 			take: 6,
 			pagination: {
 				page: 0,
