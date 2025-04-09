@@ -8,13 +8,13 @@ import {
 	createOrder,
 	removeCartItem,
 	createCustomizeOrder,
+	getStore,
 } from "../../models/index.js";
 import {
 	OrderDeliveryType,
 	OrderPaymentType,
 	AppContext,
 } from "../../types/index.js";
-import { getStore } from "src/models/settings-model.js";
 
 export const createCheckoutSessionResolver = async (
 	_: never,

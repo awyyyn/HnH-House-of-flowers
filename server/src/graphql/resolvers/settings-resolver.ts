@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { getStore, updateStore } from "src/models/settings-model.js";
+import { getStore, updateStore } from "../../models/settings-model.js";
 
 export const settingsResolver = async (
 	_: never,

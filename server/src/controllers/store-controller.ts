@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import { getBestSellingProducts } from "src/models/product-model.js";
-import { readReviews } from "src/models/review-model.js";
-import { getStore } from "src/models/settings-model.js";
+import {
+	getBestSellingProducts,
+	readReviews,
+	getStore,
+} from "../models/index.js";
 
 export const readStoreController = async (_: Request, res: Response) => {
 	try {

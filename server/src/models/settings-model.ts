@@ -1,4 +1,4 @@
-import { prisma } from "src/services/prisma.js";
+import { prisma } from "../services/index.js";
 
 export const updateStore = async (
 	{
