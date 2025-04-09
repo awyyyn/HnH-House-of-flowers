@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "./components/pagination";
-import CardSkeleton from "./components/card-skeleton";
+import { CardSkeleton } from "../skeletons";
 import ProductCard from "./components/product-card";
 import { EmptyState, Helmet } from "@/components";
 import { PackageSearch } from "lucide-react";

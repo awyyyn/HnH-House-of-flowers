@@ -65,3 +65,6 @@ export * from "./custom/file-upload";
 export * from "./ui/command";
 export * from "./ui/radio-group";
 export * from "./custom/rich-text-editor";
+
+/* MAGIC UI */
+export * from "./magicui/marquee";

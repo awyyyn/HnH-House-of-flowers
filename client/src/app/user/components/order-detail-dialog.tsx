@@ -23,10 +23,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatOrderDate } from "@/lib/utils";
 import { format, formatDate } from "date-fns";
-import { Order } from "@/types";
+import { BouquetItem, Order } from "@/types";
 import { useAuth } from "@/contexts";
 import { Link } from "react-router-dom";
-// import type { OrderWithItems } from "./types";
+import { lazy, Suspense } from "react";
+import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
+import { useQuery } from "@apollo/client";
+
+const CustomizePreview = lazy(() => import("./customize-preview"));
 
 interface OrderDetailDialogProps {
 	// order: OrderWithItems;
@@ -50,9 +54,32 @@ export default function OrderDetailDialog({
 		if (order.status === "READY_FOR_PICKUP") return 2; // Same level as SHIPPED
 		return statuses.indexOf(order.status);
 	};
+	const { data, loading } = useQuery<{
+		bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
+	}>(GET_ALL_BOUQUET_ITEMS_QUERY, {
+		variables: {
+			isAvailable: true,
+		},
+		fetchPolicy: "no-cache",
+	});
+
 	const { user } = useAuth();
 
 	const statusStep = getStatusStep();
+
+	const wrappers =
+		data?.bouquetItems.data.filter((item) => item.type === "WRAPPER") ?? [];
+
+	const flowers =
+		data?.bouquetItems.data.filter((item) => item.type === "FLOWER") ?? [];
+
+	const subFlowers =
+		data?.bouquetItems.data.filter((item) => item.type === "SUB_FLOWER") ?? [];
+
+	const ties =
+		data?.bouquetItems.data.filter((item) => item.type === "TIE") ?? [];
+
+	if (loading) return null;
 
 	return (
 		<Dialog open={open} onOpenChange={(open) => !open && onClose()}>
@@ -260,50 +287,70 @@ export default function OrderDetailDialog({
 				{/* Order Items */}
 				<div className="my-4">
 					<h3 className="font-medium mb-4">Order Items</h3>
-					<div className="space-y-4">
-						{order.orderItems.map((item) => (
-							<div key={item.id} className="flex gap-4">
-								<div className="h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
-									{item.product?.images?.[0] ? (
-										<img
-											src={item.product.images[0] || "/placeholder.svg"}
-											alt={item.product.name}
-											width={64}
-											height={64}
-											className="h-full w-full object-cover"
-										/>
-									) : (
-										<div className="h-full w-full flex items-center justify-center bg-muted">
-											<Package className="h-8 w-8 text-muted-foreground" />
+					{order.isPreOrder && order.customize ? (
+						<div className="space-y-4">
+							<Suspense fallback={<p>Loading...</p>}>
+								<CustomizePreview
+									flowers={flowers}
+									subFlowers={subFlowers}
+									ties={ties}
+									wrappers={wrappers}
+									additionalFlowers={order.customize?.bouquetItems.subFlowers}
+									mainFlower={order.customize?.bouquetItems.mainFlower}
+									wrapper={order.customize?.bouquetItems.wrapper}
+									wrapperColor={order.customize?.bouquetItems.wrapperColor}
+									tie={order.customize?.bouquetItems.tie}
+								/>
+							</Suspense>
+						</div>
+					) : (
+						<div className="space-y-4">
+							{order.orderItems.map((item) => (
+								<div key={item.id} className="flex gap-4">
+									<div className="h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+										{item.product?.images?.[0] ? (
+											<img
+												src={item.product.images[0] || "/placeholder.svg"}
+												alt={item.product.name}
+												width={64}
+												height={64}
+												className="h-full w-full object-cover"
+											/>
+										) : (
+											<div className="h-full w-full flex items-center justify-center bg-muted">
+												<Package className="h-8 w-8 text-muted-foreground" />
+											</div>
+										)}
+									</div>
+									<div className="flex-1 flex justify-between">
+										<div className="flex flex-col mt-1">
+											<h4 className="font-medium">
+												{item.product?.name || "Product"}
+											</h4>
+											<p className="text-sm text-muted-foreground">
+												Qty: {item.quantity}
+											</p>
 										</div>
-									)}
-								</div>
-								<div className="flex-1 flex justify-between">
-									<div className="flex flex-col mt-1">
-										<h4 className="font-medium">
-											{item.product?.name || "Product"}
-										</h4>
-										<p className="text-sm text-muted-foreground">
-											Qty: {item.quantity}
-										</p>
-									</div>
-									<div className="flex items-end justify-end flex-col mt-1">
-										<p className="font-medium">{formatCurrency(item.price)}</p>
-										{showReviewButton &&
-											!item.product?.reviews
-												.map((review) => review.id)
-												.includes(user.id) && (
-												<Button size="sm" asChild>
-													<Link to={`/add-review/${item.product?.id}`}>
-														Write a Review
-													</Link>
-												</Button>
-											)}
+										<div className="flex items-end justify-end flex-col mt-1">
+											<p className="font-medium">
+												{formatCurrency(item.price)}
+											</p>
+											{showReviewButton &&
+												!item.product?.reviews
+													.map((review) => review.id)
+													.includes(user.id) && (
+													<Button size="sm" asChild>
+														<Link to={`/add-review/${item.product?.id}`}>
+															Write a Review
+														</Link>
+													</Button>
+												)}
+										</div>
 									</div>
 								</div>
-							</div>
-						))}
-					</div>
+							))}
+						</div>
+					)}
 				</div>
 
 				<Separator />
@@ -315,19 +362,31 @@ export default function OrderDetailDialog({
 						<div className="flex justify-between text-sm">
 							<span>
 								Subtotal (
-								{order.orderItems.reduce((acc, item) => acc + item.quantity, 0)}{" "}
-								items)
+								{order.isPreOrder
+									? "1 item"
+									: `${order.orderItems.reduce(
+											(acc, item) => acc + item.quantity,
+											0
+									  )}} item`}
+								)
 							</span>
 							<span>
-								{formatCurrency(
-									order.orderItems.reduce((acc, item) => acc + item.price, 0)
-								)}
+								{order.isPreOrder
+									? formatCurrency(order.totalPrice)
+									: formatCurrency(
+											order.orderItems.reduce(
+												(acc, item) => acc + item.price,
+												0
+											)
+									  )}
 							</span>
 						</div>
-						<div className="flex justify-between text-sm">
-							<span>Delivery Fee</span>
-							<span>{formatCurrency(50)}</span>
-						</div>
+						{order.shippingFee && (
+							<div className="flex justify-between text-sm">
+								<span>Delivery Fee</span>
+								<span>{formatCurrency(order.shippingFee)}</span>
+							</div>
+						)}
 						<Separator className="my-2" />
 						<div className="flex justify-between font-medium">
 							<span>Total</span>

@@ -313,3 +313,90 @@ export const CREATE_REVIEW_MUTATION = gql`
 		}
 	}
 `;
+
+export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
+	mutation CreateCustomBouquet(
+		$mainFlower: String!
+		$wrapper: String!
+		$tie: String!
+		$totalPrice: Float!
+		$typeOfDelivery: OrderDeliveryType!
+		$subFlowers: [String]
+		$note: String
+		$wrapperColor: String!
+	) {
+		createCustomBouquet(
+			mainFlower: $mainFlower
+			wrapper: $wrapper
+			tie: $tie
+			totalPrice: $totalPrice
+			typeOfDelivery: $typeOfDelivery
+			subFlowers: $subFlowers
+			note: $note
+			wrapperColor: $wrapperColor
+		) {
+			id
+			status
+			formattedId
+			totalPrice
+			isPreOrder
+			payment {
+				checkoutUrl
+			}
+			typeOfDelivery
+			typeOfPayment
+			orderDate
+			processedAt
+			shippedAt
+			forPickup
+			cancelledAt
+			completedAt
+		}
+	}
+`;
+
+export const UPDATE_STORE_SETTINGS_MUTATION = gql`
+	mutation (
+		$storePhone: String!
+		$storeEmail: String!
+		$storeName: String!
+		$storeAddress: String!
+		$storeDescription: String!
+		$deliveryFee: Float!
+		$socialMedia: SocialMediaInput!
+		$policies: PoliciesInput!
+		$id: ID
+	) {
+		settings: configureStore(
+			id: $id
+			storePhone: $storePhone
+			storeEmail: $storeEmail
+			storeName: $storeName
+			storeAddress: $storeAddress
+			storeDescription: $storeDescription
+			deliveryFee: $deliveryFee
+			socialMedia: $socialMedia
+			policies: $policies
+		) {
+			id
+			storeName
+			storeEmail
+			storePhone
+			storeAddress
+			storeDescription
+			deliveryFee
+			socialMedia {
+				facebook
+				instagram
+			}
+			policies {
+				privacyPolicy
+				returnPolicy
+				shippingPolicy
+				termsOfService
+			}
+			createdAt
+			updatedAt
+		}
+	}
+`;

@@ -33,12 +33,12 @@ export const createReviewResolver = async (
 export const readReviewsResolver = async (
 	_: never,
 	{
-		id,
+		productId,
 		pagination,
-	}: { id: string; pagination?: UserPaginationArgs["pagination"] }
+	}: { productId: string; pagination?: UserPaginationArgs["pagination"] }
 ) => {
 	try {
-		return await readReview({ productId: id, pagination });
+		return await readReview({ productId, pagination });
 	} catch {
 		throw new GraphQLError("Internal Server Error!");
 	}

@@ -51,7 +51,7 @@ export function Navbar({ className }: { className?: string }) {
 							<UserDrawer />
 						</div>
 					)}
-					<Link to="/">
+					<Link to="/" className="lg:block hidden">
 						<TextGenerateEffect
 							className="text-lg  "
 							words="House of Flowers"

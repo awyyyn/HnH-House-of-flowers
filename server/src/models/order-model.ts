@@ -15,6 +15,9 @@ import {
 	OrderFilter,
 } from "../types/index.js";
 import { PaymentStatus } from "../types/payment.js";
+import { createCustomizeBouquet } from "./customize-order-model.js";
+import { environment } from "src/environments/environment.js";
+import { getStore } from "./settings-model.js";
 
 export const createOrder = async ({
 	userId,
@@ -25,7 +28,9 @@ export const createOrder = async ({
 	typeOfDelivery,
 	preOrder,
 	payment,
+	fee,
 }: {
+	fee?: number;
 	totalPrice: number;
 	userId?: string;
 	items: {
@@ -51,6 +56,7 @@ export const createOrder = async ({
 			totalPrice,
 			status,
 			typeOfDelivery,
+			shippingFee: fee,
 			typeOfPayment,
 			isPreOrder: preOrder,
 			formattedId: orderId,
@@ -245,6 +251,7 @@ export const readOrders = async ({
 			},
 			payment: true,
 			customer: true,
+			customize: true,
 		},
 	});
 
@@ -274,6 +281,7 @@ export const readOrdersByUser = async (userId: string) => {
 					},
 				},
 			},
+			customize: true,
 			payment: true,
 			customer: true,
 		},
@@ -468,4 +476,146 @@ export const getOrderSummary = async () => {
 			percentage: Number(percentage.toFixed(2)),
 		};
 	});
+};
+
+export const createCustomizeOrder = async ({
+	mainFlower,
+	name,
+	subFlowers,
+	tie,
+	totalPrice,
+	wrapper,
+	note,
+	typeOfDelivery,
+	userId,
+	wrapperColor,
+}: {
+	name: string;
+	mainFlower: string;
+	subFlowers: string[];
+	wrapper: string;
+	tie: string;
+	totalPrice: number;
+	note?: string;
+	typeOfDelivery: OrderDeliveryType;
+	userId: string;
+	wrapperColor: string;
+}) => {
+	const unixTimestamp = getUnixTime(new Date()); // Get current Unix timestamp
+	const formattedId = `ORD${unixTimestamp.toString().padStart(10, "0")}`;
+
+	const url = "https://api.paymongo.com/v1/checkout_sessions";
+	const store = await getStore();
+
+	const options = {
+		method: "POST",
+		headers: {
+			accept: "application/json",
+			"Content-Type": "application/json",
+			authorization: `Basic ${process.env.PAYMONGO_SECRET}`,
+		},
+		body: JSON.stringify({
+			data: {
+				attributes: {
+					send_email_receipt: true,
+					show_description: true,
+					show_line_items: true,
+					description: "Payment for custom bouquet",
+					line_items: [
+						{
+							currency: "PHP",
+							quantity: 1,
+							amount: totalPrice * 100,
+							name: name,
+							description: "Information about the custom bouquet",
+							images: [
+								"https://img.freepik.com/premium-vector/giving-flowers-bouquet-present-icon_98396-113210.jpg",
+							],
+						},
+						{
+							currency: "PHP",
+							quantity: 1,
+							amount: Number(store?.deliveryFee || 0) * 100,
+							name: "Delivery Fee",
+							description: "Charge for delivery",
+							images: [
+								"https://cdn1.iconfinder.com/data/icons/logistics-transportation-vehicles/202/logistic-shipping-vehicles-002-512.png",
+							],
+						},
+					],
+					payment_method_types: ["gcash"],
+					success_url: `${environment.CLIENT_URL}/checkout/success`,
+					cancel_url: `${environment.CLIENT_URL}/checkout/cancel`,
+				},
+			},
+		}),
+	};
+
+	const response = await fetch(url, options);
+	const data = await response.json();
+
+	if (response.status !== 200) {
+		throw new Error("Failed to order");
+	}
+
+	const payment = {
+		checkoutUrl: data.data.attributes.checkout_url,
+		id: data.data.id,
+	};
+
+	const customizeBouquet = await createCustomizeBouquet({
+		mainFlower,
+		name,
+		subFlowers,
+		tie,
+		totalPrice,
+		wrapper,
+		note,
+
+		wrapperColor,
+	});
+
+	if (!customizeBouquet) {
+		throw new Error("Failed to create customize bouquet");
+	}
+
+	const order = await prisma.order.create({
+		data: {
+			formattedId,
+			totalPrice,
+			typeOfDelivery,
+			shippingFee: store?.deliveryFee,
+			typeOfPayment: "GCASH",
+			payment: {
+				create: {
+					checkoutUrl: payment.checkoutUrl,
+					userId,
+					status: "PENDING",
+					paymentId: payment.id,
+				},
+			},
+			isPreOrder: true,
+			status: "PENDING",
+			customer: {
+				connect: {
+					id: userId,
+				},
+			},
+			customize: {
+				connect: {
+					id: customizeBouquet.id,
+				},
+			},
+		},
+		include: {
+			payment: true,
+			customize: true,
+		},
+	});
+
+	if (!order) {
+		throw new Error("Failed to create order");
+	}
+
+	return order;
 };

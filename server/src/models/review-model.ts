@@ -45,6 +45,9 @@ export const readReview = async ({
 		},
 		skip: pagination ? pagination.limit * pagination?.page : undefined,
 		take: pagination ? pagination.limit : undefined,
+		include: {
+			user: true,
+		},
 	});
 
 	const total = await prisma.review.count({
@@ -56,4 +59,29 @@ export const readReview = async ({
 		hasNextPage: reviews.length === pagination?.limit,
 		total,
 	};
+};
+
+export const readReviews = async () => {
+	const reviews = await prisma.review.findMany({
+		where: {
+			rating: {
+				gte: 4,
+			},
+			comment: {
+				not: null,
+			},
+		},
+		take: 3,
+		include: {
+			user: {
+				select: {
+					firstName: true,
+					lastName: true,
+					photo: true,
+				},
+			},
+		},
+	});
+
+	return reviews;
 };

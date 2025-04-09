@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, Button, Helmet, Input } from "@/components";
 import { Flower, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts";
+import { ConversationSkeletonLoading } from "../skeletons";
 
 export default function Chat() {
 	const { user } = useAuth();
@@ -47,7 +48,7 @@ export default function Chat() {
 		fetchPolicy: "no-cache",
 	});
 
-	if (loading) return <div>Loading...</div>;
+	if (loading) return <ConversationSkeletonLoading />;
 
 	const handleSendMessage = async () => {
 		if (!message.trim()) return;

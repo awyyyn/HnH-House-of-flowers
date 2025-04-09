@@ -4,10 +4,10 @@ import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "./components/pagination";
-import CardSkeleton from "./components/card-skeleton";
 import ProductCard from "./components/product-card";
 import { EmptyState, Helmet } from "@/components";
 import { PackageSearch } from "lucide-react";
+import { ProductsSkeleton } from "../skeletons";
 
 export default function Chocolates() {
 	const [params] = useSearchParams();
@@ -28,7 +28,7 @@ export default function Chocolates() {
 		}
 	);
 
-	if (loading) return <CardSkeleton />;
+	if (loading) return <ProductsSkeleton />;
 
 	return (
 		<>

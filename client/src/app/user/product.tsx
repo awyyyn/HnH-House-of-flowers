@@ -1,18 +1,23 @@
 import { Helmet, RichTextEditor } from "@/components";
-import { GET_PRODUCT_QUERY } from "@/queries";
-import { Product } from "@/types";
+import { READ_PRODUCT_WITH_REVIEWS } from "@/queries";
+import { PaginationResult, Product, Review } from "@/types";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import AddToCart from "./components/add-to-cart-btn";
+import ProductReviewComponent from "./components/comment-section";
 
 const ProductDetails = () => {
 	const { productId } = useParams();
 
 	const [activeImg, setActiveImg] = useState("");
-	const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
+	const { data, loading } = useQuery<{
+		product: Product;
+		reviews: PaginationResult<Review>;
+	}>(READ_PRODUCT_WITH_REVIEWS, {
 		variables: {
 			id: productId,
+			productId,
 		},
 		onCompleted(data) {
 			setActiveImg(data.product.images[0]);
@@ -102,6 +107,17 @@ const ProductDetails = () => {
 					</div>
 				</div>
 			</div>
+			<section>
+				<div className="container px-4 py-6  ">
+					{data?.reviews.data.length > 0 ? (
+						<ProductReviewComponent reviews={data?.reviews.data || []} />
+					) : (
+						<div className="w-full min-h-[200px] grid place-content-center">
+							<h3 className="text-2xl italic text-primary/60">No review yet</h3>
+						</div>
+					)}
+				</div>
+			</section>
 		</>
 	);
 };

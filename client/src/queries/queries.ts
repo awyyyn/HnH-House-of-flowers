@@ -1,9 +1,5 @@
 import { gql } from "@apollo/client";
-import {
-	bouquetItemFragment,
-	productFragment,
-	userFragment,
-} from "./fragments";
+import { productFragment, userFragment } from "./fragments";
 
 export const getUserQuery = gql`
 	${userFragment}
@@ -111,7 +107,6 @@ export const GET_MESSAGES_QUERY = gql`
 `;
 
 export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
-	${bouquetItemFragment}
 	query (
 		$isAvailable: Boolean
 		$filter: String
@@ -126,7 +121,15 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 		) {
 			total
 			data {
-				...BouquetItemFragment
+				id
+				name
+				price
+				svg
+				colors
+				type
+				isAvailable
+				createdAt
+				updatedAt
 			}
 			hasNextPage
 		}
@@ -141,8 +144,22 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 			formattedId
 			totalPrice
 			isPreOrder
+			shippingFee
 			typeOfDelivery
 			typeOfPayment
+			customizeId
+			customize {
+				id
+				name
+				note
+				bouquetItems {
+					subFlowers
+					mainFlower
+					wrapper
+					wrapperColor
+					tie
+				}
+			}
 			orderItems {
 				id
 				orderId
@@ -206,6 +223,20 @@ export const READ_ORDERS_QUERY = gql`
 						zone
 						city
 						street
+					}
+				}
+				customizeId
+				shippingFee
+				customize {
+					id
+					name
+					note
+					bouquetItems {
+						subFlowers
+						mainFlower
+						wrapper
+						wrapperColor
+						tie
 					}
 				}
 				status
@@ -335,6 +366,68 @@ export const READ_UNREVIEW_PRODUCT_QUERY = gql`
 			...ProductFragment
 		}
 		products: unReviewedProducts {
+			...ProductFragment
+		}
+	}
+`;
+export const READ_STORE_SETTINGS_QUERY = gql`
+	query {
+		settings: readSettings {
+			id
+			storeName
+			storeEmail
+			storePhone
+			storeDescription
+			deliveryFee
+			socialMedia {
+				facebook
+				instagram
+			}
+			policies {
+				privacyPolicy
+				returnPolicy
+				shippingPolicy
+				termsOfService
+			}
+			createdAt
+			updatedAt
+			storeAddress
+		}
+	}
+`;
+
+export const HOME_QUERY = gql`
+	query ($take: Int) {
+		topProducts: readBestSellingProducts(take: $take) {
+			id
+			images
+			price
+			name
+			sold
+		}
+	}
+`;
+
+export const READ_PRODUCT_WITH_REVIEWS = gql`
+	${productFragment}
+	query ($id: ID!, $productId: String!, $pagination: PaginationInput) {
+		reviews: readReviews(productId: $productId, pagination: $pagination) {
+			total
+			data {
+				comment
+				rating
+				images
+				id
+				user {
+					firstName
+					lastName
+					email
+				}
+			}
+			hasNextPage
+		}
+
+		product(id: $id) {
 			...ProductFragment
 		}
 	}

@@ -1,12 +1,12 @@
-import { OrderItem } from "./order.js";
+import { BouquetItems } from "./bouquet-item";
 
 export interface Customize {
 	readonly id: string;
 	name: string;
-	description?: string;
-	price?: number;
+	note?: string;
+	totalPrice: number;
 
-	orderItem: OrderItem;
+	bouquetItems: BouquetItems;
 
 	createdAt: Date;
 	updatedAt: Date;

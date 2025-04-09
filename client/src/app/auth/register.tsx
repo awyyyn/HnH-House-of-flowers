@@ -9,6 +9,7 @@ import {
 	Form,
 	InputWithIcon,
 	Helmet,
+	Checkbox,
 } from "@/components";
 import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +32,9 @@ const formSchema = z
 			.string()
 			.min(1, "Confirm Password is required")
 			.min(8, "Password must be at least 8 characters"),
+		acceptPolicies: z.boolean().refine((val) => val === true, {
+			message: "You must accept the policies to register",
+		}),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords don't match",
@@ -191,8 +195,37 @@ export default function Register() {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="acceptPolicies"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+											disabled={form.formState.isSubmitting}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none text-left">
+										<FormLabel className="text-sm text-black/60 dark:text-white/60">
+											I accept the{" "}
+											<Link
+												to="/policies"
+												target="_blank"
+												className="text-primary  hover:underline">
+												Terms of Service, Privacy Policy, and other policies
+											</Link>
+										</FormLabel>
+										<FormMessage className="dark:text-primary" />
+									</div>
+								</FormItem>
+							)}
+						/>
 						<Button
-							disabled={form.formState.isSubmitting}
+							disabled={
+								form.formState.isSubmitting || !form.getValues().acceptPolicies
+							}
 							type="submit"
 							className="w-full">
 							{form.formState.isSubmitting ? (

@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components";
 
-export default function CardSkeleton() {
+export function CardSkeleton() {
 	return (
 		<div className="grid grid-cols-6 sm:grid-cols-8 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
 			{Array.from({ length: 10 }).map((_, index) => (

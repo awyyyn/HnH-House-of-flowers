@@ -1,3 +1,4 @@
+import { Customize } from "./customize.js";
 import { Payment } from "./payment.js";
 import { Product } from "./product.js";
 import { User } from "./user.js";
@@ -20,6 +21,7 @@ export interface Order {
 	customer: User | null;
 	status: OrderStatus;
 	totalPrice: number;
+	shippingFee: number | null;
 
 	payment: Payment | null;
 	typeOfPayment: OrderPaymentType;
@@ -27,6 +29,8 @@ export interface Order {
 	isPreOrder: boolean;
 
 	orderItems: OrderItem[];
+	customizeId: string | null;
+	customize: Customize | null;
 
 	orderDate: string;
 	processedAt: string | null;

@@ -45,11 +45,12 @@ export const typeDefs = gql`
 		productsSummary: ProductSummary
 		ordersSummary: [OrderSummary]
 		readReviews(
-			id: String!
+			productId: String!
 			pagination: PaginationInput
 		): ReviewPaginationResult
 		readNotifications(pagination: PaginationInput): NotificationPaginationResult
 		unReviewedProducts: [Product]
+		readSettings: StoreSettings
 	}
 
 	type Mutation {
@@ -103,6 +104,39 @@ export const typeDefs = gql`
 		): Review
 		updateNotification(id: ID): String!
 		deleteNotification(id: ID): String!
+		createCustomBouquet(
+			mainFlower: String!
+			subFlowers: [String]
+			wrapper: String!
+			tie: String!
+			totalPrice: Float!
+			note: String
+			typeOfDelivery: OrderDeliveryType!
+			wrapperColor: String!
+		): Order
+		configureStore(
+			id: ID
+			storePhone: String!
+			storeEmail: String!
+			storeName: String!
+			storeAddress: String!
+			storeDescription: String!
+			deliveryFee: Float!
+			socialMedia: SocialMediaInput!
+			policies: PoliciesInput!
+		): StoreSettings
+	}
+
+	input SocialMediaInput {
+		facebook: String!
+		instagram: String!
+	}
+
+	input PoliciesInput {
+		privacyPolicy: String!
+		returnPolicy: String!
+		shippingPolicy: String!
+		termsOfService: String!
 	}
 
 	type ProductSummary {
@@ -300,6 +334,11 @@ export const typeDefs = gql`
 		typeOfDelivery: OrderDeliveryType
 		typeOfPayment: OrderPaymentType
 
+		shippingFee: Float
+
+		customizeId: String
+		customize: Customize
+
 		orderDate: String!
 		processedAt: String
 		shippedAt: String
@@ -426,6 +465,7 @@ export const typeDefs = gql`
 		subFlowers: [String]
 		mainFlower: String
 		wrapper: String
+		wrapperColor: String
 		tie: String
 	}
 
@@ -491,5 +531,31 @@ export const typeDefs = gql`
 		images: [String]
 		createdAt: String
 		updatedAt: String
+	}
+
+	type StoreSettings {
+		id: ID!
+		storeName: String!
+		storeEmail: String!
+		storePhone: String!
+		storeAddress: String!
+		storeDescription: String!
+		deliveryFee: Float!
+		socialMedia: SocialMedia!
+		policies: Policies!
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	type SocialMedia {
+		facebook: String!
+		instagram: String!
+	}
+
+	type Policies {
+		privacyPolicy: String!
+		returnPolicy: String!
+		shippingPolicy: String!
+		termsOfService: String!
 	}
 `;

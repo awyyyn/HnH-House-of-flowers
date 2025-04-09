@@ -27,6 +27,7 @@ import { CREATE_BOUQUET_ITEM_MUTATION } from "@/queries";
 import { useMutation } from "@apollo/client";
 import { toast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { AddBouquetItemSkeleton } from "../skeletons";
 
 // Define the item types
 const ItemType = z.enum(["WRAPPER", "TIE", "FLOWER", "SUB_FLOWER"]);
@@ -120,7 +121,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function BouquetItemForm() {
-	const [createBouquetItem] = useMutation(CREATE_BOUQUET_ITEM_MUTATION);
+	const [createBouquetItem, { loading }] = useMutation(
+		CREATE_BOUQUET_ITEM_MUTATION
+	);
 	// Initialize the form
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
@@ -235,6 +238,10 @@ export default function BouquetItemForm() {
 				variant: "destructive",
 			});
 		}
+	}
+
+	if (loading) {
+		return <AddBouquetItemSkeleton />;
 	}
 
 	return (

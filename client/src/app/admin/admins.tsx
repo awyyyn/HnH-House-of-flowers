@@ -149,6 +149,7 @@ export default function UsersPage() {
 			<div className="flex justify-between items-center py-2">
 				<h1 className="text-4xl">List of admins</h1>
 			</div>
+
 			<DataTable
 				loading={loading}
 				pagination={pagination}
@@ -158,6 +159,7 @@ export default function UsersPage() {
 				data={data?.users.data ?? []}
 				rowCount={data?.users.total ?? 0}
 			/>
+
 			{selectedAdmin?.id && (
 				<UserInfoModal
 					isAdmin
