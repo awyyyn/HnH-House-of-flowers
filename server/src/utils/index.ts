@@ -4,7 +4,8 @@ import { NotificationType } from "@prisma/client";
 export function generateNotificationContent(
 	type: NotificationType,
 	orderStatus?: OrderStatus,
-	userName?: string
+	userName?: string,
+	placed?: boolean
 ): { title: string; message: string } {
 	let title = "";
 	let message = "";
@@ -12,7 +13,9 @@ export function generateNotificationContent(
 	switch (type) {
 		case NotificationType.ORDER:
 			title = `Order ${orderStatus?.toLowerCase().split("_").join(" ")}`;
-			message = `Your order is currently ${orderStatus?.toLowerCase()}.`;
+			message = placed
+				? "New order placed."
+				: `Your order is currently ${orderStatus?.toLowerCase()}.`;
 			break;
 
 		case NotificationType.MESSAGE:
