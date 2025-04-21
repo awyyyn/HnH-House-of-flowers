@@ -16,7 +16,7 @@ import {
 	OrderPaymentType,
 	AppContext,
 } from "../../types/index.js";
-import { generateNotificationContent } from "src/utils/index.js";
+import { generateNotificationContent } from "../../utils/index.js";
 import { pubsub } from "../../services/pubsub.js";
 
 export const createCheckoutSessionResolver = async (
