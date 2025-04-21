@@ -86,7 +86,7 @@ export default function Orders() {
 					<Badge
 						variant={productStatusColorMap[row.original.status]}
 						className="capitalize">
-						{row.original.status}
+						{row.original.status.replace(/_/g, " ").toLowerCase()}
 					</Badge>
 				);
 			},
