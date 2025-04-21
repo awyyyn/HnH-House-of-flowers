@@ -1,6 +1,7 @@
 import {
 	AuroraBackground,
 	Button,
+	EmptyState,
 	Helmet,
 	Label,
 	Stepper,
@@ -25,6 +26,7 @@ import {
 	GET_ALL_BOUQUET_ITEMS_QUERY,
 } from "@/queries";
 import { useToast } from "@/hooks/use-toast";
+import { Origami } from "lucide-react";
 
 const steps = [
 	{ title: "Step 1", description: "Choose a theme" },
@@ -128,7 +130,7 @@ export default function Customize() {
 	const renderStep = (step: number) => {
 		switch (step) {
 			case 0:
-				return (
+				return data?.bouquetItems.data && data.bouquetItems.data.length > 0 ? (
 					<PickTheme
 						wrappers={wrappers}
 						selected={values.wrapper}
@@ -141,6 +143,14 @@ export default function Customize() {
 							});
 						}}
 					/>
+				) : (
+					<div className="min-h-[300px] w-full grid place-content-center">
+						<EmptyState
+							title="No Bouquets wrappers Available"
+							description="There are currently no bouquet wrappers. Please check back later."
+							icon={Origami}
+						/>
+					</div>
 				);
 			case 1:
 				return (
@@ -353,9 +363,11 @@ export default function Customize() {
 						<Button
 							onClick={handleNext}
 							disabled={
-								(activeStep === 1
-									? !values.mainFlower || !values.tie || !values.wrapper
-									: false) || loading
+								activeStep === 0
+									? (data?.bouquetItems.data.length || 0) === 0
+									: (activeStep === 1
+											? !values.mainFlower || !values.tie || !values.wrapper
+											: false) || loading
 							}>
 							{activeStep === steps.length - 1 ? "Finish" : "Next"}
 						</Button>

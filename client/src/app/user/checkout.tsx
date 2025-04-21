@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { cartAtom } from "@/states";
 import { useMutation } from "@apollo/client";
 import { CHECKOUT_MUTATION } from "@/queries";
@@ -21,7 +21,7 @@ const CheckoutPage = () => {
 	const [checkout, { loading }] = useMutation(CHECKOUT_MUTATION);
 	const { state } = useLocation();
 	const navigate = useNavigate();
-	const cart = useAtomValue(cartAtom);
+	const [cart, setCart] = useAtom(cartAtom);
 	// cart.items.ma
 
 	if (!state.selectedItems.size) {
@@ -32,6 +32,8 @@ const CheckoutPage = () => {
 	const cartItems = cart.items.filter((item) =>
 		state.selectedItems.has(item.id)
 	);
+
+	const cartItemsId = cartItems.map((item) => item.id);
 
 	const footerHeight = 320; // Adjust this value based on your footer's actual height
 
@@ -76,6 +78,14 @@ const CheckoutPage = () => {
 				window.location.replace(
 					data?.data.createCheckoutSession.payment.checkoutUrl
 				);
+			} else {
+				setCart((prevCart) => {
+					const newItems = prevCart.items.filter(
+						(item) => !cartItemsId.includes(item.id)
+					);
+					return { ...prevCart, items: newItems };
+				});
+				navigate("/my-orders");
 			}
 		} catch (err) {
 			toast({
