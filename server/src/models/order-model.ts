@@ -412,6 +412,7 @@ export const getLastMonthData = async () => {
 			createdAt: {
 				gte: sub(new Date(), { months: 1 }),
 			},
+			role: "USER",
 		},
 	});
 
@@ -438,17 +439,17 @@ export const getLastMonthData = async () => {
 		orders: {
 			lastMonth: newOrdersCount.length,
 			overAll: totalOrdersCount,
-			percentage: orderPercentage,
+			percentage: orderPercentage.toFixed(2),
 		},
 		users: {
 			lastMonth: newUserCount,
 			overAll: totalUserCount,
-			percentage: userPercentage,
+			percentage: userPercentage.toFixed(2),
 		},
 		revenues: {
 			overAll: overallRevenue,
 			lastMonth: lastMonthRevenue,
-			percentage: revenuePercentage,
+			percentage: revenuePercentage.toFixed(2),
 		},
 	};
 };

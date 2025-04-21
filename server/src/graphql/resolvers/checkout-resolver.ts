@@ -9,12 +9,15 @@ import {
 	removeCartItem,
 	createCustomizeOrder,
 	getStore,
+	createNotification,
 } from "../../models/index.js";
 import {
 	OrderDeliveryType,
 	OrderPaymentType,
 	AppContext,
 } from "../../types/index.js";
+import { generateNotificationContent } from "src/utils/index.js";
+import { pubsub } from "../../services/pubsub.js";
 
 export const createCheckoutSessionResolver = async (
 	_: never,
@@ -145,6 +148,24 @@ export const createCheckoutSessionResolver = async (
 				line_items.map(async (item) => await removeCartItem(item.cartItemId))
 			);
 		}
+
+		const content = generateNotificationContent(
+			"ORDER",
+			order.status,
+			order.customer?.firstName!,
+			true
+		);
+
+		const notification = await createNotification({
+			message: content.message,
+			userId: app.id!,
+			type: "ORDER",
+			idToGo: order.id,
+			title: content.title,
+			toShop: true,
+		});
+
+		pubsub.publish("NOTIFICATION_SENT", { notificationSent: notification });
 
 		return order;
 	} catch (err) {

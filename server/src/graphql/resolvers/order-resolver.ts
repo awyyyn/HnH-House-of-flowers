@@ -126,22 +126,24 @@ export const createOrderResolver = async (
 			throw new GraphQLError("Failed to create order");
 		}
 
-		const content = generateNotificationContent(
-			"ORDER",
-			order.status,
-			order.customer?.firstName!
-		);
+		if (order.customerID) {
+			const content = generateNotificationContent(
+				"ORDER",
+				order.status,
+				order.customer?.firstName!
+			);
 
-		const notification = await createNotification({
-			message: content.message,
-			userId: app.id!,
-			type: "ORDER",
-			idToGo: order.id,
-			title: content.title,
-			toShop: true,
-		});
+			const notification = await createNotification({
+				message: content.message,
+				userId: app.id!,
+				type: "ORDER",
+				idToGo: order.id,
+				title: content.title,
+				toShop: true,
+			});
 
-		pubsub.publish("NOTIFICATION_SENT", { notificationSent: notification });
+			pubsub.publish("NOTIFICATION_SENT", { notificationSent: notification });
+		}
 
 		return order;
 	} catch (error) {
