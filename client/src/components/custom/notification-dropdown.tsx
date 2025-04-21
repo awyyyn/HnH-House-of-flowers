@@ -147,12 +147,17 @@ export function NotificationDropdown() {
 										)
 									}>
 									<div className="flex items-start justify-between w-full">
-										<p
-											className={`text-sm ${
-												notification.read ? "" : "font-medium"
-											}`}>
-											{notification.message}
-										</p>
+										<div className="">
+											<h2 className="font-medium text-md">
+												{notification.title}
+											</h2>
+											<p
+												className={`text-xs ${
+													notification.read ? "" : "font-medium"
+												}`}>
+												{notification.message}
+											</p>
+										</div>
 										{!notification.read && (
 											<div className="h-2 w-2 rounded-full bg-blue-500 mt-1 ml-2" />
 										)}

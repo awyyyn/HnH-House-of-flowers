@@ -46,9 +46,9 @@ export function DashboardSkeleton() {
 				</TabsList>
 
 				<TabsContent value="overview" className="space-y-4">
-					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+					<div className="grid gap-4 md:grid-cols-3 ">
 						{/* Summary Cards */}
-						{Array(4)
+						{Array(3)
 							.fill(0)
 							.map((_, i) => (
 								<Card key={i}>

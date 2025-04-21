@@ -15,7 +15,7 @@ import {
 import { cn, formatCurrency } from "@/lib";
 import { Product } from "@/types";
 import { Check, ChevronsUpDown, Minus, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 export default function ProductItem({
 	products,
@@ -30,12 +30,33 @@ export default function ProductItem({
 	removeOrderItem: (id: string) => void;
 	updateOrderItem: (product: Product, id: string) => void;
 }) {
-	const [searchTerm, setSearchTerm] = useState("");
+	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+
+	// Initialize filtered products with all products
+	useEffect(() => {
+		setFilteredProducts(products);
+	}, [products]);
+
+	const handleSearch = useCallback(
+		(value: string) => {
+			if (!value) {
+				setFilteredProducts(products);
+				return;
+			}
+
+			setFilteredProducts(
+				products.filter((product) => {
+					return product.name.toLowerCase().includes(value.toLowerCase());
+				})
+			);
+		},
+		[products]
+	);
 
 	return (
 		<div className="grid md:grid-cols-12 gap-2 items-end">
 			<div className="md:col-span-5">
-				<Label htmlFor={`product}`}>Product</Label>
+				<Label htmlFor={`product`}>Product</Label>
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
@@ -48,17 +69,10 @@ export default function ProductItem({
 					</PopoverTrigger>
 					<PopoverContent className="w-[300px] p-0">
 						<Command>
-							<CommandInput
-								placeholder="Search products..."
-								value={searchTerm}
-								onValueChange={setSearchTerm}
-								readOnly={true}
-							/>
-
 							<CommandList>
 								<CommandEmpty>No products found.</CommandEmpty>
 								<CommandGroup>
-									{products.map((productItem) => (
+									{filteredProducts.map((productItem) => (
 										<CommandItem
 											key={productItem.id}
 											value={productItem.id}
@@ -95,7 +109,7 @@ export default function ProductItem({
 							type="button"
 							variant="no-styles"
 							className="cursor-pointer p-0 m-0"
-							disabled={product.stock >= product.quantity}
+							disabled={product.stock <= product.quantity}
 							onClick={() => updateOrderQuantity(product.id, true)}>
 							<Plus className="h-4 w-4 " />
 						</Button>
@@ -126,7 +140,7 @@ export default function ProductItem({
 					size="icon"
 					onClick={() => removeOrderItem(product.id)}>
 					<span className="block md:hidden text-white">Remove</span>
-					<Trash2 className="h-4 w-4  text-white md:text-destructive" />
+					<Trash2 className="h-4 w-4 text-white md:text-destructive" />
 				</Button>
 			</div>
 		</div>

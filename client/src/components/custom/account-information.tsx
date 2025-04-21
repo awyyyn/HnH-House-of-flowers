@@ -16,13 +16,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { InputWithIcon } from "./flexible-input";
 import { Loader, Mail } from "lucide-react";
-import { DatePicker } from "./date-picker";
 import { Combobox } from "./combobox";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_MUTATION } from "@/queries";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import places from "../../../places.json";
+import { formatDate } from "date-fns";
 
 const accountInformationSchema = z.object({
 	firstName: z.string().nonempty(),
@@ -55,9 +55,10 @@ export default function AccountInformation({
 	const [isEditing, setIsEditing] = useState(setUp);
 	const [uploading, setUploading] = useState(false);
 	const { user, setUser } = useAuth();
+
 	const form = useForm<z.infer<typeof accountInformationSchema>>({
 		resolver: zodResolver(accountInformationSchema),
-		defaultValues: {
+		values: {
 			firstName: user?.firstName ?? "",
 			lastName: user?.lastName ?? "",
 			email: user?.email ?? "",
@@ -399,15 +400,31 @@ export default function AccountInformation({
 									</FormLabel>
 									<FormControl>
 										<div className="w-full">
-											<DatePicker
-												handleChangeValue={(v) => {
-													form.setValue("birthDate", v.toISOString());
-													form.clearErrors("birthDate");
+											<Input
+												type="date"
+												onChange={(e) => {
+													console.log("changed", e.target.value);
+													form.setValue(
+														"birthDate",
+														new Date(e.target.value).toISOString()
+													);
 												}}
-												readonly={!isEditing || form.formState.isSubmitting}
-												defaultValue={
-													user?.birthDate ? new Date(user.birthDate) : undefined
+												value={
+													form.getValues().birthDate
+														? formatDate(
+																form.getValues().birthDate,
+																"yyyy-MM-dd"
+														  )
+														: ""
 												}
+												// handleChangeValue={(v) => {
+												// 	form.setValue("birthDate", v.toISOString());
+												// 	form.clearErrors("birthDate");
+												// }}
+												readOnly={!isEditing || form.formState.isSubmitting}
+												// defaultValue={
+												// 	user?.birthDate ? new Date(user.birthDate) : undefined
+												// }
 											/>
 										</div>
 									</FormControl>
