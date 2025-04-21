@@ -3,7 +3,6 @@ import {
 	Command,
 	CommandEmpty,
 	CommandGroup,
-	CommandInput,
 	CommandItem,
 	CommandList,
 	InputWithIcon,
@@ -15,7 +14,7 @@ import {
 import { cn, formatCurrency } from "@/lib";
 import { Product } from "@/types";
 import { Check, ChevronsUpDown, Minus, Plus, Trash2 } from "lucide-react";
-import { useCallback, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProductItem({
 	products,
@@ -37,21 +36,21 @@ export default function ProductItem({
 		setFilteredProducts(products);
 	}, [products]);
 
-	const handleSearch = useCallback(
-		(value: string) => {
-			if (!value) {
-				setFilteredProducts(products);
-				return;
-			}
+	// const handleSearch = useCallback(
+	// 	(value: string) => {
+	// 		if (!value) {
+	// 			setFilteredProducts(products);
+	// 			return;
+	// 		}
 
-			setFilteredProducts(
-				products.filter((product) => {
-					return product.name.toLowerCase().includes(value.toLowerCase());
-				})
-			);
-		},
-		[products]
-	);
+	// 		setFilteredProducts(
+	// 			products.filter((product) => {
+	// 				return product.name.toLowerCase().includes(value.toLowerCase());
+	// 			})
+	// 		);
+	// 	},
+	// 	[products]
+	// );
 
 	return (
 		<div className="grid md:grid-cols-12 gap-2 items-end">
