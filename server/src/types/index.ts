@@ -3,6 +3,7 @@ import { BouquetItemType } from "./bouquet-item.js";
 import { OrderDeliveryType, OrderPaymentType, OrderStatus } from "./order.js";
 import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
+import { FlowerTags } from "@prisma/client";
 export * from "./user.js";
 export * from "./product.js";
 export * from "./cart.js";
@@ -10,96 +11,98 @@ export * from "./bouquet-item.js";
 export * from "./order.js";
 
 export interface UserFilter {
-	filter?: string;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
-	status?: UserStatus;
-	role?: UserRole;
+  filter?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  status?: UserStatus;
+  role?: UserRole;
 }
 
 export interface ProductFilter {
-	filter?: string;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
-	status?: ProductStatus[];
-	category?: ProductCategory;
+  filter?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  status?: ProductStatus[];
+  category?: ProductCategory;
+  tags?: FlowerTags[];
 }
 
 export interface BouquetItemFilter {
-	filter?: string;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
-	isAvailable?: boolean;
-	type?: BouquetItemType[];
+  filter?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  isAvailable?: boolean;
+  type?: BouquetItemType[];
 }
 
 export interface OrderFilter {
-	filter?: string;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
-	isPreOrder?: boolean;
-	status?: OrderStatus[];
-	typeOfPayment?: OrderPaymentType;
-	typeOfDelivery?: OrderDeliveryType;
+  filter?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  isPreOrder?: boolean;
+  status?: OrderStatus[];
+  typeOfPayment?: OrderPaymentType;
+  typeOfDelivery?: OrderDeliveryType;
 }
 
 export interface PaginationResult<T> {
-	count: number;
-	data: T[];
-	hasMore: boolean;
+  count: number;
+  data: T[];
+  hasMore: boolean;
 }
 
 export type AppContext = {
-	id: string;
-	email: string;
-	role: UserRole;
-	prisma: typeof prisma;
+  id: string;
+  email: string;
+  role: UserRole;
+  prisma: typeof prisma;
 };
 
 export interface UserPaginationArgs {
-	filter?: string;
-	status?: UserStatus;
-	role?: UserRole;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
+  filter?: string;
+  status?: UserStatus;
+  role?: UserRole;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
 }
 
 export interface ProductsPaginationArgs {
-	filter?: string;
-	status?: ProductStatus[];
-	category?: ProductCategory;
-	pagination?: {
-		page: number;
-		limit: number;
-	};
+  filter?: string;
+  status?: ProductStatus[];
+  category?: ProductCategory;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  tags?: FlowerTags[];
 }
 
 export interface RegistrationLink {
-	email: string;
-	role?: UserRole;
-	otp?: string;
+  email: string;
+  role?: UserRole;
+  otp?: string;
 }
 
 export interface UpdateUserInput {
-	firstName: string | null;
-	lastName: string | null;
-	middleName: string | null;
-	photo?: string;
-	phoneNumber: string | null;
-	birthDate: string | null;
-	address: {
-		zone: string;
-		city: string;
-		street: string;
-	} | null;
+  firstName: string | null;
+  lastName: string | null;
+  middleName: string | null;
+  photo?: string;
+  phoneNumber: string | null;
+  birthDate: string | null;
+  address: {
+    zone: string;
+    city: string;
+    street: string;
+  } | null;
 }
