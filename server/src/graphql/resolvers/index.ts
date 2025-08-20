@@ -6,3 +6,7 @@ export * from "./message-resolver.js";
 export * from "./bouquet-items-resolver.js";
 export * from "./order-resolver.js";
 export * from "./checkout-resolver.js";
+export * from "./component-resolver.js";
+export * from "./notification-resolver.js";
+export * from "./review-resolver.js";
+export * from "./settings-resolver.js";

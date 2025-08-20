@@ -8,6 +8,8 @@ export const typeDefs = gql`
 
   type Query {
     user(filter: String!): User
+    component(id: ID!): Component
+    components(componentType: ComponentType): [Component]
     users(
       role: UserRole
       filter: String
@@ -55,6 +57,27 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    createComponent(
+      name: String!
+      quantity: Int!
+      description: String
+      price: Float
+      image: String
+      type: ComponentType!
+      isAvailable: Boolean!
+      availableColors: [String]
+    ): Component
+    updateComponent(
+      id: ID!
+      name: String!
+      quantity: Int!
+      description: String
+      price: Float
+      image: String
+      type: ComponentType!
+      isAvailable: Boolean!
+      availableColors: [String]
+    ): Component
     createAdmin(email: String!, password: String!): User
     blockUser(id: ID!, reason: String!, role: UserRole!): User
     unblockUser(id: ID!, role: UserRole!): User
@@ -127,6 +150,26 @@ export const typeDefs = gql`
       socialMedia: SocialMediaInput!
       policies: PoliciesInput!
     ): StoreSettings
+  }
+
+  type Component {
+    id: ID!
+    name: String!
+    quantity: Int!
+    description: String
+    price: Float
+    image: String
+    type: ComponentType!
+    isAvailable: Boolean!
+    availableColors: [String]
+
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  enum ComponentType {
+    FLOWER
+    WRAPPER
   }
 
   input SocialMediaInput {

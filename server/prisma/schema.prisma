@@ -186,14 +186,39 @@ enum BouquetItemType {
   SUB_FLOWER
 }
 
+model Component {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  quantity        Int           @default(0)
+  description     String?       @default("")
+  price           Float?        @default(0.00)
+  image           String?       @default("https://clipart-library.com/newhp/94-948284_purple-flower-clip-art-6-petal-flower-clipart.png")
+  type            ComponentType
+  isAvailable     Boolean       @default(true)
+  availableColors String[]
+
+  // TimeStamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("components")
+}
+
+enum ComponentType {
+  FLOWER
+  WRAPPER
+}
+
 model Product {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String   @default("")
   price       Float    @default(0.00)
   images      String[]
-  // tags        String[]
   stock       Int      @default(1)
+
+  // components
+  components String[] @default([])
 
   reviews Review[]
 
