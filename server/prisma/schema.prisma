@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   email       String     @unique
@@ -16,19 +14,19 @@ model User {
   lastName    String?
   middleName  String?
   password    String
-  photo      String @default("https://clipart-library.com/newhp/94-948284_purple-flower-clip-art-6-petal-flower-clipart.png")
+  photo       String     @default("https://clipart-library.com/newhp/94-948284_purple-flower-clip-art-6-petal-flower-clipart.png")
   phoneNumber String?
   birthDate   DateTime?
-  verifiedAt DateTime?
-  address address?
+  verifiedAt  DateTime?
+  address     address?
   role        UserRole
   status      UserStatus @default(UNVERIFIED)
 
-  orders Order[]
-  cart Cart?
-  payments Payment[]
+  orders        Order[]
+  cart          Cart?
+  payments      Payment[]
   notifications Notification[]
-  reviews Review[]
+  reviews       Review[]
 
   messagesSent     Message[] @relation(name: "SentMessages")
   messagesReceived Message[] @relation(name: "ReceivedMessages")
@@ -41,9 +39,9 @@ model User {
 }
 
 type address {
-  zone String?
+  zone   String?
   street String
-  city String
+  city   String
 }
 
 enum UserStatus {
@@ -59,29 +57,29 @@ enum UserRole {
 }
 
 model Order {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  formattedId String @unique
-  customerID String?      @db.ObjectId
-  customer   User?        @relation(fields: [customerID], references: [id])
-  status     OrderStatus @default(PENDING)
-  totalPrice Float
- 
-  shippingFee Float?
-  payment Payment? 
-  typeOfDelivery typeOfDelivery
-  typeOfPayment  typeOfPayment  
-  isPreOrder Boolean @default(false)
-  customizeId String? @db.ObjectId
-  customize Customize? @relation(fields: [customizeId], references: [id])
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  formattedId String      @unique
+  customerID  String?     @db.ObjectId
+  customer    User?       @relation(fields: [customerID], references: [id])
+  status      OrderStatus @default(PENDING)
+  totalPrice  Float
 
-  orderItems OrderItem[]
+  shippingFee    Float?
+  payment        Payment?
+  typeOfDelivery typeOfDelivery
+  typeOfPayment  typeOfPayment
+  isPreOrder     Boolean        @default(false)
+  customizeId    String?        @db.ObjectId
+  customize      Customize?     @relation(fields: [customizeId], references: [id])
+
+  orderItems  OrderItem[]
   // TimeStamps
-  orderDate    DateTime  @default(now())
-  processedAt  DateTime?
-  shippedAt    DateTime?
-  forPickup  DateTime?
-  cancelledAt  DateTime?
-  completedAt  DateTime?
+  orderDate   DateTime    @default(now())
+  processedAt DateTime?
+  shippedAt   DateTime?
+  forPickup   DateTime?
+  cancelledAt DateTime?
+  completedAt DateTime?
 
   @@map("orders")
 }
@@ -95,27 +93,25 @@ enum typeOfDelivery {
   PICKUP
   DELIVERY
 }
- 
 
 type BouquetItems {
-  subFlowers String[]
-  mainFlower String
-  wrapper String
+  subFlowers   String[]
+  mainFlower   String
+  wrapper      String
   wrapperColor String
-  tie String
+  tie          String
 }
 
 model Customize {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
 
-  note String?
+  note       String?
   totalPrice Float
 
   bouquetItems BouquetItems
 
   order Order[]
-
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -131,8 +127,8 @@ model OrderItem {
   price    Float
   quantity Int
 
-  productId   String?      @db.ObjectId
-  product     Product?   @relation(fields: [productId], references: [id])
+  productId String?  @db.ObjectId
+  product   Product? @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }
@@ -145,17 +141,16 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   checkoutUrl String
-  status     PaymentStatus
-  paymentId String @unique
-  orderId   String @db.ObjectId @unique
-  order     Order  @relation(fields: [orderId], references: [id])
-  userId    String? @db.ObjectId
-  user      User?   @relation(fields: [userId], references: [id])
+  status      PaymentStatus
+  paymentId   String        @unique
+  orderId     String        @unique @db.ObjectId
+  order       Order         @relation(fields: [orderId], references: [id])
+  userId      String?       @db.ObjectId
+  user        User?         @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
-
 }
 
 enum OrderStatus {
@@ -168,15 +163,15 @@ enum OrderStatus {
 }
 
 model BouquetItem {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  name String
-  price Float
-  svg String[]
-  colors String[] @default([])
-  type BouquetItemType
-  isAvailable Boolean @default(true)
-  
+  name        String
+  price       Float
+  svg         String[]
+  colors      String[]        @default([])
+  type        BouquetItemType
+  isAvailable Boolean         @default(true)
+
   // TimeStamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -192,22 +187,21 @@ enum BouquetItemType {
 }
 
 model Product {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  description String @default("")
-  price       Float  @default(0.00)
-  images       String[]
+  description String   @default("")
+  price       Float    @default(0.00)
+  images      String[]
   // tags        String[]
-  stock       Int    @default(1)
+  stock       Int      @default(1)
 
   reviews Review[]
-
 
   status   ProductStatus   @default(IN_STOCK)
   category ProductCategory @default(FLOWER)
 
   orderItem OrderItem[]
-  cartItem CartItem[]
+  cartItem  CartItem[]
 
   // TimeStamps
   createdAt DateTime @default(now())
@@ -230,79 +224,74 @@ enum ProductCategory {
   GIFT
 }
 
-
 model token {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  email String   @unique
   token String
-  time DateTime
+  time  DateTime
 
   @@map("tokens")
 }
 
 model BlockedUser {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String @db.ObjectId @unique 
-  email       String @unique  
-  reason String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  email     String   @unique
+  reason    String
   blockedAt DateTime @default(now())
 
   @@map("blocked_users")
 }
 
-
 model Cart {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Unique cart ID
-  userId     String   @db.ObjectId @unique
-  user       User     @relation(fields: [userId], references: [id])
-  items      CartItem[]   // List of items in the cart
-  createdAt  DateTime @default(now()) // Timestamp of when the cart was created
-  updatedAt  DateTime @updatedAt // Timestamp of when the cart was last updated
-
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId // Unique cart ID
+  userId    String     @unique @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[] // List of items in the cart
+  createdAt DateTime   @default(now()) // Timestamp of when the cart was created
+  updatedAt DateTime   @updatedAt // Timestamp of when the cart was last updated
 }
 
 model CartItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Unique item ID
-  cartId     String  @db.ObjectId   // Cart ID (foreign key to Cart model)
-  cart       Cart     @relation(fields: [cartId], references: [id])
-  productId  String   @db.ObjectId 
-  product    Product  @relation(fields: [productId], references: [id])
-  quantity   Int      // Quantity of the product in the cart
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // Unique item ID
+  cartId    String  @db.ObjectId // Cart ID (foreign key to Cart model)
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int // Quantity of the product in the cart
 
-  price      Float    // Price of the item
-
+  price Float // Price of the item
 }
 
 model Message {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  senderId     String   @db.ObjectId // The user who sent the message
-  receiverId   String    @db.ObjectId// The user who received the message
-  content      String?   // The message content (can be null for media messages)
-  mediaUrl     String?   // URL for media (optional, for images, videos)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String   @db.ObjectId // The user who sent the message
+  receiverId String   @db.ObjectId // The user who received the message
+  content    String? // The message content (can be null for media messages)
+  mediaUrl   String? // URL for media (optional, for images, videos)
   // messageType  MessageType // Type of the message (text, image, video, etc.)
   // status       MessageStatus // Status of the message (sent, delivered, read)
-  createdAt    DateTime @default(now()) // Timestamp of when the message was sent
-  updatedAt    DateTime @updatedAt     // Timestamp of last update
+  createdAt  DateTime @default(now()) // Timestamp of when the message was sent
+  updatedAt  DateTime @updatedAt // Timestamp of last update
 
-  sender       User     @relation(name: "SentMessages", fields: [senderId], references: [id])
-  receiver     User     @relation(name: "ReceivedMessages", fields: [receiverId], references: [id])
+  sender   User @relation(name: "SentMessages", fields: [senderId], references: [id])
+  receiver User @relation(name: "ReceivedMessages", fields: [receiverId], references: [id])
 }
- 
- 
+
 model Notification {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String @db.ObjectId
-  user        User   @relation(fields: [userId], references: [id])
-  message     String
-  title      String
-  type        NotificationType
-  read        Boolean @default(false)
-  idToGo      String
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String           @db.ObjectId
+  user    User             @relation(fields: [userId], references: [id])
+  message String
+  title   String
+  type    NotificationType
+  read    Boolean          @default(false)
+  idToGo  String
 
-  toShop      Boolean @default(false)
+  toShop Boolean @default(false)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("notifications")
 }
@@ -315,51 +304,44 @@ enum NotificationType {
 }
 
 model Review {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String @db.ObjectId
-  user       User   @relation(fields: [userId], references: [id])
-  productId  String @db.ObjectId
-  product    Product @relation(fields: [productId], references: [id])
-  rating     Int
-  comment    String?
-  images     String[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  rating    Int
+  comment   String?
+  images    String[]
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, productId])
-
-
   @@map("reviews")
 }
 
-
-
 model StoreSettings {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  storeName       String
-  storeEmail      String
-  storePhone      String
-  storeAddress    String
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  storeName        String
+  storeEmail       String
+  storePhone       String
+  storeAddress     String
   storeDescription String
-  deliveryFee     Float?
-  socialMedia     SocialMedia?
-  policies        Policies?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  deliveryFee      Float?
+  socialMedia      SocialMedia?
+  policies         Policies?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 }
 
 type SocialMedia {
-  facebook        String?
-  instagram       String?
-  
+  facebook  String?
+  instagram String?
 }
 
 type Policies {
-  privacyPolicy   String
-  termsOfService  String
-  returnPolicy    String
-  shippingPolicy  String
+  privacyPolicy  String
+  termsOfService String
+  returnPolicy   String
+  shippingPolicy String
 }
