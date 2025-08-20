@@ -9,6 +9,7 @@ export * from "./product.js";
 export * from "./cart.js";
 export * from "./bouquet-item.js";
 export * from "./order.js";
+export * from "./component.js";
 
 export interface UserFilter {
   filter?: string;
