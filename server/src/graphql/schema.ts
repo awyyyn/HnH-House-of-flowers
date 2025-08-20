@@ -9,7 +9,11 @@ export const typeDefs = gql`
   type Query {
     user(filter: String!): User
     component(id: ID!): Component
-    components(componentType: ComponentType): [Component]
+    components(
+      componentType: ComponentType
+      filter: String
+      pagination: PaginationInput
+    ): ComponentPaginationResult
     users(
       role: UserRole
       filter: String
@@ -272,6 +276,12 @@ export const typeDefs = gql`
   type UsersPaginationResult {
     total: Int!
     data: [User]
+    hasNextPage: Boolean!
+  }
+
+  type ComponentPaginationResult {
+    total: Int!
+    data: [Component]
     hasNextPage: Boolean!
   }
 

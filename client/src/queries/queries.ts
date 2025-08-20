@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { productFragment, userFragment } from "./fragments";
+import { componentFragment, productFragment, userFragment } from "./fragments";
 
 export const getUserQuery = gql`
   ${userFragment}
@@ -431,6 +431,36 @@ export const READ_PRODUCT_WITH_REVIEWS = gql`
 
     product(id: $id) {
       ...ProductFragment
+    }
+  }
+`;
+
+export const READ_COMPONENTS_QUERY = gql`
+  ${componentFragment}
+  query (
+    $componentType: ComponentType
+    $filter: String
+    $pagination: PaginationInput
+  ) {
+    components(
+      componentType: $componentType
+      filter: $filter
+      pagination: $pagination
+    ) {
+      total
+      data {
+        ...ComponentFragment
+      }
+      hasNextPage
+    }
+  }
+`;
+
+export const READ_COMPONENT_QUERY = gql`
+  ${componentFragment}
+  query ($id: ID!) {
+    component(id: $id) {
+      ...ComponentFragment
     }
   }
 `;

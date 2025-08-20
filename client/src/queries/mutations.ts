@@ -438,10 +438,10 @@ export const UPDATE_COMPONENT_MUTATION = gql`
     $quantity: Int!
     $type: ComponentType!
     $isAvailable: Boolean!
-    $description: String
+    $availableColors: [String]
     $price: Float
     $image: String
-    $availableColors: [String]
+    $description: String
   ) {
     updateComponent(
       id: $id
@@ -449,10 +449,10 @@ export const UPDATE_COMPONENT_MUTATION = gql`
       quantity: $quantity
       type: $type
       isAvailable: $isAvailable
-      description: $description
+      availableColors: $availableColors
       price: $price
       image: $image
-      availableColors: $availableColors
+      description: $description
     ) {
       ...ComponentFragment
     }
