@@ -1,78 +1,90 @@
 import {
-	AppSidebar,
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-	Separator,
-	NotificationDropdown,
+  AppSidebar,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  Separator,
+  NotificationDropdown,
 } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Suspense } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { useLocalPathname } from "@/hooks/use-local-pathname";
+import { Suspense, useEffect } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function AdminLayout({
-	children,
+  children,
 }: {
-	children?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
-	const { pathname } = useLocation();
+  const { pathname } = useLocation();
+  const pathName = useLocalPathname();
+  const navigate = useNavigate();
 
-	const paths = pathname
-		.split("/")
-		.filter((path) => path !== "/" && path !== "");
+  const paths = pathname
+    .split("/")
+    .filter((path) => path !== "/" && path !== "");
 
-	return (
-		<SidebarProvider>
-			<Suspense fallback={<h1>loading...</h1>}>
-				<AppSidebar />
-			</Suspense>
-			<main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100sdvh] h-auto ">
-				<header className="flex justify-between pr-5 lg:pr-10 z-20  shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
-					<div className="flex   items-center gap-2 px-4">
-						<SidebarTrigger className="md:hidden flex justify-center" />
-						<Separator
-							orientation="vertical"
-							className="md:hidden block mr-2 h-4"
-						/>
-						<Breadcrumb>
-							<BreadcrumbList>
-								{paths.map((path, index) => {
-									const pathName = path.split("-").join(" ");
-									const isLast = index === paths.length - 1;
-									if (isLast) {
-										return (
-											<BreadcrumbItem key={`${path}-${index}`}>
-												<BreadcrumbPage className="capitalize">
-													{pathName}
-												</BreadcrumbPage>
-											</BreadcrumbItem>
-										);
-									} else {
-										return (
-											<>
-												<BreadcrumbItem
-													key={`item-${path}-${index}`}
-													className="hidden md:block capitalize">
-													<BreadcrumbLink href="#">{pathName}</BreadcrumbLink>
-												</BreadcrumbItem>
-												<BreadcrumbSeparator
-													key={`separator-${path}-${index}`}
-													className="hidden md:block capitalize"
-												/>
-											</>
-										);
-									}
-								})}
-							</BreadcrumbList>
-						</Breadcrumb>
-					</div>
-					<NotificationDropdown />
-				</header>
-				<div className="p-2 md:p-4  ">{children ? children : <Outlet />}</div>
-			</main>
-		</SidebarProvider>
-	);
+  useEffect(() => {
+    if (pathName && pathName !== pathname) {
+      navigate(pathName, {
+        replace: true,
+      });
+    }
+  }, []);
+
+  return (
+    <SidebarProvider>
+      <Suspense fallback={<h1>loading...</h1>}>
+        <AppSidebar />
+      </Suspense>
+      <main className="mx-auto bg-white dark:bg-zinc-950 w-full relative max-h-[100sdvh] h-auto ">
+        <header className="flex justify-between pr-5 lg:pr-10 z-20  shadow-sm h-16 sticky top-0 backdrop-blur-md bg-white/40 dark:bg-zinc-900 shrink-0 items-center gap-2">
+          <div className="flex   items-center gap-2 px-4">
+            <SidebarTrigger className="md:hidden flex justify-center" />
+            <Separator
+              orientation="vertical"
+              className="md:hidden block mr-2 h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                {paths.map((path, index) => {
+                  const pathName = path.split("-").join(" ");
+                  const isLast = index === paths.length - 1;
+                  if (isLast) {
+                    return (
+                      <BreadcrumbItem key={`${path}-${index}`}>
+                        <BreadcrumbPage className="capitalize">
+                          {pathName}
+                        </BreadcrumbPage>
+                      </BreadcrumbItem>
+                    );
+                  } else {
+                    return (
+                      <>
+                        <BreadcrumbItem
+                          key={`item-${path}-${index}`}
+                          className="hidden md:block capitalize"
+                        >
+                          <BreadcrumbLink href="#">{pathName}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator
+                          key={`separator-${path}-${index}`}
+                          className="hidden md:block capitalize"
+                        />
+                      </>
+                    );
+                  }
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <NotificationDropdown />
+        </header>
+        <div className="p-2 md:p-4  ">{children ? children : <Outlet />}</div>
+      </main>
+    </SidebarProvider>
+  );
 }
