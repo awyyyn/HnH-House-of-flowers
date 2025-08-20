@@ -31,141 +31,144 @@ import wrapper1 from "@/assets/flowers/themes/Group 1.png";
 import wrapper2 from "@/assets/flowers/themes/Group 2.png";
 import wrapper3 from "@/assets/flowers/themes/Group 3.png";
 import wrapper4 from "@/assets/flowers/themes/Group 4.png";
+import { FlowerTags } from "@/types";
 
 export const backWrappers = [
-	{
-		id: "wrapper-4",
-		title: "Angular wrapper",
-		svg: angular,
-	},
-	{
-		id: "wrapper-2",
-		title: "Classic wrapper",
-		svg: classic,
-	},
-	{
-		id: "wrapper-1",
-		title: "Fan wrapper",
-		svg: fan,
-	},
-	{
-		id: "wrapper-3",
-		title: "Rounded wrapper",
-		svg: rounded,
-	},
+  {
+    id: "wrapper-4",
+    title: "Angular wrapper",
+    svg: angular,
+  },
+  {
+    id: "wrapper-2",
+    title: "Classic wrapper",
+    svg: classic,
+  },
+  {
+    id: "wrapper-1",
+    title: "Fan wrapper",
+    svg: fan,
+  },
+  {
+    id: "wrapper-3",
+    title: "Rounded wrapper",
+    svg: rounded,
+  },
 ];
 
 export const mainFlowers = [
-	{
-		id: "flower-1",
-		title: "Sunflower",
-		svg: sunflower,
-	},
-	{
-		id: "flower-2",
-		title: "Tulips",
-		svg: tulips,
-	},
-	{
-		id: "flower-3",
-		title: "Calla Lilies",
-		svg: lilies,
-	},
-	{
-		id: "flower-4",
-		title: "Poppies",
-		svg: popies,
-	},
+  {
+    id: "flower-1",
+    title: "Sunflower",
+    svg: sunflower,
+  },
+  {
+    id: "flower-2",
+    title: "Tulips",
+    svg: tulips,
+  },
+  {
+    id: "flower-3",
+    title: "Calla Lilies",
+    svg: lilies,
+  },
+  {
+    id: "flower-4",
+    title: "Poppies",
+    svg: popies,
+  },
 ];
 
 export const additionalFlowers = [
-	{
-		id: "additional-flower-1",
-		title: "Clovers",
-		svg: clovers,
-	},
-	{
-		id: "additional-flower-2",
-		title: "Primroses",
-		svg: primroses,
-	},
-	{
-		id: "additional-flower-3",
-		title: "Daisies",
-		svg: daisies,
-	},
-	{
-		id: "additional-flower-4",
-		title: "Violets",
-		svg: violets,
-	},
+  {
+    id: "additional-flower-1",
+    title: "Clovers",
+    svg: clovers,
+  },
+  {
+    id: "additional-flower-2",
+    title: "Primroses",
+    svg: primroses,
+  },
+  {
+    id: "additional-flower-3",
+    title: "Daisies",
+    svg: daisies,
+  },
+  {
+    id: "additional-flower-4",
+    title: "Violets",
+    svg: violets,
+  },
 ];
 
 export const ties = [
-	{
-		id: "tie-1",
-		title: "Big twine bow",
-		svg: bigTwine,
-	},
-	{
-		id: "tie-2",
-		title: "Double twine bow",
-		svg: doubleTwine,
-	},
-	{
-		id: "tie-3",
-		title: "Layered twine tie",
-		svg: layeredTwine,
-	},
-	{
-		id: "tie-4",
-		title: "Silk bow",
-		svg: silkBow,
-	},
+  {
+    id: "tie-1",
+    title: "Big twine bow",
+    svg: bigTwine,
+  },
+  {
+    id: "tie-2",
+    title: "Double twine bow",
+    svg: doubleTwine,
+  },
+  {
+    id: "tie-3",
+    title: "Layered twine tie",
+    svg: layeredTwine,
+  },
+  {
+    id: "tie-4",
+    title: "Silk bow",
+    svg: silkBow,
+  },
 ];
 
 export const handWraps = [
-	{
-		id: "wrapper-4",
-		title: "Angular wrapper",
-		svg: angularrWrapper,
-	},
-	{
-		id: "wrapper-2",
-		title: "Classic wrapper",
-		svg: classicWrapper,
-	},
-	{
-		id: "wrapper-1",
-		title: "Wavy wrapper",
-		svg: wavyWrapper,
-	},
-	{
-		id: "wrapper-3",
-		title: "layered wrapper",
-		svg: layeredWrapper,
-	},
+  {
+    id: "wrapper-4",
+    title: "Angular wrapper",
+    svg: angularrWrapper,
+  },
+  {
+    id: "wrapper-2",
+    title: "Classic wrapper",
+    svg: classicWrapper,
+  },
+  {
+    id: "wrapper-1",
+    title: "Wavy wrapper",
+    svg: wavyWrapper,
+  },
+  {
+    id: "wrapper-3",
+    title: "layered wrapper",
+    svg: layeredWrapper,
+  },
 ];
 
 export const wrappers = [
-	{
-		id: "wrapper-1",
-		image: wrapper1,
-		name: "Wrapper 1",
-	},
-	{
-		id: "wrapper-2",
-		image: wrapper2,
-		name: "Wrapper 2",
-	},
-	{
-		id: "wrapper-3",
-		image: wrapper3,
-		name: "Wrapper 3",
-	},
-	{
-		id: "wrapper-4",
-		image: wrapper4,
-		name: "Wrapper 4",
-	},
+  {
+    id: "wrapper-1",
+    image: wrapper1,
+    name: "Wrapper 1",
+  },
+  {
+    id: "wrapper-2",
+    image: wrapper2,
+    name: "Wrapper 2",
+  },
+  {
+    id: "wrapper-3",
+    image: wrapper3,
+    name: "Wrapper 3",
+  },
+  {
+    id: "wrapper-4",
+    image: wrapper4,
+    name: "Wrapper 4",
+  },
 ];
+
+export const flowerTagOptions: FlowerTags[] = Object.values(FlowerTags);
