@@ -29,7 +29,7 @@ import { useMutation } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -146,6 +146,10 @@ export default function ProductForm({
       });
   };
 
+  const watchedCategory = form.watch("category");
+
+  const shouldShowTags = ["FLOWER", "BOUQUET"].includes(watchedCategory);
+
   return (
     <Form {...form}>
       <form className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
@@ -221,7 +225,7 @@ export default function ProductForm({
             <div className="flex flex-col  gap-4 items-start md:flex-row">
               <FormField
                 control={form.control}
-                name="price"
+                name="tags"
                 render={({ field }) => (
                   <FormItem className="flex w-full flex-col items-start">
                     <FormLabel className="text-black dark:text-white ">
@@ -246,6 +250,7 @@ export default function ProductForm({
                 )}
               />
             </div>
+
             <div className="flex flex-col  gap-4 items-start md:flex-row">
               <FormField
                 control={form.control}
@@ -318,28 +323,30 @@ export default function ProductForm({
                 )}
               />
             </div>
-            <div className="w-full">
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-start w-full">
-                    <FormLabel className="text-black dark:text-white ">
-                      Tags
-                    </FormLabel>
-                    <FormControl className="w-full">
-                      <TagsInput
-                        onChangeValue={field.onChange}
-                        options={flowerTagOptions}
-                        value={field.value}
-                      />
-                    </FormControl>
+            {shouldShowTags && (
+              <div className="w-full">
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem className={`flex flex-col items-start w-full`}>
+                      <FormLabel className="text-black dark:text-white ">
+                        Tags
+                      </FormLabel>
+                      <FormControl className="w-full">
+                        <TagsInput
+                          onChangeValue={field.onChange}
+                          options={flowerTagOptions}
+                          value={field.value}
+                        />
+                      </FormControl>
 
-                    <FormMessage className="dark:text-primary" />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      <FormMessage className="dark:text-primary" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
           </div>
           <div className="col-span-4 order-1">
             <div className="p-5">
