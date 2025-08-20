@@ -87,19 +87,24 @@ export default function ComponentsPage() {
         );
       },
     },
-    // {
-    // 	accessorKey: "category",
-    // 	header: "Category",
-    // 	enableHiding: true,
-    // 	cell: ({ row }) => {
-    // 		return (
-    // 			<p className="capitalize">
-    // 				{row.original.category[0]}
-    // 				{row.original.category.slice(1).toLocaleLowerCase()}
-    // 			</p>
-    // 		);
-    // 	},
-    // },
+    {
+      accessorKey: "quantity",
+      header: "Stock",
+      enableHiding: true,
+    },
+    {
+      accessorKey: "category",
+      header: "Category",
+      enableHiding: true,
+      cell: ({ row }) => {
+        return (
+          <p className="capitalize">
+            {row.original.type[0]}
+            {row.original.type.slice(1).toLocaleLowerCase()}
+          </p>
+        );
+      },
+    },
     {
       id: "actions",
       enableHiding: false,
@@ -165,6 +170,9 @@ export default function ComponentsPage() {
           handleClose={() => {
             setItem({ ...item, isOpen: false, component: null });
           }}
+          handleNavigate={() =>
+            navigate(`/components/${item.component?.id}/edit`)
+          }
         />
       )}
     </>

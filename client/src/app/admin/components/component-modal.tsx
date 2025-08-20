@@ -16,12 +16,14 @@ interface ComponentDetailsModalProps {
   component: Component;
   isOpen: boolean;
   handleClose: VoidFunction;
+  handleNavigate: VoidFunction;
 }
 
 export function ComponentDetailsModal({
   component,
   isOpen,
   handleClose,
+  handleNavigate,
 }: ComponentDetailsModalProps) {
   const formatPrice = (price?: number) => {
     if (!price) return "Free";
@@ -191,7 +193,12 @@ export function ComponentDetailsModal({
           </Card>
         </div>
         <DialogFooter>
-          <Button onClick={handleClose}>Close</Button>
+          <Button type="button" onClick={handleNavigate}>
+            Edit
+          </Button>
+          <Button type="button" onClick={handleClose} variant="destructive">
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
