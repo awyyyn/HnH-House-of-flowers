@@ -40,6 +40,7 @@ export * from "./ui/popover";
 export * from "./ui/tabs";
 export * from "./ui/scroll-area";
 export * from "./ui/step";
+export * from "./ui/date-picker";
 export * from "./ui/stepper";
 export * from "./ui/table";
 export * from "./ui/textarea";
