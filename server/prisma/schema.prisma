@@ -199,6 +199,7 @@ model Product {
 
   status   ProductStatus   @default(IN_STOCK)
   category ProductCategory @default(FLOWER)
+  tags     FlowerTags[]    @default([])
 
   orderItem OrderItem[]
   cartItem  CartItem[]
@@ -208,6 +209,15 @@ model Product {
   updatedAt DateTime @updatedAt
 
   @@map("products")
+}
+
+enum FlowerTags {
+  FUNERAL
+  VALENTINE
+  BIRTHDAY
+  GRADUATION
+  WEDDING
+  CROCHET
 }
 
 enum ProductStatus {
