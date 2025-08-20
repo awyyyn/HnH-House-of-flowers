@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import {
   bouquetItemFragment,
+  componentFragment,
   productFragment,
   userFragment,
 } from "./fragments";
@@ -399,6 +400,61 @@ export const UPDATE_STORE_SETTINGS_MUTATION = gql`
       }
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const CREATE_COMPONENT_MUTATION = gql`
+  ${componentFragment}
+  mutation (
+    $name: String!
+    $quantity: Int!
+    $type: ComponentType!
+    $isAvailable: Boolean!
+    $description: String
+    $price: Float
+    $image: String
+    $availableColors: [String]
+  ) {
+    createComponent(
+      name: $name
+      quantity: $quantity
+      type: $type
+      isAvailable: $isAvailable
+      description: $description
+      price: $price
+      image: $image
+      availableColors: $availableColors
+    ) {
+      ...ComponentFragment
+    }
+  }
+`;
+export const UPDATE_COMPONENT_MUTATION = gql`
+  ${componentFragment}
+  mutation (
+    $id: ID!
+    $name: String!
+    $quantity: Int!
+    $type: ComponentType!
+    $isAvailable: Boolean!
+    $description: String
+    $price: Float
+    $image: String
+    $availableColors: [String]
+  ) {
+    updateComponent(
+      id: $id
+      name: $name
+      quantity: $quantity
+      type: $type
+      isAvailable: $isAvailable
+      description: $description
+      price: $price
+      image: $image
+      availableColors: $availableColors
+    ) {
+      ...ComponentFragment
     }
   }
 `;

@@ -52,3 +52,19 @@ export const bouquetItemFragment = gql`
     updatedAt
   }
 `;
+
+export const componentFragment = gql`
+  fragment ComponentFragment on Component {
+    id
+    name
+    quantity
+    description
+    price
+    image
+    type
+    isAvailable
+    availableColors
+    createdAt
+    updatedAt
+  }
+`;
