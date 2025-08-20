@@ -11,6 +11,7 @@ export * from "./ui/switch";
 export * from "./ui/progress";
 export * from "./aceternity/sticky-scroll";
 export * from "./custom/wrapper";
+export * from "./custom/switch-ios";
 export { default as Helmet } from "./custom/helmet";
 export * from "./custom/empty-state";
 export * from "./custom/notification-dropdown";

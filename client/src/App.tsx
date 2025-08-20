@@ -27,7 +27,7 @@ import {
   SystemSettingsSkeleton,
   AddOrderSkeleton,
   AdminOrdersSkeleton,
-  BouquetItemsSkeleton,
+  // BouquetItemsSkeleton,
   AddBouquetItemSkeleton,
   AddProductSkeleton,
   ProductInfoSkeleton,
@@ -49,8 +49,8 @@ const AddAdmin = loadable(() => import("./app/admin/add-admin"));
 const AddOrder = loadable(() => import("./app/admin/add-order"));
 const Orders = loadable(() => import("./app/admin/orders"));
 const PreOrders = loadable(() => import("./app/admin/pre-orders"));
-const BouquetItems = loadable(() => import("./app/admin/bouquet-items"));
-const AddBouquetItem = loadable(() => import("./app/admin/add-bouquet-item"));
+// const BouquetItems = loadable(() => import("./app/admin/bouquet-items"));
+// const AddBouquetItem = loadable(() => import("./app/admin/add-bouquet-item"));
 const Products = loadable(() => import("./app/admin/products"));
 const AdminsPage = loadable(() => import("./app/admin/admins"));
 const AddProduct = loadable(() => import("./app/admin/add-product"));
@@ -68,6 +68,8 @@ const ReviewPage = loadable(() => import("./app/user/review"));
 // const Customize = loadable(() => import("./app/user/customize"));
 const CheckoutPage = loadable(() => import("./app/user/checkout"));
 const Home = loadable(() => import("./app/home"));
+const ComponentsPage = loadable(() => import("./app/admin/components"));
+const AddComponentPage = loadable(() => import("./app/admin/add-component"));
 
 export default function App() {
   const publicRoutes = [
@@ -140,17 +142,19 @@ export default function App() {
             ],
           },
           {
-            path: "bouquet-items",
+            path: "components",
             children: [
               {
                 index: true,
-                element: <BouquetItems fallback={<BouquetItemsSkeleton />} />,
+                element: <ComponentsPage />,
               },
               {
-                path: "add-item",
-                element: (
-                  <AddBouquetItem fallback={<AddBouquetItemSkeleton />} />
-                ),
+                path: "add",
+                element: <AddComponentPage />,
+              },
+              {
+                path: ":id/edit",
+                element: <AddComponentPage />,
               },
             ],
           },
