@@ -1,11 +1,9 @@
 import { sub } from "date-fns";
 import { prisma } from "../services/prisma.js";
-import { ProductFilter, Product, ProductInput } from "../types/index.js";
-import { Prisma } from "@prisma/client";
+import { ProductFilter, ProductInput } from "../types/index.js";
+import { Component, Prisma } from "@prisma/client";
 
-export const createProduct = async (
-  values: Omit<Product, "id" | "createdAt" | "updatedAt">,
-) => {
+export const createProduct = async (values: ProductInput) => {
   const newProduct = await prisma.product.create({
     data: values,
   });
@@ -94,8 +92,23 @@ export const readProducts = async ({
         },
       });
 
+      let components: Component[] = [];
+
+      if (product.components.length) {
+        components = (
+          await Promise.all(
+            product.components.map(async (id) => {
+              return await prisma.component.findUnique({
+                where: { id },
+              });
+            }),
+          )
+        ).filter((c) => c !== null);
+      }
+
       return {
         ...product,
+        components,
         avg: avg._avg?.rating || 0,
       };
     }),
