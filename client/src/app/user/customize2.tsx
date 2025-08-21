@@ -27,7 +27,7 @@ import { Component, Product } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom } from "jotai";
-import { Info } from "lucide-react";
+import { Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -331,6 +331,7 @@ const Customize2 = () => {
                               type="button"
                               size="sm"
                               variant="ghost"
+                              disabled={creatingOrder}
                               className="self-end mb-1"
                               onClick={() => handleSetComponent("WRAPPER")}
                             >
@@ -350,6 +351,7 @@ const Customize2 = () => {
                             Available Wrapper Colors
                           </FormLabel>
                           <ToggleGroup
+                            disabled={creatingOrder}
                             className=""
                             value={field.value}
                             onValueChange={field.onChange}
@@ -385,7 +387,11 @@ const Customize2 = () => {
                                 Flower Component
                               </FormLabel>
 
-                              <Select onValueChange={field.onChange} {...field}>
+                              <Select
+                                disabled={creatingOrder}
+                                onValueChange={field.onChange}
+                                {...field}
+                              >
                                 <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
                                   <SelectValue placeholder="Select a flower" />
                                 </SelectTrigger>
@@ -454,6 +460,7 @@ const Customize2 = () => {
                           </FormLabel>
                           <FormControl className="w-full">
                             <RichTextEditor
+                              isEditing={!creatingOrder}
                               handleValue={(editor) => {
                                 form.setValue(
                                   "note",
@@ -461,7 +468,7 @@ const Customize2 = () => {
                                 );
                               }}
                               content={form.formState.defaultValues?.note ?? ""}
-                              editable
+                              editable={!creatingOrder}
                             />
                           </FormControl>
                           <FormMessage className="dark:text-primary" />
@@ -526,8 +533,12 @@ const Customize2 = () => {
                     </div>
                   </div>
                   <div className="w-full justify-end flex items-center mt-4">
-                    <Button>
-                      <span className="text-sm">Place Order</span>
+                    <Button className="min-w-[100px]" disabled={creatingOrder}>
+                      {creatingOrder ? (
+                        <Loader className="animate-spin" />
+                      ) : (
+                        <span className="text-sm">Place Order</span>
+                      )}
                     </Button>
                   </div>
                 </form>

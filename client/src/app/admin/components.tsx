@@ -39,6 +39,7 @@ export default function ComponentsPage() {
     components: { data: Component[]; hasNextPage: boolean; total: number };
   }>(READ_COMPONENTS_QUERY, {
     variables: {
+      isAvailable: true,
       pagination: {
         page: Number(pagination.pageIndex),
         limit: Number(pagination.pageSize),
