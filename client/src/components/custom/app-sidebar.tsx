@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts";
 import { NavSystem } from "./nav-projects";
+import { Link } from "react-router-dom";
 
 const data = {
   navMain: [
@@ -161,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link to="/">
                 <div className="flex bg-primary aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg   text-sidebar-primary-foreground">
                   <Flower className="size-4 " />
                 </div>
@@ -169,7 +170,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-semibold">HnH</span>
                   <span className="truncate text-xs">House of Flowers</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

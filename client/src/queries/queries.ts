@@ -60,9 +60,13 @@ export const GET_PRODUCTS_QUERY = gql`
 
 export const GET_PRODUCT_QUERY = gql`
   ${productFragment}
+  ${componentFragment}
   query ($id: ID!) {
     product(id: $id) {
       ...ProductFragment
+      components {
+        ...ComponentFragment
+      }
     }
   }
 `;
@@ -441,11 +445,13 @@ export const READ_COMPONENTS_QUERY = gql`
     $componentType: ComponentType
     $filter: String
     $pagination: PaginationInput
+    $isAvailable: Boolean
   ) {
     components(
       componentType: $componentType
       filter: $filter
       pagination: $pagination
+      isAvailable: $isAvailable
     ) {
       total
       data {

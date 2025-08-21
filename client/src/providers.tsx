@@ -6,16 +6,16 @@ import { ApolloProvider } from "@apollo/client";
 import { client } from "./lib";
 
 export default function Providers({ children }: { children: ReactNode }) {
-	return (
-		<ApolloProvider client={client}>
-			<AuthContextProvider>
-				<ThemeProvider>
-					<BrowserRouter>
-						{children}
-						<Toaster />
-					</BrowserRouter>
-				</ThemeProvider>
-			</AuthContextProvider>
-		</ApolloProvider>
-	);
+  return (
+    <ApolloProvider client={client}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <AuthContextProvider>
+            {children}
+            <Toaster />
+          </AuthContextProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ApolloProvider>
+  );
 }

@@ -1,9 +1,9 @@
 import {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 import { AuthContextProps, JWTDecoded, User } from "@/types";
 import { jwtDecode } from "jwt-decode";
@@ -11,149 +11,163 @@ import { useToast } from "@/hooks/use-toast";
 import { useSetAtom } from "jotai";
 import { cartAtom, notificationAtom, storeAtom } from "@/states";
 import { Loader } from "@/components/custom/loader";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useLocalPathname } from "@/hooks/use-local-pathname";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const useAuth = () => {
-	const context = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
 
-	return context;
+  return context;
 };
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-	const [values, setValues] = useState<
-		Pick<AuthContextProps, "role" | "isAuthenticated">
-	>({
-		isAuthenticated: false,
-		role: "USER",
-	});
-	const setStore = useSetAtom(storeAtom);
-	const [user, setUser] = useState<User>(null!);
-	const [loading, setLoading] = useState(true);
-	const setCart = useSetAtom(cartAtom);
-	const setNotification = useSetAtom(notificationAtom);
-	const { toast } = useToast();
+  const [values, setValues] = useState<
+    Pick<AuthContextProps, "role" | "isAuthenticated">
+  >({
+    isAuthenticated: false,
+    role: "USER",
+  });
+  const setStore = useSetAtom(storeAtom);
+  const [user, setUser] = useState<User>(null!);
+  const [loading, setLoading] = useState(true);
+  const setCart = useSetAtom(cartAtom);
+  const setNotification = useSetAtom(notificationAtom);
+  const { toast } = useToast();
 
-	useEffect(() => {
-		(async () => {
-			setLoading(true);
-			const token = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
+  const localPathname = useLocalPathname();
 
-			if (!token) {
-				setLoading(false);
-				setValues({ isAuthenticated: false, role: "USER" });
-				return;
-			}
+  useEffect(() => {
+    if (localPathname) {
+      navigate(localPathname, {
+        replace: true,
+      });
+    }
+  }, []);
 
-			try {
-				const decoded = jwtDecode<JWTDecoded>(token);
-				if (!(decoded.exp! * 1000 > Date.now())) {
-					throw new Error("Session expired");
-				}
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const token = localStorage.getItem("accessToken");
 
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/auth/me`,
-					{
-						method: "POST",
-						headers: {
-							Authorization: `Bearer ${token}`,
-							"Content-Type": "application/json",
-						},
-					}
-				);
+      if (!token) {
+        setLoading(false);
+        setValues({ isAuthenticated: false, role: "USER" });
+        return;
+      }
 
-				if (response.status !== 200) {
-					throw new Error("Session expired");
-				}
+      try {
+        const decoded = jwtDecode<JWTDecoded>(token);
+        if (!(decoded.exp! * 1000 > Date.now())) {
+          throw new Error("Session expired");
+        }
 
-				const data = await response.json();
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
 
-				setUser(data.data.user);
-				setNotification(data.data.user.notifications || []);
-				if (data.data.user.role === "USER") {
-					setCart(data.data.user.cart);
-				}
-				localStorage.setItem("accessToken", data.data.accessToken);
-				setValues({ isAuthenticated: true, role: data.data.user.role });
-			} catch (err) {
-				localStorage.clear();
-				toast({
-					title: (err as Error).message,
-					description: "Please login again",
-					variant: "destructive",
-				});
-				setValues({ isAuthenticated: false, role: "USER" });
-			} finally {
-				setLoading(false);
-			}
-		})();
-	}, []);
+        if (response.status !== 200) {
+          throw new Error("Session expired");
+        }
 
-	useEffect(() => {
-		(async () => {
-			setLoading(true);
-			try {
-				const response = await fetch(`${import.meta.env.VITE_API_URL}/api`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
+        const data = await response.json();
 
-				if (response.status !== 200) {
-					throw new Error("Something went wrong!");
-				}
+        setUser(data.data.user);
+        setNotification(data.data.user.notifications || []);
+        if (data.data.user.role === "USER") {
+          setCart(data.data.user.cart);
+        }
+        localStorage.setItem("accessToken", data.data.accessToken);
+        setValues({ isAuthenticated: true, role: data.data.user.role });
+      } catch (err) {
+        localStorage.clear();
+        toast({
+          title: (err as Error).message,
+          description: "Please login again",
+          variant: "destructive",
+        });
+        setValues({ isAuthenticated: false, role: "USER" });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-				const data = await response.json();
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-				setStore(data);
-			} catch (err) {
-				toast({
-					title: (err as Error).message,
-					description: "Something went wrong!",
-					variant: "destructive",
-				});
-			} finally {
-				setLoading(false);
-			}
-		})();
-	}, []);
+        if (response.status !== 200) {
+          throw new Error("Something went wrong!");
+        }
 
-	const login = (token: string, loggedInUser: User) => {
-		localStorage.setItem("accessToken", token);
+        const data = await response.json();
 
-		const decoded = jwtDecode<JWTDecoded>(token);
+        setStore(data);
+      } catch (err) {
+        toast({
+          title: (err as Error).message,
+          description: "Something went wrong!",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-		if (!(decoded!.exp! * 1000 > Date.now())) {
-			localStorage.removeItem("accessToken");
-			setValues({ isAuthenticated: false, role: "USER" });
-			return;
-		}
-		if (loggedInUser && loggedInUser.role === "USER") {
-			setCart(loggedInUser.cart);
-		}
-		setUser(loggedInUser);
+  const login = (token: string, loggedInUser: User) => {
+    localStorage.setItem("accessToken", token);
 
-		setNotification(loggedInUser.notifications || []);
-		setValues({ isAuthenticated: true, role: decoded.role });
-	};
+    const decoded = jwtDecode<JWTDecoded>(token);
 
-	const logout = () => {
-		localStorage.removeItem("accessToken");
-		setValues({ isAuthenticated: false, role: "USER" });
-		setLoading(false);
-	};
+    if (!(decoded!.exp! * 1000 > Date.now())) {
+      localStorage.removeItem("accessToken");
+      setValues({ isAuthenticated: false, role: "USER" });
+      return;
+    }
+    if (loggedInUser && loggedInUser.role === "USER") {
+      setCart(loggedInUser.cart);
+    }
+    setUser(loggedInUser);
 
-	if (loading) return <Loader />;
+    setNotification(loggedInUser.notifications || []);
+    setValues({ isAuthenticated: true, role: decoded.role });
+  };
 
-	return (
-		<AuthContext.Provider
-			value={{ ...values, loading, login, logout, user, setUser, setValues }}>
-			{children}
-		</AuthContext.Provider>
-	);
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    setValues({ isAuthenticated: false, role: "USER" });
+    setLoading(false);
+  };
+
+  if (loading) return <Loader />;
+
+  return (
+    <AuthContext.Provider
+      value={{ ...values, loading, login, logout, user, setUser, setValues }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

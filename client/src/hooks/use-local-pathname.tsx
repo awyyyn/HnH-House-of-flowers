@@ -6,11 +6,25 @@ export function useLocalPathname() {
   const [path, setPath] = useState(() => localStorage.getItem("path") || "/");
 
   useEffect(() => {
-    if (pathname) {
-      localStorage.setItem("path", pathname);
-      setPath(pathname);
-    }
+    const handleBeforeUnload = () => {
+      if (pathname) {
+        localStorage.setItem("path", pathname);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, [pathname]);
+
+  // Optional: sync the local state when pathname changes (e.g., for internal use)
+  useEffect(() => {
+    if (pathname !== path) {
+      setPath(localStorage.getItem("path") || "/");
+    }
+  }, [pathname, path]);
 
   return path;
 }

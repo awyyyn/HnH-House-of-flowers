@@ -10,17 +10,6 @@ export default function UserLayout({
   children?: React.ReactNode;
 }) {
   const { user } = useAuth();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const localPathname = useLocalPathname();
-
-  useEffect(() => {
-    if (localPathname && localPathname !== pathname) {
-      navigate(localPathname, {
-        replace: true,
-      });
-    }
-  }, []);
 
   if (user !== null && (user.status === "UNVERIFIED" || !user.verifiedAt)) {
     return <Navigate to="/verify-account" />;

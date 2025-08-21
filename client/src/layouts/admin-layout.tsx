@@ -19,22 +19,6 @@ export default function AdminLayout({
 }: {
   children?: React.ReactNode;
 }) {
-  const { pathname } = useLocation();
-  const pathName = useLocalPathname();
-  const navigate = useNavigate();
-
-  const paths = pathname
-    .split("/")
-    .filter((path) => path !== "/" && path !== "");
-
-  useEffect(() => {
-    if (pathName && pathName !== pathname) {
-      navigate(pathName, {
-        replace: true,
-      });
-    }
-  }, []);
-
   return (
     <SidebarProvider>
       <Suspense fallback={<h1>loading...</h1>}>

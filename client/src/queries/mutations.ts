@@ -418,7 +418,7 @@ export const CREATE_COMPONENT_MUTATION = gql`
     $type: ComponentType!
     $isAvailable: Boolean!
     $description: String
-    $price: Float
+    $price: Float!
     $image: String
     $availableColors: [String]
   ) {
