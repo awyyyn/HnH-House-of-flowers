@@ -35,8 +35,7 @@ const formSchema = z
     stock: z.number({ message: "Stock must be a number!" }),
     price: z
       .number({ message: "Invalid price input, must be numbers only!" })
-      .min(0, "Price must be a positive number")
-      .optional(),
+      .min(0, "Price must be a positive number"),
     // stock: z.number().positive("Stock must be a positive number"),
     image: z.string().optional(),
     type: z.enum(["WRAPPER", "FLOWER"]),

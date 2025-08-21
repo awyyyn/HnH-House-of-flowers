@@ -1,16 +1,26 @@
 import { Helmet } from "@/components";
 import ProductForm from "./components/product-form";
-import { Navigate, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_PRODUCT_QUERY } from "@/queries";
+import { Product } from "@/types";
 
 export default function EditProduct() {
-	const { state } = useLocation();
+  const { id } = useParams();
 
-	if (!state.product) return <Navigate to="/products" />;
+  const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
+    variables: { id },
+  });
 
-	return (
-		<>
-			<Helmet title={`Edit ${state.product.name}`} />
-			<ProductForm editing product={state.product} />;
-		</>
-	);
+  // TODO: ADD LOADING UI
+
+  if (loading) return <div>Loading...</div>;
+  if (!data?.product) return <div>Product not found</div>;
+
+  return (
+    <>
+      <Helmet title={`Edit ${data.product.name}`} />
+      <ProductForm editing product={data?.product} />
+    </>
+  );
 }

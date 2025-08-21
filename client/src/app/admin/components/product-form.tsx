@@ -23,29 +23,108 @@ import {
 } from "@/components";
 import { flowerTagOptions, productCategory, productStatus } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
-import { CREATE_PRODUCT_MUTATION, UPDATE_PRODUCT_MUTATION } from "@/queries";
-import { Product } from "@/types";
-import { useMutation } from "@apollo/client";
+import {
+  CREATE_PRODUCT_MUTATION,
+  READ_COMPONENTS_QUERY,
+  UPDATE_PRODUCT_MUTATION,
+} from "@/queries";
+import { Component, Product, ProductStatus } from "@/types";
+import { useMutation, useQuery } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, Plus, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { TagsInput } from "./tags-input";
+import { useAtom } from "jotai";
+import { componentsAtom } from "@/states/components";
 
-const formSchema = z.object({
-  name: z.string().nonempty("Required"),
-  description: z.string().optional(),
-  price: z.number().positive(),
-  stock: z.number().positive(),
-  images: z.array(z.string()).min(1, "Required"),
-  category: z.string().nonempty("Required"),
-  status: z.string().nonempty("Required"),
-  tags: z.array(z.string()).min(1, "Required"),
-});
+const formSchema = z
+  .object({
+    name: z.string().nonempty("Required"),
+    description: z.string().optional(),
+    price: z.preprocess(
+      (val) =>
+        val === "" || typeof val === "string" || isNaN(val)
+          ? undefined
+          : Number(val),
+      z.number().positive({
+        message: "Price must not be zero!",
+      }),
+    ),
+    stock: z.preprocess(
+      (val) => (val === "" ? undefined : Number(val)),
+      z.number().positive(),
+    ),
+    images: z.array(z.string()).min(1, "Required"),
+    category: z.string().nonempty("Required"),
+    status: z.string().nonempty("Required"),
+    tags: z.array(z.string()).optional(),
+
+    otherFee: z.preprocess(
+      (val) => {
+        if (val === "" || val === null || val === undefined) return undefined;
+        const num = Number(val);
+        return isNaN(num) ? undefined : num;
+      },
+      z
+        .number({
+          message: "Other fee must be a number",
+        })
+        .optional(),
+    ),
+    serviceFee: z.preprocess(
+      (val) => {
+        if (val === "" || val === null || val === undefined) return undefined;
+        const num = Number(val);
+        return isNaN(num) ? undefined : num;
+      },
+      z
+        .number({
+          message: "Service fee must be a number",
+        })
+        .optional(),
+    ),
+    wrapper: z.string().optional(),
+    flower: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.category === "BOUQUET") {
+      if (!data.tags || data.tags.length === 0) {
+        ctx.addIssue({
+          path: ["tags"],
+          code: z.ZodIssueCode.custom,
+          message: "Tags are required for bouquets",
+        });
+      }
+      if (!data.serviceFee || isNaN(data.serviceFee)) {
+        ctx.addIssue({
+          path: ["serviceFee"],
+          code: z.ZodIssueCode.custom,
+          message: "Service fee is required for bouquets",
+        });
+      }
+
+      if (!data.flower || data.flower.trim() === "") {
+        ctx.addIssue({
+          path: ["flower"],
+          code: z.ZodIssueCode.custom,
+          message: "Flower component is required for bouquets",
+        });
+      }
+
+      if (!data.wrapper || data.wrapper.trim() === "") {
+        ctx.addIssue({
+          path: ["wrapper"],
+          code: z.ZodIssueCode.custom,
+          message: "Wrapper component is required for bouquets",
+        });
+      }
+    }
+  });
 
 export default function ProductForm({
   editing = false,
@@ -57,7 +136,7 @@ export default function ProductForm({
   const [uploading, setUploading] = useState(false);
   const [imgs, setImgs] = useState<string[]>(product?.images ?? []);
   const { toast } = useToast();
-
+  const [componentsState, setComponentsState] = useAtom(componentsAtom);
   // const [isEditing, setIsEditing] = useState(editing);
   const navigate = useNavigate();
   const [addProduct] = useMutation(
@@ -74,18 +153,52 @@ export default function ProductForm({
       category: product?.category ?? "",
       status: product?.status ?? "",
       tags: product?.tags ?? [],
+      serviceFee: product?.serviceFee ?? 0,
+      otherFee: product?.otherFee ?? 0,
+      flower: product?.components[0]?.id ?? "",
+      wrapper: product?.components[1]?.id ?? "",
+    },
+  });
+
+  useQuery<{
+    components: { data: Component[]; hasNextPage: boolean; total: number };
+  }>(READ_COMPONENTS_QUERY, {
+    variables: {
+      isAvailable: true,
+    },
+    onCompleted(data) {
+      setComponentsState(data.components.data || []);
     },
   });
 
   useEffect(() => {
     form.setValue("images", imgs);
-  }, [imgs]);
+  }, [imgs, form]);
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const variables = editing
-        ? { id: String(product?.id), data: values }
-        : values;
+      const components = [];
+      const isBuoquet = values.category === "BOUQUET";
+      if (values.flower && values.flower.trim() !== "")
+        components.push(values.flower);
+      if (values.wrapper && values.wrapper.trim() !== "")
+        components.push(values.wrapper);
+
+      const data: any = {
+        name: values.name,
+        price: values.price,
+        stock: values.stock,
+        status: values.status as ProductStatus,
+        category: values.category,
+        images: values.images,
+        description: values.description,
+        tags: isBuoquet ? values.tags : [],
+        serviceFee: isBuoquet ? values.serviceFee : 0,
+        otherFee: isBuoquet ? values.otherFee : 0,
+        components: isBuoquet ? components : [],
+      };
+
+      const variables = editing ? { id: String(product?.id), data } : data;
 
       await addProduct({
         variables,
@@ -147,8 +260,46 @@ export default function ProductForm({
   };
 
   const watchedCategory = form.watch("category");
-
   const shouldShowTags = ["FLOWER", "BOUQUET"].includes(watchedCategory);
+  const shouldShowComponents = watchedCategory === "BOUQUET";
+  const flowerOptions =
+    componentsState.filter((comp) => comp.type === "FLOWER") || [];
+  const wrapperOptions =
+    componentsState.filter((comp) => comp.type === "WRAPPER") || [];
+  const category = form.watch("category");
+  const flower = form.watch("flower");
+  const wrapper = form.watch("wrapper");
+  const serviceFee = form.watch("serviceFee");
+  const otherFee = form.watch("otherFee");
+
+  // Auto-update price when any of the watched values change
+  useEffect(() => {
+    if (category === "BOUQUET") {
+      const flowerPrice =
+        flowerOptions.find((f) => f.id === flower)?.price || 0;
+
+      const wrapperPrice =
+        wrapperOptions.find((w) => w.id === wrapper)?.price || 0;
+
+      const calculatedPrice =
+        Number(flowerPrice) +
+        Number(wrapperPrice) +
+        Number(serviceFee || 0) +
+        Number(otherFee || 0);
+
+      form.setValue("price", calculatedPrice);
+      if (calculatedPrice > 0) form.clearErrors("price");
+    } else {
+      form.setValue("serviceFee", 0);
+      form.setValue("otherFee", 0);
+      form.setValue("flower", "");
+      form.setValue("wrapper", "");
+    }
+  }, [category, flower, wrapper, serviceFee, otherFee]);
+
+  // TODO: ADD LOADING UI
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -160,9 +311,9 @@ export default function ProductForm({
             </h1>
           </div>
           <div className="hidden md:flex items-center gap-2">
-            <Button variant="ghost" type="reset" onClick={() => form.reset()}>
+            {/*<Button variant="ghost" type="reset" onClick={() => form.reset()}>
               Reset
-            </Button>
+            </Button>*/}
             <Button type="submit">
               {form.formState.isSubmitting ? (
                 <>
@@ -222,20 +373,22 @@ export default function ProductForm({
               )}
             />
 
-            <div className="flex flex-col  gap-4 items-start md:flex-row">
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem className="flex w-full flex-col items-start">
-                    <FormLabel className="text-black dark:text-white ">
-                      Price
-                    </FormLabel>
-                    <Input {...field} className="dark:bg-zinc-900 " />
-                    <FormMessage className="dark:text-primary dark:bg-zinc-900" />
-                  </FormItem>
-                )}
-              />
+            <div className={`flex flex-col  gap-4 items-start md:flex-row `}>
+              {!shouldShowComponents && (
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="flex w-full flex-col items-start">
+                      <FormLabel className="text-black dark:text-white ">
+                        Price
+                      </FormLabel>
+                      <Input {...field} className="dark:bg-zinc-900 " />
+                      <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="stock"
@@ -337,7 +490,7 @@ export default function ProductForm({
                         <TagsInput
                           onChangeValue={field.onChange}
                           options={flowerTagOptions}
-                          value={field.value}
+                          value={field.value || []}
                         />
                       </FormControl>
 
@@ -346,6 +499,185 @@ export default function ProductForm({
                   )}
                 />
               </div>
+            )}
+            {shouldShowComponents && (
+              <>
+                <div className="">
+                  <FormField
+                    control={form.control}
+                    name="flower"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col  items-start">
+                        <div className="flex items-center w-full  gap-5  ">
+                          <div className="w-[70%] md:w-[85%]">
+                            <FormLabel className="text-black dark:text-white ">
+                              Flower Component
+                            </FormLabel>
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={form.getValues("flower")}
+                            >
+                              <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
+                                <SelectValue placeholder="Select a flower" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel>Flowers</SelectLabel>
+                                  {flowerOptions.map((flower) => (
+                                    <SelectItem
+                                      value={flower.id}
+                                      key={flower.id}
+                                      className="capitalize  w-full  "
+                                    >
+                                      <div className="   flex  items-center gap-3">
+                                        <img
+                                          src={
+                                            flower.image ||
+                                            "https://blocks.astratic.com/img/general-img-landscape.png"
+                                          }
+                                          alt={flower.name}
+                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                        />
+
+                                        <p className=" ">{flower.name}</p>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="">
+                            <h3>Price:</h3>
+                            <p>
+                              {Intl.NumberFormat("en-PH", {
+                                currency: "PHP",
+                                style: "currency",
+                              }).format(
+                                flowerOptions.find(
+                                  (flower) =>
+                                    flower.id === form.getValues().flower,
+                                )?.price || 0,
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="">
+                  <FormField
+                    control={form.control}
+                    name="wrapper"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col  items-start">
+                        <div className="flex items-center w-full  gap-5  ">
+                          <div className="w-[70%] md:w-[85%]">
+                            <FormLabel className="text-black dark:text-white ">
+                              Wrapper Component
+                            </FormLabel>
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={form.getValues("wrapper")}
+                            >
+                              <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
+                                <SelectValue placeholder="Select a flower" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel>Wrappers</SelectLabel>
+                                  {wrapperOptions.map((wrapper) => (
+                                    <SelectItem
+                                      value={wrapper.id}
+                                      key={wrapper.id}
+                                      className="capitalize  w-full  "
+                                    >
+                                      <div className="   flex  items-center gap-3">
+                                        <img
+                                          src={
+                                            wrapper.image ||
+                                            "https://blocks.astratic.com/img/general-img-landscape.png"
+                                          }
+                                          alt={wrapper.name}
+                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                        />
+
+                                        <p className=" ">{wrapper.name}</p>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="">
+                            <h3>Price:</h3>
+                            <p>
+                              {Intl.NumberFormat("en-PH", {
+                                currency: "PHP",
+                                style: "currency",
+                              }).format(
+                                wrapperOptions.find(
+                                  (wrapper) =>
+                                    wrapper.id === form.getValues().wrapper,
+                                )?.price || 0,
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div
+                  className={`flex flex-col  gap-4 items-start md:flex-row `}
+                >
+                  <FormField
+                    control={form.control}
+                    name="serviceFee"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col items-start">
+                        <FormLabel className="text-black dark:text-white ">
+                          Service Fee
+                        </FormLabel>
+                        <Input {...field} className="dark:bg-zinc-900 " />
+                        <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="otherFee"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col items-start">
+                        <FormLabel className="text-black dark:text-white ">
+                          Other Fee
+                        </FormLabel>
+                        <Input {...field} className="dark:bg-zinc-900" />
+                        <FormMessage className="dark:text-primary" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="flex w-full flex-col items-start">
+                      <FormLabel className="text-black dark:text-white ">
+                        Total Price
+                      </FormLabel>
+                      <Input readOnly {...field} className="dark:bg-zinc-900" />
+                      <FormMessage className="dark:text-primary" />
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
           </div>
           <div className="col-span-4 order-1">

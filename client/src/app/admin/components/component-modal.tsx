@@ -16,7 +16,7 @@ interface ComponentDetailsModalProps {
   component: Component;
   isOpen: boolean;
   handleClose: VoidFunction;
-  handleNavigate: VoidFunction;
+  handleNavigate?: VoidFunction;
 }
 
 export function ComponentDetailsModal({
@@ -193,9 +193,11 @@ export function ComponentDetailsModal({
           </Card>
         </div>
         <DialogFooter>
-          <Button type="button" onClick={handleNavigate}>
-            Edit
-          </Button>
+          {handleNavigate && (
+            <Button type="button" onClick={handleNavigate}>
+              Edit
+            </Button>
+          )}
           <Button type="button" onClick={handleClose} variant="destructive">
             Close
           </Button>
