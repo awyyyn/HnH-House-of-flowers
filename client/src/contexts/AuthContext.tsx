@@ -39,17 +39,16 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const setCart = useSetAtom(cartAtom);
   const setNotification = useSetAtom(notificationAtom);
   const { toast } = useToast();
-
-  const navigate = useNavigate();
-  const localPathname = useLocalPathname();
-
-  useEffect(() => {
-    if (localPathname) {
-      navigate(localPathname, {
-        replace: true,
-      });
-    }
-  }, []);
+  // const navigate = useNavigate();
+  // const localPathname = useLocalPathname();
+  // TODO: TO FIX
+  // useEffect(() => {
+  //   if (localPathname && localPathname !== "/") {
+  //     navigate(localPathname, {
+  //       replace: true,
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
     (async () => {

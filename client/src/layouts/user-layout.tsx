@@ -1,8 +1,6 @@
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Navbar } from "./components/user-navbar";
 import { useAuth } from "@/contexts";
-import { useEffect } from "react";
-import { useLocalPathname } from "@/hooks/use-local-pathname";
 
 export default function UserLayout({
   children,

@@ -10,15 +10,20 @@ import {
   NotificationDropdown,
 } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { useLocalPathname } from "@/hooks/use-local-pathname";
-import { Suspense, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Suspense } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 export default function AdminLayout({
   children,
 }: {
   children?: React.ReactNode;
 }) {
+  const { pathname } = useLocation();
+
+  const paths = pathname
+    .split("/")
+    .filter((path) => path !== "/" && path !== "");
+
   return (
     <SidebarProvider>
       <Suspense fallback={<h1>loading...</h1>}>
