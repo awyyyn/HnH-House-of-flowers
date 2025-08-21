@@ -92,6 +92,9 @@ export const typeDefs = gql`
     createProduct(
       name: String!
       description: String
+      serviceFee: Float
+      otherFee: Float
+      components: [String]
       price: Float!
       images: [String]
       stock: Int!
@@ -424,10 +427,14 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     description: String
-    price: Float!
     images: [String]
     stock: Int!
     avg: Float
+    # Fees
+    otherFee: Float
+    serviceFee: Float
+    components: [Component]
+    price: Float!
 
     status: ProductStatus!
     category: ProductCategory!

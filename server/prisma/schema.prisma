@@ -213,9 +213,13 @@ model Product {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String   @default("")
-  price       Float    @default(0.00)
   images      String[]
   stock       Int      @default(1)
+
+  // price
+  servicePrice Float @default(0.00)
+  otherPrice   Float @default(0.00)
+  price        Float @default(0.00)
 
   // components
   components String[] @default([])
