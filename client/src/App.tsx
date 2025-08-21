@@ -28,7 +28,7 @@ import {
   AddOrderSkeleton,
   AdminOrdersSkeleton,
   // BouquetItemsSkeleton,
-  AddBouquetItemSkeleton,
+  // AddBouquetItemSkeleton,
   AddProductSkeleton,
   ProductInfoSkeleton,
   CardSkeleton,
@@ -70,6 +70,7 @@ const CheckoutPage = loadable(() => import("./app/user/checkout"));
 const Home = loadable(() => import("./app/home"));
 const ComponentsPage = loadable(() => import("./app/admin/components"));
 const AddComponentPage = loadable(() => import("./app/admin/add-component"));
+const Customize2 = loadable(() => import("./app/user/customize2"));
 
 export default function App() {
   const publicRoutes = [
@@ -309,7 +310,18 @@ export default function App() {
               },
               {
                 path: ":productId",
-                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+                children: [
+                  {
+                    index: true,
+                    element: (
+                      <ProductDetails fallback={<ProductInfoSkeleton />} />
+                    ),
+                  },
+                  {
+                    path: "customize",
+                    element: <Customize2 />,
+                  },
+                ],
               },
             ],
           },
