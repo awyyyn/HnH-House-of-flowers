@@ -1,3 +1,4 @@
+import { Component } from "./component";
 import { Review } from "./review";
 
 export const FlowerTags = {
@@ -15,10 +16,14 @@ export interface Product {
   readonly id: string;
   name: string;
   description: string;
-  price: number;
   images: string[];
   stock: number;
   avg: number;
+  // Fees
+  otherFee?: number;
+  serviceFee?: number;
+  price: number;
+  components: Component[];
 
   status: ProductStatus;
   category: ProductCategory;

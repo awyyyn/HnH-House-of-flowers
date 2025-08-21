@@ -29,6 +29,8 @@ export const productFragment = gql`
     id
     name
     description
+    serviceFee
+    otherFee
     price
     images
     stock

@@ -78,6 +78,9 @@ export const CREATE_PRODUCT_MUTATION = gql`
     $stock: Int!
     $status: ProductStatus!
     $category: ProductCategory!
+    $serviceFee: Float
+    $otherFee: Float
+    $components: [String]
     $images: [String]
     $description: String
     $tags: [FlowerTag]
@@ -88,6 +91,9 @@ export const CREATE_PRODUCT_MUTATION = gql`
       stock: $stock
       status: $status
       category: $category
+      serviceFee: $serviceFee
+      otherFee: $otherFee
+      components: $components
       images: $images
       description: $description
       tags: $tags
