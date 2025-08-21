@@ -202,12 +202,34 @@ export const createCustomizeOrderResolver = async (
   { id }: AppContext,
 ) => {
   try {
-    console.log(customData);
-    return await createOrderWithCustomization({
+    const order = await createOrderWithCustomization({
       customData,
       customerId: id,
       deliveryType,
     });
+
+    if (!order) {
+      throw new GraphQLError("Failed to create customized order");
+    }
+
+    const content = generateNotificationContent(
+      "ORDER",
+      order.status,
+      order.customer?.firstName!,
+      true,
+    );
+
+    const notification = await createNotification({
+      message: content.message,
+      userId: id!,
+      type: "ORDER",
+      idToGo: order.id,
+      title: content.title,
+      toShop: true,
+    });
+    pubsub.publish("NOTIFICATION_SENT", { notificationSent: notification });
+
+    return order;
   } catch (error) {
     console.log(error);
     throw new GraphQLError((error as GraphQLError).message);
