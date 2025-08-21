@@ -18,7 +18,7 @@ import {
   ToggleGroupItem,
 } from "@/components";
 import {
-  CREATE_CUSTOM_BOUQUET_MUTATION,
+  CREATE_CUSTOMOMIZE_ORDER_MUTATION,
   GET_PRODUCT_QUERY,
   READ_COMPONENTS_QUERY,
 } from "@/queries";
@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { ComponentDetailsModal } from "../admin/components/component-modal";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   flower: z.string({
@@ -54,7 +55,10 @@ const Customize2 = () => {
     resolver: zodResolver(formSchema),
   });
   const [component, setComponent] = useState<Component | null>(null);
-
+  const { toast } = useToast();
+  const [createOrder, { loading: creatingOrder }] = useMutation(
+    CREATE_CUSTOMOMIZE_ORDER_MUTATION,
+  );
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
   const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
     variables: {
@@ -66,9 +70,6 @@ const Customize2 = () => {
       form.setValue("totalPrice", data.product.price || 0);
     },
   });
-  const [createOrder, { loading: creatingOrder }] = useMutation(
-    CREATE_CUSTOM_BOUQUET_MUTATION,
-  );
 
   useQuery<{
     components: { data: Component[]; hasNextPage: boolean; total: number };
@@ -140,7 +141,48 @@ const Customize2 = () => {
     }
   }
 
-  async function handleSubmit() {}
+  async function handleSubmit(values: FormData) {
+    try {
+      //
+      const order = await createOrder({
+        variables: {
+          customData: {
+            productId: product.id,
+            note: values.note || "",
+            totalPrice: values.totalPrice,
+            components: [values.flower, values.wrapper],
+            wrapperColor: values.wrapperColor || "",
+          },
+          // TODO: Add type of delivery
+        },
+      });
+      toast({
+        title: "Order Placed!",
+        description: "Please wait for the admin to confirm your order",
+        variant: "success",
+      });
+
+      setTimeout(() => {
+        toast({
+          title: "Redirecting to payment page",
+          description: "Please wait...",
+          variant: "success",
+        });
+      }, 3000);
+
+      setTimeout(() => {
+        window.location.replace(
+          order.data.createCustomizeOrder.payment.checkoutUrl,
+        );
+      }, 8000);
+    } catch (err) {
+      toast({
+        title: "Error Occurred!",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+    }
+  }
 
   const availableColors =
     wrapperOptions.find((wrpr) => wrpr.id === form.watch("wrapper"))

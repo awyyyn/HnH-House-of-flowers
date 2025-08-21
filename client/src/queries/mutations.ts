@@ -363,6 +363,28 @@ export const CREATE_CUSTOM_BOUQUET_MUTATION = gql`
     }
   }
 `;
+export const CREATE_CUSTOMOMIZE_ORDER_MUTATION = gql`
+  mutation ($customData: CustomData, $deliveryType: OrderDeliveryType) {
+    createCustomizeOrder(customData: $customData, deliveryType: $deliveryType) {
+      id
+      status
+      formattedId
+      totalPrice
+      isPreOrder
+      payment {
+        checkoutUrl
+      }
+      typeOfDelivery
+      typeOfPayment
+      orderDate
+      processedAt
+      shippedAt
+      forPickup
+      cancelledAt
+      completedAt
+    }
+  }
+`;
 
 export const UPDATE_STORE_SETTINGS_MUTATION = gql`
   mutation (
