@@ -33,7 +33,7 @@ import { useMutation, useQuery } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -46,15 +46,7 @@ const formSchema = z
   .object({
     name: z.string().nonempty("Required"),
     description: z.string().optional(),
-    price: z.preprocess(
-      (val) =>
-        val === "" || typeof val === "string" || isNaN(val)
-          ? undefined
-          : Number(val),
-      z.number().positive({
-        message: "Price must not be zero!",
-      }),
-    ),
+    price: z.string().nonempty("Required"),
     stock: z.preprocess(
       (val) => (val === "" ? undefined : Number(val)),
       z.number().positive(),
@@ -92,6 +84,19 @@ const formSchema = z
     flower: z.string().optional(),
   })
   .superRefine((data, ctx) => {
+    if (isNaN(parseInt(data.price))) {
+      ctx.addIssue({
+        path: ["price"],
+        code: z.ZodIssueCode.custom,
+        message: "Price must be a valid number",
+      });
+    } else if (data.price.trim() === "" || data.price == "0") {
+      ctx.addIssue({
+        path: ["price"],
+        code: z.ZodIssueCode.custom,
+        message: "Price is invalid or zero",
+      });
+    }
     if (data.category === "BOUQUET") {
       if (!data.tags || data.tags.length === 0) {
         ctx.addIssue({
@@ -147,7 +152,7 @@ export default function ProductForm({
     defaultValues: {
       name: product?.name ?? "",
       description: product?.description ?? "",
-      price: product?.price ?? 1,
+      price: product?.price.toString() ?? "",
       stock: product?.stock ?? 1,
       images: product?.images ?? [],
       category: product?.category ?? "",
@@ -186,7 +191,7 @@ export default function ProductForm({
 
       const data: any = {
         name: values.name,
-        price: values.price,
+        price: Number(values.price),
         stock: values.stock,
         status: values.status as ProductStatus,
         category: values.category,
@@ -273,7 +278,7 @@ export default function ProductForm({
   const otherFee = form.watch("otherFee");
 
   // Auto-update price when any of the watched values change
-  useEffect(() => {
+  useMemo(() => {
     if (category === "BOUQUET") {
       const flowerPrice =
         flowerOptions.find((f) => f.id === flower)?.price || 0;
@@ -287,7 +292,7 @@ export default function ProductForm({
         Number(serviceFee || 0) +
         Number(otherFee || 0);
 
-      form.setValue("price", calculatedPrice);
+      form.setValue("price", calculatedPrice.toString());
       if (calculatedPrice > 0) form.clearErrors("price");
     } else {
       form.setValue("serviceFee", 0);
@@ -298,8 +303,6 @@ export default function ProductForm({
   }, [category, flower, wrapper, serviceFee, otherFee]);
 
   // TODO: ADD LOADING UI
-
-  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -383,7 +386,11 @@ export default function ProductForm({
                       <FormLabel className="text-black dark:text-white ">
                         Price
                       </FormLabel>
-                      <Input {...field} className="dark:bg-zinc-900 " />
+                      <Input
+                        className="dark:bg-zinc-900 "
+                        type="number"
+                        {...field}
+                      />
                       <FormMessage className="dark:text-primary dark:bg-zinc-900" />
                     </FormItem>
                   )}

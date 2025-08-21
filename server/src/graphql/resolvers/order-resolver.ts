@@ -76,7 +76,7 @@ export const updateOrderResolver = async (
       idToGo: updatedOrder.formattedId,
       type: "ORDER",
       title: "Order Status",
-      toShop: false,
+      toShop: true,
     });
 
     pubsub.publish("NOTIFICATION_SENT", { notificationSent: notification });
