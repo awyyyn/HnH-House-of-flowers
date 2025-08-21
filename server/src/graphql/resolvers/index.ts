@@ -10,3 +10,4 @@ export * from "./component-resolver.js";
 export * from "./notification-resolver.js";
 export * from "./review-resolver.js";
 export * from "./settings-resolver.js";
+export * from "./order-resolver.js";

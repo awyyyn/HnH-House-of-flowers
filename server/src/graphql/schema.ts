@@ -147,6 +147,10 @@ export const typeDefs = gql`
       typeOfDelivery: OrderDeliveryType!
       wrapperColor: String!
     ): Order
+    createCustomizeOrder(
+      customData: CustomData
+      deliveryType: OrderDeliveryType
+    ): Order
     configureStore(
       id: ID
       storePhone: String!
@@ -158,6 +162,14 @@ export const typeDefs = gql`
       socialMedia: SocialMediaInput!
       policies: PoliciesInput!
     ): StoreSettings
+  }
+
+  input CustomData {
+    productId: String!
+    note: String
+    totalPrice: Float!
+    components: [String!]!
+    wrapperColor: String
   }
 
   type Component {

@@ -46,6 +46,7 @@ import {
   readReviewsResolver,
   readSettingsResolver,
   settingsResolver,
+  createCustomizeOrderResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -88,6 +89,7 @@ export const resolvers = {
     updateUser: updateUserResolver,
     createProduct: createProductResolver,
     updateProduct: updateProductResolver,
+    createCustomizeOrder: createCustomizeOrderResolver,
     removeToCart: removeToCartResolver,
     sendMessage: sendMessageResolver,
     addToCart: addToCartResolver,
