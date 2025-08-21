@@ -1,36 +1,138 @@
 import { sub } from "date-fns";
 import { prisma } from "../services/prisma.js";
-import { ProductFilter, ProductInput } from "../types/index.js";
-import { Component, Prisma } from "@prisma/client";
+import { Component, ProductFilter, ProductInput } from "../types/index.js";
+import { Prisma } from "@prisma/client";
 
 export const createProduct = async (values: ProductInput) => {
-  const newProduct = await prisma.product.create({
-    data: values,
-  });
+  return await prisma.$transaction(async (prsma) => {
+    let components: Component[] = [];
 
-  return newProduct;
+    if (values?.components && values.components.length > 0) {
+      components = (
+        await Promise.all(
+          values.components.map(async (id) => {
+            const cmpnnt = await prsma.component.update({
+              where: {
+                id,
+              },
+              data: {
+                quantity: {
+                  decrement: 1,
+                },
+              },
+            });
+
+            if (!cmpnnt)
+              throw new Error("There was an error updating product!");
+
+            return await prsma.component.findUnique({
+              where: { id },
+            });
+          }),
+        )
+      )
+        .filter((c) => c !== null)
+        .map((c) => ({
+          ...c,
+          createdAt: c.createdAt.toISOString(),
+          updatedAt: c.updatedAt.toISOString(),
+        }));
+    }
+
+    const newProduct = await prisma.product.create({
+      data: values,
+    });
+
+    if (!newProduct) throw new Error("Failed to create product");
+
+    return {
+      ...newProduct,
+      components,
+    };
+  });
 };
 
 export const updateProduct = async (
   id: string,
   values: Partial<ProductInput>,
 ) => {
-  const updatedProduct = await prisma.product.update({
-    where: { id },
-    data: values,
-  });
+  return await prisma.$transaction(async (prsma) => {
+    const updatedProduct = await prsma.product.update({
+      where: { id },
+      data: values,
+    });
+    let components: Component[] = [];
 
-  return updatedProduct;
+    if (updatedProduct?.components.length) {
+      components = (
+        await Promise.all(
+          updatedProduct.components.map(async (id) => {
+            const cmpnnt = await prsma.component.update({
+              where: {
+                id,
+              },
+              data: {
+                quantity: {
+                  decrement: 1,
+                },
+              },
+            });
+
+            if (!cmpnnt)
+              throw new Error("There was an error updating product!");
+
+            return await prsma.component.findUnique({
+              where: { id },
+            });
+          }),
+        )
+      )
+        .filter((c) => c !== null)
+        .map((c) => ({
+          ...c,
+          createdAt: c.createdAt.toISOString(),
+          updatedAt: c.updatedAt.toISOString(),
+        }));
+    }
+
+    return {
+      ...updatedProduct,
+      components,
+    };
+  });
 };
 
 export const readProduct = async (filter: string) => {
-  const user = await prisma.product.findFirst({
+  const product = await prisma.product.findFirst({
     where: {
       id: filter,
     },
   });
 
-  return user;
+  let components: Component[] = [];
+
+  if (product?.components.length) {
+    components = (
+      await Promise.all(
+        product.components.map(async (id) => {
+          return await prisma.component.findUnique({
+            where: { id },
+          });
+        }),
+      )
+    )
+      .filter((c) => c !== null)
+      .map((c) => ({
+        ...c,
+        createdAt: c.createdAt.toISOString(),
+        updatedAt: c.updatedAt.toISOString(),
+      }));
+  }
+
+  return {
+    ...product,
+    components,
+  };
 };
 
 export const readProducts = async ({
@@ -103,7 +205,13 @@ export const readProducts = async ({
               });
             }),
           )
-        ).filter((c) => c !== null);
+        )
+          .filter((c) => c !== null)
+          .map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
+          }));
       }
 
       return {

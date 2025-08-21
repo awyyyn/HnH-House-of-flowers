@@ -109,13 +109,17 @@ model Customize {
   note       String?
   totalPrice Float
 
-  bouquetItems BouquetItems
+  //#OLD bouquetItems BouquetItems
+  components Component[]
+  product    Product     @relation(fields: [productId], references: [id])
+  productId  String      @db.ObjectId
 
   order Order[]
 
   // TimeStamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderItem OrderItem[]
 
   @@map("customizes")
 }
@@ -127,8 +131,11 @@ model OrderItem {
   price    Float
   quantity Int
 
-  productId String?  @db.ObjectId
-  product   Product? @relation(fields: [productId], references: [id])
+  customizeItem Boolean    @default(false)
+  customizeId   String?    @db.ObjectId
+  customize     Customize? @relation(fields: [customizeId], references: [id])
+  productId     String?    @db.ObjectId
+  product       Product?   @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }
@@ -191,15 +198,17 @@ model Component {
   name            String
   quantity        Int           @default(0)
   description     String?       @default("")
-  price           Float?        @default(0.00)
+  price           Float         @default(0.00)
   image           String?       @default("https://clipart-library.com/newhp/94-948284_purple-flower-clip-art-6-petal-flower-clipart.png")
   type            ComponentType
   isAvailable     Boolean       @default(true)
   availableColors String[]
 
   // TimeStamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Customize   Customize? @relation(fields: [customizeId], references: [id])
+  customizeId String?    @db.ObjectId
 
   @@map("components")
 }
@@ -217,9 +226,9 @@ model Product {
   stock       Int      @default(1)
 
   // price
-  servicePrice Float @default(0.00)
-  otherPrice   Float @default(0.00)
-  price        Float @default(0.00)
+  serviceFee Float @default(0.00)
+  otherFee   Float @default(0.00)
+  price      Float @default(0.00)
 
   // components
   components String[] @default([])
@@ -234,8 +243,9 @@ model Product {
   cartItem  CartItem[]
 
   // TimeStamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Customize Customize[]
 
   @@map("products")
 }

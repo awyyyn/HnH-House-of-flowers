@@ -51,14 +51,21 @@ export const readComponentsResolver = async (
     componentType,
     filter,
     pagination,
+    isAvailable,
   }: {
     componentType?: ComponentType;
     pagination?: { page: number; limit: number };
     filter?: string;
+    isAvailable?: boolean;
   },
 ) => {
   try {
-    return await readComponents({ componentType, filter, pagination });
+    return await readComponents({
+      componentType,
+      filter,
+      pagination,
+      isAvailable,
+    });
   } catch (error) {
     throw new GraphQLError((error as Error).message);
   }

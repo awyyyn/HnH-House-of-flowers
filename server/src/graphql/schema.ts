@@ -13,6 +13,7 @@ export const typeDefs = gql`
       componentType: ComponentType
       filter: String
       pagination: PaginationInput
+      isAvailable: Boolean
     ): ComponentPaginationResult
     users(
       role: UserRole
@@ -65,7 +66,7 @@ export const typeDefs = gql`
       name: String!
       quantity: Int!
       description: String
-      price: Float
+      price: Float!
       image: String
       type: ComponentType!
       isAvailable: Boolean!
@@ -164,7 +165,7 @@ export const typeDefs = gql`
     name: String!
     quantity: Int!
     description: String
-    price: Float
+    price: Float!
     image: String
     type: ComponentType!
     isAvailable: Boolean!
@@ -451,9 +452,12 @@ export const typeDefs = gql`
     price: Float!
     images: [String]
     stock: Int!
-    status: [ProductStatus]!
+    status: ProductStatus!
     category: ProductCategory!
     tags: [FlowerTag]
+    serviceFee: Float
+    otherFee: Float
+    components: [String]
   }
 
   enum ProductStatus {

@@ -1,6 +1,6 @@
 import { ComponentType, Prisma } from "@prisma/client";
 import { prisma } from "src/services/prisma.js";
-import { ComponentInput } from "src/types/index.js";
+import { Component, ComponentInput } from "src/types/index.js";
 
 export const createComponent = async (data: ComponentInput) => {
   return await prisma.component.create({
@@ -49,13 +49,14 @@ export const readComponent = async (id: string) => {
 
 export const readComponents = async ({
   componentType,
-
+  isAvailable,
   pagination,
   filter,
 }: {
   componentType?: ComponentType;
   pagination?: { page: number; limit: number };
   filter?: string;
+  isAvailable?: boolean;
 } = {}) => {
   let where: Prisma.ComponentWhereInput = {};
 
@@ -72,7 +73,10 @@ export const readComponents = async ({
   }
 
   const components = await prisma.component.findMany({
-    where,
+    where: {
+      ...where,
+      isAvailable: !!isAvailable,
+    },
     skip: pagination ? pagination.limit * pagination?.page : undefined,
     take: pagination ? pagination.limit : undefined,
   });
