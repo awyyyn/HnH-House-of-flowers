@@ -4,112 +4,112 @@
 
 /* ... */
 .bg-repeat-this {
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10' /><circle cx='6' cy='6' r='2' /><circle cx='18' cy='6' r='2' /><circle cx='6' cy='18' r='2' /><circle cx='18' cy='18' r='2' /></svg>");
-	background-repeat: repeat;
-	background-size: 60px 60px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10' /><circle cx='6' cy='6' r='2' /><circle cx='18' cy='6' r='2' /><circle cx='6' cy='18' r='2' /><circle cx='18' cy='18' r='2' /></svg>");
+    background-repeat: repeat;
+    background-size: 60px 60px;
 }
 
 @layer components {
-	.img-card-sm {
-		@apply min-h-[100px] dark:bg-zinc-900 dark:border-transparent max-h-[100px] relative min-w-[100px] border border-gray-300 shadow-md rounded-md w-[100px];
-	}
-	.img {
-		@apply object-contain  w-full h-full;
-	}
+    .img-card-sm {
+        @apply min-h-[100px] dark:bg-zinc-900 dark:border-transparent max-h-[100px] relative min-w-[100px] border border-gray-300 shadow-md rounded-md w-[100px];
+    }
+    .img {
+        @apply object-contain  w-full h-full;
+    }
 }
 
 @layer base {
-	:root {
-		--background: 342 100% 100%;
-		--foreground: 342 5% 10%;
-		--card: 342 50% 100%;
-		--card-foreground: 342 5% 15%;
-		--popover: 342 100% 100%;
-		--popover-foreground: 342 100% 10%;
-		--primary: 342 93.9% 55.1%;
-		--primary-foreground: 0 0% 100%;
-		--secondary: 342 30% 90%;
-		--secondary-foreground: 0 0% 0%;
-		--muted: 304 30% 95%;
-		--muted-foreground: 342 5% 40%;
-		--accent: 304 30% 90%;
-		--accent-foreground: 342 5% 15%;
-		--destructive: 0 100% 50%;
-		--destructive-foreground: 342 5% 100%;
-		--border: 342 30% 82%;
-		--input: 342 30% 50%;
-		--ring: 342 93.9% 55.1%;
-		--radius: 0.3rem;
-		--sidebar-background: 0 0% 98%;
-		--sidebar-foreground: 240 5.3% 26.1%;
-		--sidebar-primary: 240 5.9% 10%;
-		--sidebar-primary-foreground: 0 0% 98%;
-		--sidebar-accent: 240 4.8% 95.9%;
-		--sidebar-accent-foreground: 240 5.9% 10%;
-		--sidebar-border: 220 13% 91%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
+    :root {
+        --background: 342 100% 100%;
+        --foreground: 342 5% 10%;
+        --card: 342 50% 100%;
+        --card-foreground: 342 5% 15%;
+        --popover: 342 100% 100%;
+        --popover-foreground: 342 100% 10%;
+        --primary: 342 93.9% 55.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 342 30% 90%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 304 30% 95%;
+        --muted-foreground: 342 5% 40%;
+        --accent: 304 30% 90%;
+        --accent-foreground: 342 5% 15%;
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 342 5% 100%;
+        --border: 342 30% 82%;
+        --input: 342 30% 50%;
+        --ring: 342 93.9% 55.1%;
+        --radius: 0.3rem;
+        --sidebar-background: 0 0% 98%;
+        --sidebar-foreground: 240 5.3% 26.1%;
+        --sidebar-primary: 240 5.9% 10%;
+        --sidebar-primary-foreground: 0 0% 98%;
+        --sidebar-accent: 240 4.8% 95.9%;
+        --sidebar-accent-foreground: 240 5.9% 10%;
+        --sidebar-border: 220 13% 91%;
+        --sidebar-ring: 217.2 91.2% 59.8%;
 
-		--chart-1: 347 77% 50%;
-		--chart-2: 352 83% 91%;
-		--chart-3: 350 80% 72%;
-		--chart-4: 351 83% 82%;
-		--chart-5: 349 77% 62%;
-	}
-	.dark {
-		/* --background: 342 50% 10%; */
-		--background: 240 6% 10%;
-		--foreground: 342 5% 100%;
-		--card: 342 50% 10%;
-		--card-foreground: 342 5% 100%;
-		--popover: 342 50% 5%;
-		--popover-foreground: 342 5% 100%;
-		--primary: 342 93.9% 55.1%;
-		--primary-foreground: 0 0% 100%;
-		--secondary: 342 30% 20%;
-		--secondary-foreground: 0 0% 100%;
-		--muted: 304 30% 25%;
-		--muted-foreground: 342 5% 65%;
-		--accent: 304 30% 25%;
-		--accent-foreground: 342 5% 95%;
-		--destructive: 0 100% 50%;
-		--destructive-foreground: 342 5% 100%;
-		--border: 342 30% 50%;
-		--input: 342 30% 50%;
-		--ring: 342 93.9% 55.1%;
-		--radius: 0.3rem;
-		--sidebar-background: 240 5.9% 10%;
-		--sidebar-foreground: 240 4.8% 95.9%;
-		--sidebar-primary: 224.3 76.3% 48%;
-		--sidebar-primary-foreground: 0 0% 100%;
-		--sidebar-accent: 240 3.7% 15.9%;
-		--sidebar-accent-foreground: 240 4.8% 95.9%;
-		--sidebar-border: 240 3.7% 15.9%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
+        --chart-1: 347 77% 50%;
+        --chart-2: 352 83% 91%;
+        --chart-3: 350 80% 72%;
+        --chart-4: 351 83% 82%;
+        --chart-5: 349 77% 62%;
+    }
+    .dark {
+        /* --background: 342 50% 10%; */
+        --background: 240 6% 10%;
+        --foreground: 342 5% 100%;
+        --card: 342 50% 10%;
+        --card-foreground: 342 5% 100%;
+        --popover: 342 50% 5%;
+        --popover-foreground: 342 5% 100%;
+        --primary: 342 93.9% 55.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 342 30% 20%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 304 30% 25%;
+        --muted-foreground: 342 5% 65%;
+        --accent: 304 30% 25%;
+        --accent-foreground: 342 5% 95%;
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 342 5% 100%;
+        --border: 342 30% 50%;
+        --input: 342 30% 50%;
+        --ring: 342 93.9% 55.1%;
+        --radius: 0.3rem;
+        --sidebar-background: 240 5.9% 10%;
+        --sidebar-foreground: 240 4.8% 95.9%;
+        --sidebar-primary: 224.3 76.3% 48%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 240 3.7% 15.9%;
+        --sidebar-accent-foreground: 240 4.8% 95.9%;
+        --sidebar-border: 240 3.7% 15.9%;
+        --sidebar-ring: 217.2 91.2% 59.8%;
 
-		--chart-1: 347 77% 50%;
-		--chart-2: 349 77% 62%;
-		--chart-3: 350 80% 72%;
-		--chart-4: 351 83% 82%;
-		--chart-5: 352 83% 91%;
-	}
+        --chart-1: 347 77% 50%;
+        --chart-2: 349 77% 62%;
+        --chart-3: 350 80% 72%;
+        --chart-4: 351 83% 82%;
+        --chart-5: 352 83% 91%;
+    }
 }
 
 @layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
 }
 
 :root::-webkit-scrollbar {
-	display: none;
+    display: none;
 }
 
 :root {
-	scrollbar-width: none;
-	-ms-overflow-style: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 /* Heading styles */
@@ -119,96 +119,99 @@
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-	line-height: 1.1;
-	margin-top: 0.5rem;
-	text-wrap: pretty;
+    line-height: 1.1;
+    margin-top: 0.5rem;
+    text-wrap: pretty;
 }
 
 .tiptap h1,
 .tiptap h2 {
-	margin-top: 1.5rem;
-	margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .tiptap h1 {
-	font-size: 1.8rem;
+    font-size: 1.8rem;
 }
 
 .tiptap h2 {
-	font-size: 1.6rem;
+    font-size: 1.6rem;
 }
 
 .tiptap h3 {
-	font-size: 1.5rem;
+    font-size: 1.5rem;
 }
 
 /* Code and preformatted text styles */
 .tiptap code {
-	background-color: #d6a2e8; /* Example for var(--purple-light) */
-	border-radius: 0.4rem;
-	color: #000000; /* Example for var(--black) */
-	font-size: 0.85rem;
-	padding: 0.25em 0.3em;
+    background-color: #d6a2e8; /* Example for var(--purple-light) */
+    border-radius: 0.4rem;
+    color: #000000; /* Example for var(--black) */
+    font-size: 0.85rem;
+    padding: 0.25em 0.3em;
 }
 
 .tiptap pre {
-	background: #000000; /* Example for var(--black) */
-	border-radius: 0.5rem;
-	color: #ffffff; /* Example for var(--white) */
-	font-family: "JetBrainsMono", monospace;
-	margin: 1.5rem 0;
-	padding: 0.75rem 1rem;
+    background: #000000; /* Example for var(--black) */
+    border-radius: 0.5rem;
+    color: #ffffff; /* Example for var(--white) */
+    font-family: "JetBrainsMono", monospace;
+    margin: 1.5rem 0;
+    padding: 0.75rem 1rem;
 }
 
 .tiptap div,
 .tiptap div:active,
 .tiptap div:focus {
-	background: #000000; /* Example for var(--black) */
-	border-radius: 0.5rem;
-	border: transparent;
-	color: #ffffff; /* Example for var(--white) */
-	font-family: "JetBrainsMono", monospace;
-	margin: 1.5rem 0;
-	padding: 0.75rem 1rem;
+    background: #000000; /* Example for var(--black) */
+    border-radius: 0.5rem;
+    border: transparent;
+    color: #ffffff; /* Example for var(--white) */
+    font-family: "JetBrainsMono", monospace;
+    margin: 1.5rem 0;
+    padding: 0.75rem 1rem;
 }
 
 .tiptap ul {
-	list-style-type: disc;
-	margin-top: 0px;
+    list-style-type: disc;
+    margin-top: 0px;
+
+    margin-left: 30px;
 }
 
 .tiptap ol {
-	list-style-type: decimal;
-	margin-top: 0px;
+    list-style-type: decimal;
+    margin-top: 0px;
+    margin-left: 30px;
 }
 
 .tiptap pre code {
-	background: none;
-	color: inherit;
-	font-size: 0.8rem;
-	padding: 0;
+    background: none;
+    color: inherit;
+    font-size: 0.8rem;
+    padding: 0;
 }
 
 .tiptap blockquote {
-	border-left: 3px solid #b0b0b0; /* Example for var(--gray-3) */
-	margin: 1.5rem 0;
-	padding-left: 1rem;
+    border-left: 3px solid #b0b0b0; /* Example for var(--gray-3) */
+    margin: 1.5rem 0;
+    padding-left: 1rem;
 }
 
 .tiptap hr {
-	border: none;
-	border-top: 1px solid #d0d0d0; /* Example for var(--gray-2) */
-	margin: 2rem 0;
+    border: none;
+    border-top: 1px solid #d0d0d0; /* Example for var(--gray-2) */
+    margin: 2rem 0;
 }
 
 /* Hide the arrows in Chrome, Safari, Edge, and Opera */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Hide the arrows in Firefox */
 input[type="number"] {
-	-moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
