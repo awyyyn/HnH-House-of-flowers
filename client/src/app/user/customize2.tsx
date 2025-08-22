@@ -18,6 +18,7 @@ import {
   ToggleGroupItem,
 } from "@/components";
 import {
+  ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN,
   CREATE_CUSTOMOMIZE_ORDER_MUTATION,
   GET_PRODUCT_QUERY,
   READ_COMPONENTS_QUERY,
@@ -26,7 +27,7 @@ import { componentsAtom } from "@/states/components";
 import { Component, Product } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,6 +36,7 @@ import { z } from "zod";
 import { ComponentDetailsModal } from "../admin/components/component-modal";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts";
+import { cartAtom } from "@/states";
 
 const formSchema = z.object({
   flower: z.string({
@@ -55,12 +57,16 @@ const Customize2 = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [component, setComponent] = useState<Component | null>(null);
   const { toast } = useToast();
+  const setCart = useSetAtom(cartAtom);
   const [createOrder, { loading: creatingOrder }] = useMutation(
     CREATE_CUSTOMOMIZE_ORDER_MUTATION,
+  );
+  const [addToCart, { loading: addingToCart }] = useMutation(
+    ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN,
   );
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
   const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
@@ -146,8 +152,6 @@ const Customize2 = () => {
 
   async function handleSubmit(values: FormData) {
     try {
-      //
-      //
       if (!isAuthenticated) {
         return navigate("/auth/login", {
           state: {
@@ -197,7 +201,7 @@ const Customize2 = () => {
     }
   }
 
-  function handleAddCustomizedOrderToCart() {
+  async function handleAddCustomizedOrderToCart() {
     if (!isAuthenticated) {
       return navigate("/auth/login", {
         state: {
@@ -206,23 +210,40 @@ const Customize2 = () => {
         },
       });
     }
-
     const values = form.getValues();
-    const cartItem = {
-      productId: product.id,
-      quantity: 1,
-      price: values.totalPrice,
-      bouquetItems: {
-        mainFlower: values.flower,
-        wrapper: values.wrapper,
-        wrapperColor: values.wrapperColor || "",
-        note: values.note || "",
-      },
-    };
+    try {
+      const { data } = await addToCart({
+        variables: {
+          quantity: 1,
+          price: values.totalPrice,
+          productId: product.id,
+          cartId: user.cart.id,
+          components: [values.flower, values.wrapper],
+          note: values.note || "",
+          wrapperColor: values.wrapperColor || "",
+        },
+      });
 
-    navigate("/cart", {
-      state: { cartItem, fromCustomize: true },
-    });
+      setCart((p) => {
+        console.log(p);
+
+        return {
+          ...p,
+          items: [...p.items, data.addCustomizedBouquetToCart],
+        };
+      });
+      toast({
+        title: "Success",
+        description: "Item added to cart",
+        variant: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Error Occurred!",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+    }
   }
 
   const availableColors =
@@ -372,7 +393,7 @@ const Customize2 = () => {
                               type="button"
                               size="sm"
                               variant="ghost"
-                              disabled={creatingOrder}
+                              disabled={creatingOrder || addingToCart}
                               className="self-end mb-1"
                               onClick={() => handleSetComponent("WRAPPER")}
                             >
@@ -392,7 +413,7 @@ const Customize2 = () => {
                             Available Wrapper Colors
                           </FormLabel>
                           <ToggleGroup
-                            disabled={creatingOrder}
+                            disabled={creatingOrder || addingToCart}
                             className=""
                             value={field.value}
                             onValueChange={field.onChange}
@@ -429,7 +450,7 @@ const Customize2 = () => {
                               </FormLabel>
 
                               <Select
-                                disabled={creatingOrder}
+                                disabled={creatingOrder || addingToCart}
                                 onValueChange={field.onChange}
                                 {...field}
                               >
@@ -501,7 +522,7 @@ const Customize2 = () => {
                           </FormLabel>
                           <FormControl className="w-full">
                             <RichTextEditor
-                              isEditing={!creatingOrder}
+                              isEditing={!creatingOrder || addingToCart}
                               handleValue={(editor) => {
                                 form.setValue(
                                   "note",
@@ -509,7 +530,7 @@ const Customize2 = () => {
                                 );
                               }}
                               content={form.formState.defaultValues?.note ?? ""}
-                              editable={!creatingOrder}
+                              editable={!creatingOrder || addingToCart}
                             />
                           </FormControl>
                           <FormMessage className="dark:text-primary" />
@@ -579,15 +600,18 @@ const Customize2 = () => {
                       variant="outline"
                       type="button"
                       onClick={handleAddCustomizedOrderToCart}
-                      disabled={creatingOrder}
+                      disabled={creatingOrder || addingToCart}
                     >
-                      {creatingOrder ? (
+                      {addingToCart ? (
                         <Loader className="animate-spin" />
                       ) : (
                         <span className="text-sm">Add To Cart</span>
                       )}
                     </Button>
-                    <Button className="min-w-[100px]" disabled={creatingOrder}>
+                    <Button
+                      className="min-w-[100px]"
+                      disabled={creatingOrder || addingToCart}
+                    >
                       {creatingOrder ? (
                         <Loader className="animate-spin" />
                       ) : (

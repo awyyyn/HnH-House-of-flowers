@@ -8,163 +8,164 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CartSkeleton } from "../skeletons";
 import { useQuery } from "@apollo/client";
 import { GET_PRODUCTS_QUERY } from "@/queries";
 
 export default function CartPage() {
-	const cart = useAtomValue(cartAtom);
-	const navigate = useNavigate();
-	const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const cart = useAtomValue(cartAtom);
+  const navigate = useNavigate();
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-	// Fetch product data for cart items
-	const { loading } = useQuery(GET_PRODUCTS_QUERY, {
-		variables: {
-			ids: cart.items.map((item) => item.product.id),
-		},
-	});
+  // Fetch product data for cart items
+  const { loading } = useQuery(GET_PRODUCTS_QUERY, {
+    variables: {
+      ids: cart.items.map((item) => item.product.id),
+    },
+  });
 
-	// Calculate total only for selected items
-	const total = cart.items
-		.filter((item) => selectedItems.has(item.id))
-		.reduce((total, item) => total + item.price, 0);
+  // Calculate total only for selected items
+  const total = cart.items
+    .filter((item) => selectedItems.has(item.id))
+    .reduce((total, item) => total + item.price, 0);
 
-	// Check for errors in selected cart items
-	const itemErrors = cart.items
-		.filter((item) => selectedItems.has(item.id))
-		.map((item) => {
-			if (item.quantity > item.product.stock) {
-				return `${item.product.name} - Quantity exceeds available stock`;
-			}
-			if (item.product.stock === 0) {
-				return `${item.product.name} - Out of stock`;
-			}
-			return null;
-		})
-		.filter(Boolean);
+  // Check for errors in selected cart items
+  const itemErrors = cart.items
+    .filter((item) => selectedItems.has(item.id))
+    .map((item) => {
+      if (item.quantity > item.product.stock) {
+        return `${item.product.name} - Quantity exceeds available stock`;
+      }
+      if (item.product.stock === 0) {
+        return `${item.product.name} - Out of stock`;
+      }
+      return null;
+    })
+    .filter(Boolean);
 
-	const hasErrors = itemErrors.length > 0;
-	const hasSelectedItems = selectedItems.size > 0;
+  const hasErrors = itemErrors.length > 0;
+  const hasSelectedItems = selectedItems.size > 0;
 
-	// Handle individual item selection
-	const handleSelectItem = (itemId: string, checked: boolean) => {
-		const newSelected = new Set(selectedItems);
-		if (checked) {
-			newSelected.add(itemId);
-		} else {
-			newSelected.delete(itemId);
-		}
-		setSelectedItems(newSelected);
-	};
+  // Handle individual item selection
+  const handleSelectItem = (itemId: string, checked: boolean) => {
+    const newSelected = new Set(selectedItems);
+    if (checked) {
+      newSelected.add(itemId);
+    } else {
+      newSelected.delete(itemId);
+    }
+    setSelectedItems(newSelected);
+  };
 
-	if (loading) return <CartSkeleton />;
+  if (loading) return <CartSkeleton />;
 
-	return (
-		<>
-			<Helmet title="Cart" />
-			<div className="max-w-screen-lg mx-auto p-4 mb-6">
-				<h2 className="text-2xl font-bold mb-4">Your Cart</h2>
-				{cart.items.length === 0 ? (
-					<EmptyState
-						icon={ShoppingCart}
-						title="Your cart is empty"
-						description="Looks like you haven't added any items to your cart yet. Start shopping to fill it up!"
-						actionLabel="Start Shopping"
-						onAction={() => {
-							navigate("/flowers");
-						}}
-					/>
-				) : (
-					<>
-						<div className="border rounded-lg overflow-hidden">
-							{/* Cart Items */}
-							<div className="divide-y">
-								{cart.items.map((item) => (
-									<div key={item.id} className="flex items-center gap-4 p-4">
-										<Checkbox
-											id={`select-${item.id}`}
-											checked={selectedItems.has(item.id)}
-											onCheckedChange={(checked) =>
-												handleSelectItem(item.id, checked as boolean)
-											}
-											disabled={
-												item.quantity > item.product.stock ||
-												item.product.stock === 0
-											}
-										/>
-										<div className="flex-1">
-											<CartItem
-												isError={
-													item.quantity > item.product.stock ||
-													item.product.stock === 0
-												}
-												item={item}
-											/>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
+  return (
+    <>
+      <Helmet title="Cart" />
+      <div className="max-w-screen-lg mx-auto p-4 mb-6">
+        <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+        {cart.items.length === 0 ? (
+          <EmptyState
+            icon={ShoppingCart}
+            title="Your cart is empty"
+            description="Looks like you haven't added any items to your cart yet. Start shopping to fill it up!"
+            actionLabel="Start Shopping"
+            onAction={() => {
+              navigate("/flowers");
+            }}
+          />
+        ) : (
+          <>
+            <div className="border rounded-lg overflow-hidden">
+              {/* Cart Items */}
+              <div className="divide-y">
+                {cart.items.map((item) => (
+                  <div key={item.id} className="flex items-center gap-4 p-4">
+                    <Checkbox
+                      id={`select-${item.id}`}
+                      checked={selectedItems.has(item.id)}
+                      onCheckedChange={(checked) =>
+                        handleSelectItem(item.id, checked as boolean)
+                      }
+                      disabled={
+                        item.quantity > item.product.stock ||
+                        item.product.stock === 0
+                      }
+                    />
+                    <div className="flex-1">
+                      <CartItem
+                        isError={
+                          item.quantity > item.product.stock ||
+                          item.product.stock === 0
+                        }
+                        item={item}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-						<div className="mt-6 border-t pt-4">
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-								<div className="space-y-1">
-									<div className="text-sm text-muted-foreground">
-										Selected Items: {selectedItems.size}
-									</div>
-									<div className="text-xl font-semibold">
-										Total:{" "}
-										{Intl.NumberFormat("en-PH", {
-											style: "currency",
-											currency: "PHP",
-										}).format(total)}
-									</div>
-								</div>
+            <div className="mt-6 border-t pt-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <div className="text-sm text-muted-foreground">
+                    Selected Items: {selectedItems.size}
+                  </div>
+                  <div className="text-xl font-semibold">
+                    Total:{" "}
+                    {Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(total)}
+                  </div>
+                </div>
 
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<span>
-												<Button
-													size="lg"
-													disabled={!hasSelectedItems || hasErrors}
-													onClick={() => {
-														navigate("/checkout", { state: { selectedItems } });
-													}}>
-													Buy Selected Items
-												</Button>
-											</span>
-										</TooltipTrigger>
-										{(hasErrors || !hasSelectedItems) && (
-											<TooltipContent className="max-w-[300px]">
-												{!hasSelectedItems ? (
-													<p>Please select items to purchase</p>
-												) : (
-													<>
-														<p className="font-medium">
-															Cannot proceed with purchase:
-														</p>
-														<ul className="list-disc ml-4 mt-1 text-sm">
-															{itemErrors.map((error, index) => (
-																<li key={index}>{error}</li>
-															))}
-														</ul>
-													</>
-												)}
-											</TooltipContent>
-										)}
-									</Tooltip>
-								</TooltipProvider>
-							</div>
-						</div>
-					</>
-				)}
-			</div>
-		</>
-	);
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          size="lg"
+                          disabled={!hasSelectedItems || hasErrors}
+                          onClick={() => {
+                            navigate("/checkout", { state: { selectedItems } });
+                          }}
+                        >
+                          Buy Selected Items
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    {(hasErrors || !hasSelectedItems) && (
+                      <TooltipContent className="max-w-[300px]">
+                        {!hasSelectedItems ? (
+                          <p>Please select items to purchase</p>
+                        ) : (
+                          <>
+                            <p className="font-medium">
+                              Cannot proceed with purchase:
+                            </p>
+                            <ul className="list-disc ml-4 mt-1 text-sm">
+                              {itemErrors.map((error, index) => (
+                                <li key={index}>{error}</li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
 }
