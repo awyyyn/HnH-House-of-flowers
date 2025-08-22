@@ -1,6 +1,7 @@
 import { ComponentType, Prisma } from "@prisma/client";
 import { prisma } from "src/services/prisma.js";
 import { Component, ComponentInput } from "src/types/index.js";
+import { transformTimestamp } from "src/utils/index.js";
 
 export const createComponent = async (data: ComponentInput) => {
   return await prisma.component.create({
@@ -33,7 +34,7 @@ export const updateComponent = async (
 
   if (!updatedComponent) throw new Error("Failed to update component");
 
-  return updatedComponent;
+  return transformTimestamp(updatedComponent);
 };
 
 export const readComponent = async (id: string) => {
@@ -44,7 +45,7 @@ export const readComponent = async (id: string) => {
   });
   if (!component) throw new Error("Component not found");
 
-  return component;
+  return transformTimestamp(component);
 };
 
 export const readComponents = async ({
@@ -84,11 +85,7 @@ export const readComponents = async ({
   const total = await prisma.component.count({ where });
 
   return {
-    data: components.map((com) => ({
-      ...com,
-      createdAt: com.createdAt.toISOString(),
-      updatedAt: com.updatedAt.toISOString(),
-    })),
+    data: components.map((com) => transformTimestamp(com)),
     hasNextPage: components.length === pagination?.limit,
     total,
   };

@@ -8,8 +8,8 @@ export interface Product {
   images: string[];
   stock: number;
   avg: number;
-  flowerVariant: FlowerVariant;
-  handMadeFlowerVariant: String;
+  flowerVariant?: FlowerVariant;
+  handMadeFlowerVariant?: string;
 
   status: ProductStatus;
   category: ProductCategory;

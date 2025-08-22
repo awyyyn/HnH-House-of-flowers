@@ -62,6 +62,15 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    # addCustomizedBouquetToCart(
+    #   quantity: Int!
+    #   price: Float!
+    #   productId: String!
+    #   cartId: String
+    #   components: [String!]!
+    #   note: String
+    #   wrapperColor: String
+    # ): CartItem
     createComponent(
       name: String!
       quantity: Int!
