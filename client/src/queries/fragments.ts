@@ -74,3 +74,15 @@ export const componentFragment = gql`
     updatedAt
   }
 `;
+
+export const customizeFragment = gql`
+  fragment CustomizeFragment on Customize {
+    updatedAt
+    totalPrice
+    note
+    name
+    id
+    createdAt
+    wrapperColor
+  }
+`;

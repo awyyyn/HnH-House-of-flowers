@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import {
   bouquetItemFragment,
   componentFragment,
+  customizeFragment,
   productFragment,
   userFragment,
 } from "./fragments";
@@ -495,6 +496,47 @@ export const UPDATE_COMPONENT_MUTATION = gql`
       handMadeFlowerVariant: $handMadeFlowerVariant
     ) {
       ...ComponentFragment
+    }
+  }
+`;
+
+export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
+  ${productFragment}
+  ${customizeFragment}
+  ${componentFragment}
+  mutation AddCustomizedBouquetToCart(
+    $quantity: Int!
+    $price: Float!
+    $productId: String!
+    $cartId: String!
+    $components: [String!]!
+    $note: String
+    $wrapperColor: String
+  ) {
+    addCustomizedBouquetToCart(
+      quantity: $quantity
+      price: $price
+      productId: $productId
+      cartId: $cartId
+      components: $components
+      note: $note
+      wrapperColor: $wrapperColor
+    ) {
+      id
+      productId
+      customizeId
+      customize {
+        ...CustomizeFragment
+        components {
+          ...ComponentFragment
+        }
+      }
+      product {
+        ...ProductFragment
+      }
+      quantity
+      cartId
+      price
     }
   }
 `;

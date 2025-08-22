@@ -1,5 +1,10 @@
 import { gql } from "@apollo/client";
-import { componentFragment, productFragment, userFragment } from "./fragments";
+import {
+  componentFragment,
+  customizeFragment,
+  productFragment,
+  userFragment,
+} from "./fragments";
 
 export const getUserQuery = gql`
   ${userFragment}
@@ -143,6 +148,8 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 `;
 
 export const READ_ORDERS_BY_USER_QUERY = gql`
+  ${customizeFragment}
+  ${componentFragment}
   query {
     orders: readOrdersByUser {
       id
@@ -155,17 +162,23 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
       typeOfPayment
       customizeId
       customize {
-        id
-        name
-        note
-        bouquetItems {
-          subFlowers
-          mainFlower
-          wrapper
-          wrapperColor
-          tie
+        ...CustomizeFragment
+        components {
+          ...ComponentFragment
         }
       }
+      # customize {
+      #   id
+      #   name
+      #   note
+      #   bouquetItems {
+      #     subFlowers
+      #     mainFlower
+      #     wrapper
+      #     wrapperColor
+      #     tie
+      #   }
+      # }
       orderItems {
         id
         orderId
@@ -201,6 +214,8 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 `;
 
 export const READ_ORDERS_QUERY = gql`
+  ${customizeFragment}
+  ${componentFragment}
   query Orders(
     $filter: String
     $pagination: PaginationInput
@@ -234,15 +249,9 @@ export const READ_ORDERS_QUERY = gql`
         customizeId
         shippingFee
         customize {
-          id
-          name
-          note
-          bouquetItems {
-            subFlowers
-            mainFlower
-            wrapper
-            wrapperColor
-            tie
+          ...CustomizeFragment
+          components {
+            ...ComponentFragment
           }
         }
         status
