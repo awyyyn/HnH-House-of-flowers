@@ -35,7 +35,7 @@ export const getUsersQuery = gql`
 
 export const GET_PRODUCTS_QUERY = gql`
   ${productFragment}
-  query (
+  query Products(
     $pagination: PaginationInput
     $category: ProductCategory
     $filter: String
@@ -61,7 +61,7 @@ export const GET_PRODUCTS_QUERY = gql`
 export const GET_PRODUCT_QUERY = gql`
   ${productFragment}
   ${componentFragment}
-  query ($id: ID!) {
+  query Product($id: ID!) {
     product(id: $id) {
       ...ProductFragment
       components {
@@ -416,7 +416,11 @@ export const HOME_QUERY = gql`
 
 export const READ_PRODUCT_WITH_REVIEWS = gql`
   ${productFragment}
-  query ($id: ID!, $productId: String!, $pagination: PaginationInput) {
+  query ReadReviews(
+    $id: ID!
+    $productId: String!
+    $pagination: PaginationInput
+  ) {
     reviews: readReviews(productId: $productId, pagination: $pagination) {
       total
       data {
@@ -441,7 +445,7 @@ export const READ_PRODUCT_WITH_REVIEWS = gql`
 
 export const READ_COMPONENTS_QUERY = gql`
   ${componentFragment}
-  query (
+  query Components(
     $componentType: ComponentType
     $filter: String
     $pagination: PaginationInput

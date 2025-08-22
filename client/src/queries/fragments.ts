@@ -34,6 +34,8 @@ export const productFragment = gql`
     price
     images
     stock
+    flowerVariant
+    handMadeFlowerVariant
     status
     tags
     category
@@ -66,6 +68,8 @@ export const componentFragment = gql`
     type
     isAvailable
     availableColors
+    flowerVariant
+    handMadeFlowerVariant
     createdAt
     updatedAt
   }

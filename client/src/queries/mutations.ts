@@ -84,6 +84,8 @@ export const CREATE_PRODUCT_MUTATION = gql`
     $images: [String]
     $description: String
     $tags: [FlowerTag]
+    $flowerVariant: FlowerVariant
+    $handMadeFlowerVariant: String
   ) {
     product: createProduct(
       name: $name
@@ -97,6 +99,8 @@ export const CREATE_PRODUCT_MUTATION = gql`
       images: $images
       description: $description
       tags: $tags
+      flowerVariant: $flowerVariant
+      handMadeFlowerVariant: $handMadeFlowerVariant
     ) {
       ...ProductFragment
     }
@@ -443,6 +447,8 @@ export const CREATE_COMPONENT_MUTATION = gql`
     $price: Float!
     $image: String
     $availableColors: [String]
+    $flowerVariant: FlowerVariant
+    $handMadeFlowerVariant: String
   ) {
     createComponent(
       name: $name
@@ -453,6 +459,8 @@ export const CREATE_COMPONENT_MUTATION = gql`
       price: $price
       image: $image
       availableColors: $availableColors
+      flowerVariant: $flowerVariant
+      handMadeFlowerVariant: $handMadeFlowerVariant
     ) {
       ...ComponentFragment
     }
@@ -470,6 +478,8 @@ export const UPDATE_COMPONENT_MUTATION = gql`
     $price: Float
     $image: String
     $description: String
+    $flowerVariant: FlowerVariant
+    $handMadeFlowerVariant: String
   ) {
     updateComponent(
       id: $id
@@ -481,6 +491,8 @@ export const UPDATE_COMPONENT_MUTATION = gql`
       price: $price
       image: $image
       description: $description
+      flowerVariant: $flowerVariant
+      handMadeFlowerVariant: $handMadeFlowerVariant
     ) {
       ...ComponentFragment
     }
