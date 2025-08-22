@@ -4,49 +4,51 @@ import { Product } from "./product.js";
 import { User } from "./user.js";
 
 export interface OrderItem {
-	readonly id: string;
-	orderId: string;
-	order: Order;
-	price: number;
-	quantity: number;
+  readonly id: string;
+  orderId: string;
+  order: Order;
+  price: number;
+  quantity: number;
+  customizeId?: string;
+  customize?: Customize;
 
-	product: Product | null;
-	productId: string | null;
+  product: Product | null;
+  productId: string | null;
 }
 
 export interface Order {
-	readonly id: string;
-	formattedId: string;
-	customerID: string | null;
-	customer: User | null;
-	status: OrderStatus;
-	totalPrice: number;
-	shippingFee: number | null;
+  readonly id: string;
+  formattedId: string;
+  customerID: string | null;
+  customer: User | null;
+  status: OrderStatus;
+  totalPrice: number;
+  shippingFee: number | null;
 
-	payment: Payment | null;
-	typeOfPayment: OrderPaymentType;
-	typeOfDelivery: OrderDeliveryType;
-	isPreOrder: boolean;
+  payment: Payment | null;
+  typeOfPayment: OrderPaymentType;
+  typeOfDelivery: OrderDeliveryType;
+  isPreOrder: boolean;
 
-	orderItems: OrderItem[];
-	customizeId: string | null;
-	customize: Customize | null;
+  orderItems: OrderItem[];
+  customizeId: string | null;
+  customize: Customize | null;
 
-	orderDate: string;
-	processedAt: string | null;
-	shippedAt: string | null;
-	forPickup: string | null;
-	cancelledAt: string | null;
-	completedAt: string | null;
+  orderDate: string;
+  processedAt: string | null;
+  shippedAt: string | null;
+  forPickup: string | null;
+  cancelledAt: string | null;
+  completedAt: string | null;
 }
 
 export type OrderStatus =
-	| "PENDING"
-	| "PROCESSING"
-	| "SHIPPED"
-	| "COMPLETED"
-	| "CANCELLED"
-	| "READY_FOR_PICKUP";
+  | "PENDING"
+  | "PROCESSING"
+  | "SHIPPED"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "READY_FOR_PICKUP";
 
 export type OrderPaymentType = "CASH" | "GCASH";
 

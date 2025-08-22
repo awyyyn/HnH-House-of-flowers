@@ -1,24 +1,27 @@
+import { Customize } from "./customize.js";
 import { Product } from "./product.js";
 
 export interface Cart {
-	readonly id: string;
-	userId: string;
-	items: CartItem[];
-	createdAt: string;
-	updatedAt: string;
+  readonly id: string;
+  userId: string;
+  items: CartItem[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CartItem {
-	readonly id: string;
-	productId: string;
-	product: Product;
+  readonly id: string;
+  productId: string;
+  product: Product;
 
-	cart: Cart;
-	cartId: string;
+  cart: Cart;
+  cartId: string;
+  customizeId?: string;
+  customize?: Customize;
 
-	quantity: number;
-	price: number;
+  quantity: number;
+  price: number;
 
-	createdAt: string;
-	updatedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }

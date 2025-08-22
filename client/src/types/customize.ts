@@ -1,13 +1,17 @@
-import { BouquetItems } from "./bouquet-item";
+import { Component } from "./component";
+import { Product } from "./product";
 
 export interface Customize {
-	readonly id: string;
-	name: string;
-	note?: string;
-	totalPrice: number;
+  readonly id: string;
+  name: string;
+  note?: string;
+  totalPrice: number;
 
-	bouquetItems: BouquetItems;
+  components: Component[];
+  wrapperColor?: string;
+  product: Product;
+  productId: string;
 
-	createdAt: Date;
-	updatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
