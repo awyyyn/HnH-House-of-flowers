@@ -5,8 +5,8 @@ import {
   readComponent,
   readComponents,
   updateComponent,
-} from "src/models/index.js";
-import { ComponentInput } from "src/types/component.js";
+} from "../../models/index.js";
+import { ComponentInput } from "../../types/component.js";
 
 export const createComponentResolver = async (
   _: never,
