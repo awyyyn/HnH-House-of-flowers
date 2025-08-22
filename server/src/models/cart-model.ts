@@ -1,7 +1,6 @@
 import { AddCustomizeBouquetToCartInput } from "src/types/cart.js";
 import { prisma } from "../services/prisma.js";
 import { readProduct } from "./product-model.js";
-import { getUnixTime } from "date-fns/fp";
 
 export const createCart = async ({ userId }: { userId: string }) => {
   const cart = await prisma.cart.create({

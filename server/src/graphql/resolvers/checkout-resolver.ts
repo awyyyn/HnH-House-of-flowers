@@ -54,7 +54,13 @@ export const createCheckoutSessionResolver = async (
     await Promise.all(
       line_items.map(async (item) => {
         const product = await readProduct(item.id);
-        if (!product) {
+        if (
+          !product ||
+          product === null ||
+          !product.id ||
+          product.stock === 0 ||
+          !product.stock
+        ) {
           throw new GraphQLError("Product not found");
         }
 

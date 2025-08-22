@@ -1,12 +1,8 @@
 import { prisma } from "../services/prisma.js";
 
 export const createCustomizeBouquet = async ({
-  mainFlower,
   name,
-  subFlowers,
-  tie,
   totalPrice,
-  wrapper,
   note,
   wrapperColor,
 }: {
@@ -23,16 +19,11 @@ export const createCustomizeBouquet = async ({
   const order = await prisma.customize.create({
     data: {
       name,
-
-      bouquetItems: {
-        mainFlower,
-        subFlowers,
-        wrapper,
-        tie,
-        wrapperColor,
-      },
       totalPrice,
       note,
+      wrapperColor,
+      components: {},
+      product: {},
     },
   });
 
