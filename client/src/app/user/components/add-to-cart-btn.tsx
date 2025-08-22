@@ -10,10 +10,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useAtom } from "jotai";
 import { cartAtom } from "@/states";
 import { CheckoutModal } from "./buy-now-modal";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function AddToCartInline(product: Product) {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [cart, setCart] = useAtom(cartAtom);
   const [quantity, setQuantity] = useState(1);
   const [addToCart, { loading }] = useMutation(ADD_TO_CART_MUTATION);
@@ -37,6 +39,22 @@ export default function AddToCartInline(product: Product) {
 
   const handleAddToCart = async () => {
     try {
+      if (!isAuthenticated) {
+        toast({
+          title: "Authentication Required",
+          description: "Redirecting to login page...",
+          variant: "default",
+        });
+        return setTimeout(() => {
+          navigate("/auth/login", {
+            state: {
+              from: pathname,
+              // data: values,
+            },
+          });
+        }, 800);
+      }
+
       const { data } = await addToCart({
         variables: {
           price: product.price * quantity,
