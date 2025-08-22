@@ -227,6 +227,67 @@ export default function App() {
     element: <UserLayout />,
     children: [
       {
+        path: "chocolates",
+        children: [
+          {
+            index: true,
+            element: <Chocolates fallback={<CardSkeleton />} />,
+          },
+          {
+            path: ":productId",
+            element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+          },
+        ],
+      },
+      {
+        path: "flowers",
+        children: [
+          {
+            index: true,
+            element: <Flowers fallback={<CardSkeleton />} />,
+          },
+          {
+            path: ":productId",
+            element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+          },
+        ],
+      },
+      {
+        path: "gifts",
+        children: [
+          {
+            index: true,
+            element: <Gifts fallback={<CardSkeleton />} />,
+          },
+          {
+            path: ":productId",
+            element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+          },
+        ],
+      },
+      {
+        path: "bouquets",
+        children: [
+          {
+            index: true,
+            element: <Bouquets fallback={<CardSkeleton />} />,
+          },
+          {
+            path: ":productId",
+            children: [
+              {
+                index: true,
+                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+              },
+              {
+                path: "customize",
+                element: <Customize2 />,
+              },
+            ],
+          },
+        ],
+      },
+      {
         element: <ProtectedRoute allowedRoles={["USER"]} />,
         children: [
           // {
@@ -262,69 +323,7 @@ export default function App() {
             path: "chat",
             element: <Chat fallback={<ConversationSkeletonLoading />} />,
           },
-          {
-            path: "chocolates",
-            children: [
-              {
-                index: true,
-                element: <Chocolates fallback={<CardSkeleton />} />,
-              },
-              {
-                path: ":productId",
-                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
-              },
-            ],
-          },
-          {
-            path: "flowers",
-            children: [
-              {
-                index: true,
-                element: <Flowers fallback={<CardSkeleton />} />,
-              },
-              {
-                path: ":productId",
-                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
-              },
-            ],
-          },
-          {
-            path: "gifts",
-            children: [
-              {
-                index: true,
-                element: <Gifts fallback={<CardSkeleton />} />,
-              },
-              {
-                path: ":productId",
-                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
-              },
-            ],
-          },
-          {
-            path: "bouquets",
-            children: [
-              {
-                index: true,
-                element: <Bouquets fallback={<CardSkeleton />} />,
-              },
-              {
-                path: ":productId",
-                children: [
-                  {
-                    index: true,
-                    element: (
-                      <ProductDetails fallback={<ProductInfoSkeleton />} />
-                    ),
-                  },
-                  {
-                    path: "customize",
-                    element: <Customize2 />,
-                  },
-                ],
-              },
-            ],
-          },
+
           {
             path: "cart",
             element: <CartPage fallback={<CartSkeleton />} />,
