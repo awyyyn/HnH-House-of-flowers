@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component, FlowerVariant } from "./component";
 import { Review } from "./review";
 
 export const FlowerTags = {
@@ -24,6 +24,9 @@ export interface Product {
   serviceFee?: number;
   price: number;
   components: Component[];
+
+  flowerVariant?: FlowerVariant;
+  handMadeFlowerVariant?: string;
 
   status: ProductStatus;
   category: ProductCategory;

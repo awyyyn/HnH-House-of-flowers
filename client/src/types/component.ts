@@ -8,6 +8,8 @@ export interface Component {
   type: ComponentType;
   isAvailable: boolean;
   availableColors: string[];
+  flowerVariant?: FlowerVariant;
+  handMadeFlowerVariant?: string;
 
   createdAt: string;
   updatedAt: string;
@@ -31,3 +33,7 @@ export const ComponentType = {
 } as const;
 
 export type ComponentType = (typeof ComponentType)[keyof typeof ComponentType];
+
+export const FlowerVariant = { HANDMADE: "HANDMADE", FRESH: "FRESH" } as const;
+
+export type FlowerVariant = (typeof FlowerVariant)[keyof typeof FlowerVariant];
