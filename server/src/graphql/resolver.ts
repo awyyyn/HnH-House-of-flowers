@@ -47,6 +47,7 @@ import {
   readSettingsResolver,
   settingsResolver,
   createCustomizeOrderResolver,
+  addCustomizedBouquetToCartResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -78,6 +79,7 @@ export const resolvers = {
     readReviews: readReviewsResolver,
   },
   Mutation: {
+    addCustomizedBouquetToCart: addCustomizedBouquetToCartResolver,
     createComponent: createComponentResolver,
     updateComponent: updateComponentResolver,
     createAdmin: createAdminResolver,

@@ -62,15 +62,15 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    # addCustomizedBouquetToCart(
-    #   quantity: Int!
-    #   price: Float!
-    #   productId: String!
-    #   cartId: String
-    #   components: [String!]!
-    #   note: String
-    #   wrapperColor: String
-    # ): CartItem
+    addCustomizedBouquetToCart(
+      quantity: Int!
+      price: Float!
+      productId: String!
+      cartId: String!
+      components: [String!]!
+      note: String
+      wrapperColor: String
+    ): CartItem
     createComponent(
       name: String!
       quantity: Int!
@@ -515,9 +515,14 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     note: String
-
     totalPrice: Float
-    bouquetItems: BouquetItems
+
+    components: [Component]
+    wrapperColor: String
+    product: Product
+    productId: String
+
+    # bouquetItems: BouquetItems
 
     createdAt: String!
     updatedAt: String!
@@ -549,6 +554,8 @@ export const typeDefs = gql`
     id: ID!
     product: Product!
     productId: String!
+    customize: Customize
+    customizeId: String
     quantity: Int!
     cartId: String!
     cart: Cart!
