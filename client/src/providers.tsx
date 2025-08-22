@@ -8,14 +8,14 @@ import { client } from "./lib";
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        <BrowserRouter>
-          <AuthContextProvider>
+      <AuthContextProvider>
+        <ThemeProvider>
+          <BrowserRouter>
             {children}
             <Toaster />
-          </AuthContextProvider>
-        </BrowserRouter>
-      </ThemeProvider>
+          </BrowserRouter>
+        </ThemeProvider>
+      </AuthContextProvider>
     </ApolloProvider>
   );
 }

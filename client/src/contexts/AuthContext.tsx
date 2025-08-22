@@ -11,8 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useSetAtom } from "jotai";
 import { cartAtom, notificationAtom, storeAtom } from "@/states";
 import { Loader } from "@/components/custom/loader";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useLocalPathname } from "@/hooks/use-local-pathname";
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
