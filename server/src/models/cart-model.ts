@@ -1,4 +1,4 @@
-import { AddCustomizeBouquetToCartInput } from "src/types/cart.js";
+import { AddCustomizeBouquetToCartInput } from "../types/cart.js";
 import { prisma } from "../services/prisma.js";
 import { readProduct } from "./product-model.js";
 

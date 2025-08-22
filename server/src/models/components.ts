@@ -1,7 +1,7 @@
 import { ComponentType, Prisma } from "@prisma/client";
-import { prisma } from "src/services/prisma.js";
-import { ComponentInput } from "src/types/index.js";
-import { transformTimestamp } from "src/utils/index.js";
+import { prisma } from "../services/prisma.js";
+import { ComponentInput } from "../types/index.js";
+import { transformTimestamp } from "../utils/index.js";
 
 export const createComponent = async (data: ComponentInput) => {
   return await prisma.component.create({
