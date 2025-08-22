@@ -16,6 +16,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  ToggleGroup,
+  ToggleGroupItem,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -28,7 +30,7 @@ import {
   READ_COMPONENTS_QUERY,
   UPDATE_PRODUCT_MUTATION,
 } from "@/queries";
-import { Component, Product, ProductStatus } from "@/types";
+import { Component, FlowerVariant, Product, ProductStatus } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,7 +57,12 @@ const formSchema = z
     category: z.string().nonempty("Required"),
     status: z.string().nonempty("Required"),
     tags: z.array(z.string()).optional(),
-
+    flowerVariant: z
+      .enum(["HANDMADE", "FRESH"], {
+        message: "You must select a flower variant",
+      })
+      .optional(),
+    handMadeFlowerVariant: z.string().optional(),
     otherFee: z.preprocess(
       (val) => {
         if (val === "" || val === null || val === undefined) return undefined;
@@ -84,13 +91,35 @@ const formSchema = z
     flower: z.string().optional(),
   })
   .superRefine((data, ctx) => {
+    if (data.category === "FLOWER") {
+      if (!data.flowerVariant) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["flowerVariant"],
+          message: "Flower variant is required for flower components",
+        });
+      }
+
+      if (data.flowerVariant && data.flowerVariant === "HANDMADE") {
+        if (
+          !data.handMadeFlowerVariant ||
+          data.handMadeFlowerVariant.trim() === ""
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Handmade flower variant is required for handmade flowers",
+            path: ["handMadeFlowerVariant"],
+          });
+        }
+      }
+    }
     if (isNaN(parseInt(data.price))) {
       ctx.addIssue({
         path: ["price"],
         code: z.ZodIssueCode.custom,
         message: "Price must be a valid number",
       });
-    } else if (data.price.trim() === "" || data.price == "0") {
+    } else if (data.price.trim() === "" || data.price === "0") {
       ctx.addIssue({
         path: ["price"],
         code: z.ZodIssueCode.custom,
@@ -162,6 +191,8 @@ export default function ProductForm({
       otherFee: product?.otherFee ?? 0,
       flower: product?.components[0]?.id ?? "",
       wrapper: product?.components[1]?.id ?? "",
+      flowerVariant: product?.flowerVariant,
+      handMadeFlowerVariant: product?.handMadeFlowerVariant ?? "",
     },
   });
 
@@ -188,7 +219,7 @@ export default function ProductForm({
         components.push(values.flower);
       if (values.wrapper && values.wrapper.trim() !== "")
         components.push(values.wrapper);
-
+      // eslint-disable-next-line
       const data: any = {
         name: values.name,
         price: Number(values.price),
@@ -197,10 +228,12 @@ export default function ProductForm({
         category: values.category,
         images: values.images,
         description: values.description,
-        tags: isBuoquet ? values.tags : [],
+        tags: isBuoquet || values.category === "FLOWER" ? values.tags : [],
         serviceFee: isBuoquet ? values.serviceFee : 0,
         otherFee: isBuoquet ? values.otherFee : 0,
         components: isBuoquet ? components : [],
+        flowerVariant: values.flowerVariant,
+        handMadeFlowerVariant: values.handMadeFlowerVariant,
       };
 
       const variables = editing ? { id: String(product?.id), data } : data;
@@ -422,7 +455,14 @@ export default function ProductForm({
                     </FormLabel>
 
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(v) => {
+                        field.onChange(v);
+
+                        if (v !== "FLOWER") {
+                          form.resetField("flowerVariant");
+                          form.resetField("handMadeFlowerVariant");
+                        }
+                      }}
                       defaultValue={form.getValues("category")}
                     >
                       <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
@@ -483,6 +523,85 @@ export default function ProductForm({
                 )}
               />
             </div>
+
+            {form.watch("category") === "FLOWER" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="flowerVariant"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col items-start">
+                      <FormLabel className="text-black  dark:text-white ">
+                        Flower Variant
+                      </FormLabel>
+                      <ToggleGroup
+                        className=""
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        type="single"
+                        unselectable="on"
+                      >
+                        <ToggleGroupItem
+                          value={FlowerVariant.FRESH}
+                          aria-label="Toggle fresh"
+                        >
+                          <span>Fresh Flower</span>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          value={FlowerVariant.HANDMADE}
+                          aria-label="Toggle handmade"
+                        >
+                          <span>Handmade Flower</span>
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                      <FormMessage className="dark:text-primary" />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("flowerVariant") === FlowerVariant.HANDMADE && (
+                  <FormField
+                    control={form.control}
+                    name="handMadeFlowerVariant"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col items-start">
+                        <FormLabel className="text-black  dark:text-white ">
+                          Handmade Flower Variant
+                        </FormLabel>
+                        <ToggleGroup
+                          className=""
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          type="single"
+                          unselectable="on"
+                        >
+                          <ToggleGroupItem
+                            value="variant 1"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 1</span>
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="variant 2"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 2</span>
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="variant 3"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 3</span>
+                          </ToggleGroupItem>
+                        </ToggleGroup>
+                        <FormMessage className="dark:text-primary" />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </>
+            )}
+
             {shouldShowTags && (
               <div className="w-full">
                 <FormField

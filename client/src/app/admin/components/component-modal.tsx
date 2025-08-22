@@ -87,7 +87,7 @@ export function ComponentDetailsModal({
               />
             </div>
 
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
                 <Badge
                   variant={component.isAvailable ? "default" : "destructive"}
@@ -97,7 +97,7 @@ export function ComponentDetailsModal({
                 <Badge variant="outline">{component.type}</Badge>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 <Card>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2">
@@ -127,6 +127,33 @@ export function ComponentDetailsModal({
                     </div>
                   </CardContent>
                 </Card>
+
+                {component.type === "FLOWER" && (
+                  <Card className="col-span-2">
+                    <CardContent className="p-2">
+                      <div className="grid grid-cols-2 items-center px-3 gap-2">
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Flower Variant
+                          </p>
+                          <p className="text-lg font-semibold capitalize">
+                            {component.flowerVariant?.toLocaleLowerCase()}
+                          </p>
+                        </div>
+                        {component.flowerVariant === "HANDMADE" && (
+                          <div className="">
+                            <p className="text-sm text-muted-foreground">
+                              Handmade Variant
+                            </p>
+                            <p className="text-lg font-semibold capitalize">
+                              {component.handMadeFlowerVariant?.toLocaleLowerCase()}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </div>

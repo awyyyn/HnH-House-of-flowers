@@ -71,6 +71,22 @@ const ProductDetails = () => {
                 }).format(product.price)}
               </p>
             </div>
+            {product.flowerVariant && (
+              <div className="flex gap-1">
+                <p className="dark:text-white/90">Variant:</p>
+                <p className="font-medium capitalize">
+                  {product.flowerVariant}
+                </p>
+              </div>
+            )}
+            {product.handMadeFlowerVariant && (
+              <div className="flex gap-1">
+                <p className="dark:text-white/90">Handmade variant:</p>
+                <p className="font-medium capitalize">
+                  {product.handMadeFlowerVariant}
+                </p>
+              </div>
+            )}
             <div className="flex gap-1">
               <p className="dark:text-white/90">Category:</p>
               <p className="font-medium capitalize">

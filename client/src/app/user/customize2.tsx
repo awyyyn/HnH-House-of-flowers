@@ -30,10 +30,11 @@ import { useAtom } from "jotai";
 import { Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { ComponentDetailsModal } from "../admin/components/component-modal";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts";
 
 const formSchema = z.object({
   flower: z.string({
@@ -54,6 +55,8 @@ const Customize2 = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [component, setComponent] = useState<Component | null>(null);
   const { toast } = useToast();
   const [createOrder, { loading: creatingOrder }] = useMutation(
@@ -144,6 +147,16 @@ const Customize2 = () => {
   async function handleSubmit(values: FormData) {
     try {
       //
+      //
+      if (!isAuthenticated) {
+        return navigate("/auth/login", {
+          state: {
+            from: `/bouquets/${productId}/customize`,
+            data: values,
+          },
+        });
+      }
+
       const order = await createOrder({
         variables: {
           customData: {
@@ -182,6 +195,34 @@ const Customize2 = () => {
         variant: "destructive",
       });
     }
+  }
+
+  function handleAddCustomizedOrderToCart() {
+    if (!isAuthenticated) {
+      return navigate("/auth/login", {
+        state: {
+          from: `/bouquets/${productId}/customize`,
+          data: form.getValues(),
+        },
+      });
+    }
+
+    const values = form.getValues();
+    const cartItem = {
+      productId: product.id,
+      quantity: 1,
+      price: values.totalPrice,
+      bouquetItems: {
+        mainFlower: values.flower,
+        wrapper: values.wrapper,
+        wrapperColor: values.wrapperColor || "",
+        note: values.note || "",
+      },
+    };
+
+    navigate("/cart", {
+      state: { cartItem, fromCustomize: true },
+    });
   }
 
   const availableColors =
@@ -532,7 +573,20 @@ const Customize2 = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full justify-end flex items-center mt-4">
+                  <div className="w-full justify-end flex gap-2 items-center mt-4">
+                    <Button
+                      className="min-w-[100px]"
+                      variant="outline"
+                      type="button"
+                      onClick={handleAddCustomizedOrderToCart}
+                      disabled={creatingOrder}
+                    >
+                      {creatingOrder ? (
+                        <Loader className="animate-spin" />
+                      ) : (
+                        <span className="text-sm">Add To Cart</span>
+                      )}
+                    </Button>
                     <Button className="min-w-[100px]" disabled={creatingOrder}>
                       {creatingOrder ? (
                         <Loader className="animate-spin" />

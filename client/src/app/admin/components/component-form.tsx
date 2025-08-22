@@ -14,7 +14,7 @@ import {
   ToggleGroupItem,
 } from "@/components";
 import { toast } from "@/hooks/use-toast";
-import { Component, ComponentType } from "@/types";
+import { Component, ComponentType, FlowerVariant } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,12 +38,42 @@ const formSchema = z
       .min(0, "Price must be a positive number"),
     // stock: z.number().positive("Stock must be a positive number"),
     image: z.string().optional(),
-    type: z.enum(["WRAPPER", "FLOWER"]),
+    type: z.enum(["WRAPPER", "FLOWER"], { message: "You must select a type" }),
     isAvailable: z.boolean().default(true),
     availableColors: z.array(z.string()).optional(),
+    flowerVariant: z
+      .enum(["HANDMADE", "FRESH"], {
+        message: "You must select a flower variant",
+      })
+      .optional(),
+    handMadeFlowerVariant: z.string().optional(),
   })
   .required({
     stock: true,
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === "FLOWER") {
+      if (!data.flowerVariant) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["flowerVariant"],
+          message: "Flower variant is required for flower components",
+        });
+      }
+
+      if (data.flowerVariant && data.flowerVariant === "HANDMADE") {
+        if (
+          !data.handMadeFlowerVariant ||
+          data.handMadeFlowerVariant.trim() === ""
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Handmade flower variant is required for handmade flowers",
+            path: ["handMadeFlowerVariant"],
+          });
+        }
+      }
+    }
   });
 
 type FormDataType = z.infer<typeof formSchema>;
@@ -66,6 +96,8 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       name: value?.name || "",
       price: value?.price || 0,
       type: value?.type || "FLOWER",
+      flowerVariant: value?.flowerVariant || "FRESH",
+      handMadeFlowerVariant: value?.handMadeFlowerVariant || "",
     },
   });
   const navigate = useNavigate();
@@ -80,6 +112,8 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       form.setValue("type", value.type || "FLOWER");
       form.setValue("isAvailable", value.isAvailable || true);
       form.setValue("availableColors", value.availableColors || []);
+      form.setValue("flowerVariant", value.flowerVariant);
+      form.setValue("handMadeFlowerVariant", value.handMadeFlowerVariant || "");
     }
   }, [value]);
 
@@ -98,6 +132,8 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
         type: values.type,
         isAvailable: values.isAvailable,
         availableColors: values.availableColors || [],
+        flowerVariant: values.flowerVariant,
+        handMadeFlowerVariant: values.handMadeFlowerVariant,
       };
 
       const variables =
@@ -318,17 +354,21 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                     value={field.value}
                     onValueChange={field.onChange}
                     type="single"
+                    unselectable="on"
                   >
                     <ToggleGroupItem
                       value={ComponentType.WRAPPER}
-                      aria-label="Toggle bold"
+                      aria-label="Toggle wrapper"
+                      onClick={() => {
+                        form.resetField("flowerVariant");
+                        form.resetField("handMadeFlowerVariant");
+                      }}
                     >
                       <span>Wrapper</span>
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       value={ComponentType.FLOWER}
-                      aria-label="Toggle bold"
-                      onClick={() => field.onChange([])}
+                      aria-label="Toggle flower"
                     >
                       <span>Flower</span>
                     </ToggleGroupItem>
@@ -337,6 +377,84 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                 </FormItem>
               )}
             />
+
+            {form.watch("type") === "FLOWER" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="flowerVariant"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col items-start">
+                      <FormLabel className="text-black  dark:text-white ">
+                        Flower Variant
+                      </FormLabel>
+                      <ToggleGroup
+                        className=""
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        type="single"
+                        unselectable="on"
+                      >
+                        <ToggleGroupItem
+                          value={FlowerVariant.FRESH}
+                          aria-label="Toggle fresh"
+                        >
+                          <span>Fresh Flower</span>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          value={FlowerVariant.HANDMADE}
+                          aria-label="Toggle handmade"
+                        >
+                          <span>Handmade Flower</span>
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                      <FormMessage className="dark:text-primary" />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("flowerVariant") === FlowerVariant.HANDMADE && (
+                  <FormField
+                    control={form.control}
+                    name="handMadeFlowerVariant"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col items-start">
+                        <FormLabel className="text-black  dark:text-white ">
+                          Handmade Flower Variant
+                        </FormLabel>
+                        <ToggleGroup
+                          className=""
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          type="single"
+                          unselectable="on"
+                        >
+                          <ToggleGroupItem
+                            value="variant 1"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 1</span>
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="variant 2"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 2</span>
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="variant 3"
+                            aria-label="Toggle fresh"
+                          >
+                            <span>Variant 3</span>
+                          </ToggleGroupItem>
+                        </ToggleGroup>
+                        <FormMessage className="dark:text-primary" />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </>
+            )}
 
             {form.watch("type") === "WRAPPER" && (
               <FormField
