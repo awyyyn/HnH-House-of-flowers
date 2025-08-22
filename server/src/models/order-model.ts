@@ -247,11 +247,23 @@ export const readOrders = async ({
       orderItems: {
         include: {
           product: true,
+          customize: {
+            include: {
+              product: true,
+              components: true,
+            },
+          },
         },
       },
       payment: true,
       customer: true,
-      customize: true,
+      customize: {
+        include: {
+          product: true,
+
+          components: true,
+        },
+      },
     },
   });
 
@@ -279,9 +291,22 @@ export const readOrdersByUser = async (userId: string) => {
               reviews: true,
             },
           },
+
+          customize: {
+            include: {
+              product: true,
+              components: true,
+            },
+          },
         },
       },
-      customize: true,
+      customize: {
+        include: {
+          product: true,
+
+          components: true,
+        },
+      },
       payment: true,
       customer: true,
     },
@@ -709,9 +734,11 @@ export const createOrderWithCustomization = async ({
       id: data.data.id,
     };
 
+    const count = await prisma.customize.count();
+
     const customizedBouquet = await prsm.customize.create({
       data: {
-        name: `${product.name} | Customize #${formatDate(new Date(), "yyyyMMdd")}`,
+        name: `CSTM${count.toString().padEnd(4, "0")}`,
         note: customData.note || "",
         totalPrice: 0,
         wrapperColor: customData.wrapperColor || "",
