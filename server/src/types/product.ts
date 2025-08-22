@@ -1,3 +1,5 @@
+import { FlowerVariant } from "@prisma/client";
+
 export interface Product {
   readonly id: string;
   name: string;
@@ -6,6 +8,8 @@ export interface Product {
   images: string[];
   stock: number;
   avg: number;
+  flowerVariant: FlowerVariant;
+  handMadeFlowerVariant: String;
 
   status: ProductStatus;
   category: ProductCategory;

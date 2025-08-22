@@ -38,8 +38,8 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 // WebSocket server
 const wsServer = new WebSocketServer({
-	server: httpServer,
-	path: "/graphql",
+  server: httpServer,
+  path: "/graphql",
 });
 
 // Server Cleanup
@@ -47,46 +47,46 @@ const serverCleanup = useServer({ schema }, wsServer as any);
 
 // Set up ApolloServer.
 const server = new ApolloServer({
-	schema,
-	plugins: [
-		ApolloServerPluginDrainHttpServer({ httpServer }),
-		{
-			async serverWillStart() {
-				return {
-					async drainServer() {
-						await serverCleanup.dispose();
-					},
-				};
-			},
-		},
-	],
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
 });
 
 // Health check endpoint
 app.get("/healthz", (_, res) => {
-	res.send("ok");
+  res.send("ok");
 });
 
 // Middlewares
 
 app.use(
-	cors<cors.CorsRequest>({
-		// origin: environment.CLIENT_URL,/
-		methods: ["GET", "POST", "PATCH", "PUT"],
-		origin: function (origin, callback) {
-			if (
-				origin === environment.CLIENT_URL ||
-				!origin ||
-				origin == "http://localhost:4000" ||
-				origin == "http://localhost:5173"
-			) {
-				callback(null, true);
-			} else {
-				callback(new Error("Not allowed by CORS"));
-			}
-		},
-		allowedHeaders: ["Content-Type", "Authorization"],
-	})
+  cors<cors.CorsRequest>({
+    // origin: environment.CLIENT_URL,/
+    methods: ["GET", "POST", "PATCH", "PUT"],
+    origin: function (origin, callback) {
+      if (
+        origin === environment.CLIENT_URL ||
+        !origin ||
+        origin == "http://localhost:4000" ||
+        origin == "http://localhost:5173"
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
 );
 app.use(express.json());
 
@@ -95,37 +95,58 @@ app.use("/api", routes);
 
 // Ensure we wait for our server to start
 (async () => {
-	await server.start();
+  await server.start();
 
-	// GraphQL endpoint
-	app.use(
-		"/graphql",
-		// @ts-ignore
-		expressMiddleware(server, {
-			context: async ({ req }): Promise<AppContext> => {
-				const token = req.headers.authorization?.split(" ")[1];
-				if (!token) {
-					throw new GraphQLError("UnAuthorized");
-				}
-				const data = verifyToken(token);
-				if (!data) {
-					throw new GraphQLError("UnAuthorized");
-				}
-				return {
-					id: data.id,
-					email: data.email,
-					role: data.role,
-					prisma: prisma,
-				};
-			},
-		})
-	);
+  // GraphQL endpoint
+  app.use(
+    "/graphql",
+    // @ts-ignore
+    expressMiddleware(server, {
+      context: async ({ req }): Promise<AppContext> => {
+        const publicRoutes = [
+          "Products",
+          "Product",
+          "ReadReviews",
+          "Components",
+        ];
+        const token = req.headers.authorization?.split(" ")[1];
 
-	// Modified server startup
-	// await new Promise<void>((resolve) => {
-	// });
+        console.log(req.body);
+
+        const data = verifyToken(token || "");
+
+        if (publicRoutes.includes(req.body.operationName)) {
+          return {
+            email: data?.id || "",
+            id: data?.id || "",
+            prisma,
+            role: data?.role || "USER",
+          };
+        }
+
+        if (!token) {
+          throw new GraphQLError("UnAuthorized");
+        }
+
+        if (!data) {
+          throw new GraphQLError("UnAuthorized");
+        }
+
+        return {
+          id: data.id,
+          email: data.email,
+          role: data.role,
+          prisma: prisma,
+        };
+      },
+    }),
+  );
+
+  // Modified server startup
+  // await new Promise<void>((resolve) => {
+  // });
 })();
 
 httpServer.listen({ port: Number(environment.PORT) }, () => {
-	console.log(`🚀 Server ready at http://localhost:${environment.PORT}/`);
+  console.log(`🚀 Server ready at http://localhost:${environment.PORT}/`);
 });

@@ -71,6 +71,8 @@ export const typeDefs = gql`
       type: ComponentType!
       isAvailable: Boolean!
       availableColors: [String]
+      flowerVariant: FlowerVariant
+      handMadeFlowerVariant: String
     ): Component
     updateComponent(
       id: ID!
@@ -82,6 +84,9 @@ export const typeDefs = gql`
       type: ComponentType!
       isAvailable: Boolean!
       availableColors: [String]
+
+      flowerVariant: FlowerVariant
+      handMadeFlowerVariant: String
     ): Component
     createAdmin(email: String!, password: String!): User
     blockUser(id: ID!, reason: String!, role: UserRole!): User
@@ -101,6 +106,8 @@ export const typeDefs = gql`
       stock: Int!
       status: ProductStatus!
       category: ProductCategory!
+      flowerVariant: FlowerVariant
+      handMadeFlowerVariant: String
       tags: [FlowerTag]
     ): Product
     updateProduct(id: ID!, data: ProductInput!): Product
@@ -182,11 +189,16 @@ export const typeDefs = gql`
     type: ComponentType!
     isAvailable: Boolean!
     availableColors: [String]
+    flowerVariant: FlowerVariant
+    handMadeFlowerVariant: String
 
     createdAt: String!
     updatedAt: String!
   }
-
+  enum FlowerVariant {
+    FRESH
+    HANDMADE
+  }
   enum ComponentType {
     FLOWER
     WRAPPER
@@ -449,6 +461,8 @@ export const typeDefs = gql`
     components: [Component]
     price: Float!
 
+    flowerVariant: FlowerVariant
+    handMadeFlowerVariant: String
     status: ProductStatus!
     category: ProductCategory!
     reviews: [Review]
@@ -470,6 +484,8 @@ export const typeDefs = gql`
     serviceFee: Float
     otherFee: Float
     components: [String]
+    flowerVariant: FlowerVariant
+    handMadeFlowerVariant: String
   }
 
   enum ProductStatus {
