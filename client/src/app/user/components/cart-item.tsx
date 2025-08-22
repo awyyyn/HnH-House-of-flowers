@@ -16,7 +16,6 @@ interface CartItemProps {
 }
 
 export default function CartItemPage({ item, isError = false }: CartItemProps) {
-  const [showCustomized, setShowCustomized] = useState(false);
   const [quantity, setQuantity] = useState(item.quantity);
   const [removeToCart] = useMutation(REMOVE_TO_CART_MUTATION);
   const handleQuantityChange = (newQuantity: number) => {

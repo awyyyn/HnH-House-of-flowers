@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Navbar } from "./components/user-navbar";
 import { useAuth } from "@/contexts";
 
@@ -8,7 +8,6 @@ export default function UserLayout({
   children?: React.ReactNode;
 }) {
   const { user } = useAuth();
-  const { state } = useLocation();
 
   if (user !== null && (user.status === "UNVERIFIED" || !user.verifiedAt)) {
     return <Navigate to="/verify-account" />;
