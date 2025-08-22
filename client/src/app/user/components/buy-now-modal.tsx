@@ -87,7 +87,6 @@ export function CheckoutModal({
       });
 
       if (paymentType === "GCASH") {
-        console.log(data?.data, "qqqq");
         window.location.replace(
           data?.data.createCheckoutSession.payment.checkoutUrl,
         );

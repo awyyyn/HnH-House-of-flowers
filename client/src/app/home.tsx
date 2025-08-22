@@ -43,8 +43,6 @@ export default function Home() {
 
   if (loading || !data) return <HomeSkeleton />;
 
-  console.log(data, "qqq");
-
   return (
     <>
       <Helmet title="Home" />

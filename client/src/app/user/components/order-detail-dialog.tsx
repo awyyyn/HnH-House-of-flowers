@@ -47,7 +47,6 @@ export default function OrderDetailDialog({
   showCustomer,
   showReviewButton = false,
 }: OrderDetailDialogProps) {
-  console.log(order, "qqq order");
   const getStatusStep = () => {
     const statuses = ["PENDING", "PROCESSING", "SHIPPED", "COMPLETED"];
     if (order.status === "CANCELLED") return -1;

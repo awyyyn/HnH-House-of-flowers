@@ -225,8 +225,6 @@ const Customize2 = () => {
       });
 
       setCart((p) => {
-        console.log(p);
-
         return {
           ...p,
           items: [...p.items, data.addCustomizedBouquetToCart],

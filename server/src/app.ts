@@ -111,8 +111,6 @@ app.use("/api", routes);
         ];
         const token = req.headers.authorization?.split(" ")[1];
 
-        console.log(req.body);
-
         const data = verifyToken(token || "");
 
         if (publicRoutes.includes(req.body.operationName)) {

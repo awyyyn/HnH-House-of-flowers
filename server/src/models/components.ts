@@ -19,8 +19,6 @@ export const updateComponent = async (
     },
   });
 
-  console.log(isComponentExists, "qqq");
-
   if (!isComponentExists || isComponentExists === 0) {
     throw new Error("Component not found");
   }
