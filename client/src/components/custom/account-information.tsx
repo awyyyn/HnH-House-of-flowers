@@ -20,7 +20,7 @@ import { Combobox } from "./combobox";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_MUTATION } from "@/queries";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import places from "../../../places.json";
 import { DatePicker } from "../ui/date-picker";
 
@@ -54,6 +54,7 @@ export default function AccountInformation({
   const [setupAccount] = useMutation(UPDATE_USER_MUTATION);
   const [isEditing, setIsEditing] = useState(setUp);
   const [uploading, setUploading] = useState(false);
+  const { state } = useLocation();
   const { user, setUser } = useAuth();
 
   const form = useForm<z.infer<typeof accountInformationSchema>>({
@@ -124,9 +125,12 @@ export default function AccountInformation({
       });
       setUser(data.user);
       if (setUp) {
-        navigate(data.user.role === "USER" ? "/" : "/dashboard", {
-          replace: true,
-        });
+        navigate(
+          state ? state.from : data.user.role === "USER" ? "/" : "/dashboard",
+          {
+            replace: true,
+          },
+        );
       } else {
         setIsEditing(false);
       }

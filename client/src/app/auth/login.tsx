@@ -188,6 +188,7 @@ export default function Login() {
                 <Link
                   to="/auth/register"
                   className="text-primary ml-2 hover:underline"
+                  state={state}
                 >
                   Sign up
                 </Link>
