@@ -22,3 +22,10 @@ export const updateStoreImage = async (
     where: { id },
   });
 };
+
+export const readStoreImage = async (id: string) => {
+  return await prisma.storeImage.findFirst({
+    where: { id },
+  });
+};
+ 
