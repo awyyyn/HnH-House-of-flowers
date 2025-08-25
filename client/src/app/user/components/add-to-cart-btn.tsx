@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAtom } from "jotai";
 import { cartAtom } from "@/states";
 import { CheckoutModal } from "./buy-now-modal";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function AddToCartInline(product: Product) {
   const { user, isAuthenticated } = useAuth();
@@ -144,8 +144,22 @@ export default function AddToCartInline(product: Product) {
       />
 
       {product.category === "BOUQUET" && (
-        <Button size="sm" variant="outline">
-          <Link to={`/bouquets/${product.id}/customize`}>Customize</Link>
+        <Button
+          onClick={() => {
+            if (!isAuthenticated) {
+              return navigate("/auth/login", {
+                state: {
+                  from: `/bouquets/${product.id}/customize`,
+                },
+              });
+            }
+
+            navigate(`/bouquets/${product.id}/customize`);
+          }}
+          size="sm"
+          variant="outline"
+        >
+          Customize
         </Button>
       )}
     </div>
