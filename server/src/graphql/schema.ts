@@ -180,6 +180,23 @@ export const typeDefs = gql`
     ): StoreSettings
   }
 
+  type StoreImage {
+    id: ID!
+    event: String!
+    description: String
+    image: [Image]
+    startDate: String!
+    endDate: String!
+
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Image {
+    alt: String!
+    image: String!
+  }
+
   input CustomData {
     productId: String!
     note: String
