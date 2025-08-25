@@ -77,7 +77,7 @@ export default function Login() {
 
       if (data.data.user.role === "USER") {
         if (state) {
-          return navigate(state.from, { replace: true });
+          return navigate(state.from, { replace: true, state });
         }
 
         navigate("/");
