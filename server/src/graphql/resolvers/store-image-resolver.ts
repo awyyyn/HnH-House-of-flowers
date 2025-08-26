@@ -1,9 +1,13 @@
 import { GraphQLError } from "graphql";
 import {
   createStoreImage,
+  readStoreImages,
   updateStoreImage,
 } from "../../models/store-images-model.js";
-import { CreateStoreImageInput } from "../../types/store-images.js";
+import {
+  CreateStoreImageInput,
+  ReadStoreImage,
+} from "../../types/store-images.js";
 
 export const createStoreImageResolver = async (
   _: never,
@@ -24,6 +28,17 @@ export const updateStoreImageResolver = async (
 ) => {
   try {
     return await updateStoreImage(id, data);
+  } catch (error) {
+    throw new GraphQLError("Internal Server Error!");
+  }
+};
+
+export const readStoreImagesResolver = async (
+  _: never,
+  args: ReadStoreImage,
+) => {
+  try {
+    return await readStoreImages(args);
   } catch (error) {
     throw new GraphQLError("Internal Server Error!");
   }
