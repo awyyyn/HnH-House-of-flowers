@@ -11,10 +11,10 @@ import {
 
 export const createStoreImageResolver = async (
   _: never,
-  { createstoreImageInput }: { createstoreImageInput: CreateStoreImageInput },
+  { createStoreImageInput }: { createStoreImageInput: CreateStoreImageInput },
 ) => {
   try {
-    const newStore = await createStoreImage(createstoreImageInput);
+    const newStore = await createStoreImage(createStoreImageInput);
     if (!newStore) throw new GraphQLError("Failed to create store image");
     return newStore;
   } catch (error) {
