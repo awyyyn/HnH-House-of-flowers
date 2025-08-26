@@ -4,7 +4,7 @@ import {
 } from "../types/store-images.js";
 import { prisma } from "../services/prisma.js";
 import { PaginationResult } from "src/types/index.js";
-import { StoreImage } from "@prisma/client";
+import { Prisma, StoreImage } from "@prisma/client";
 
 export const createStoreImage = async (data: CreateStoreImageInput) => {
   return await prisma.storeImage.create({
@@ -36,17 +36,30 @@ export const readStoreImage = async (id: string) => {
 
 export const readStoreImages = async ({
   pagination,
-}: ReadStoreImage): Promise<PaginationResult<StoreImage>> => {
+  filter,
+}: ReadStoreImage) => {
+  let where: Prisma.StoreImageWhereInput = {};
+
+  if (filter && filter.trim() === "") {
+    where = {
+      OR: [
+        { event: { contains: filter } },
+        { description: { contains: filter } },
+      ],
+    };
+  }
+
   const storeImages = await prisma.storeImage.findMany({
     skip: pagination ? pagination.limit * pagination?.page : undefined,
     take: pagination ? pagination.limit : undefined,
+    where,
   });
 
-  const count = await prisma.user.count({});
+  const total = await prisma.storeImage.count({ where });
 
   return {
     data: storeImages,
-    hasMore: storeImages.length === pagination?.limit,
-    count,
+    hasNextPage: storeImages.length === pagination?.limit,
+    total,
   };
 };
