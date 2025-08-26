@@ -14,6 +14,8 @@ export const createStoreImage = async (data: CreateStoreImageInput) => {
 
   return {
     ...storeImage,
+    startDate: storeImage.startDate.toISOString(),
+    endDate: storeImage.endDate.toISOString(),
     createdAt: storeImage.createdAt.toISOString(),
     updatedAt: storeImage.updatedAt.toISOString(),
   };
@@ -38,6 +40,8 @@ export const updateStoreImage = async (
 
   return {
     ...storeImage,
+    startDate: storeImage.startDate.toISOString(),
+    endDate: storeImage.endDate.toISOString(),
     createdAt: storeImage.createdAt.toISOString(),
     updatedAt: storeImage.updatedAt.toISOString(),
   };
@@ -83,6 +87,8 @@ export const readStoreImages = async ({
   return {
     data: storeImages.map((storeImage) => ({
       ...storeImage,
+      startDate: storeImage.startDate.toISOString(),
+      endDate: storeImage.endDate.toISOString(),
       createdAt: storeImage.createdAt.toISOString(),
       updatedAt: storeImage.updatedAt.toISOString(),
     })),
