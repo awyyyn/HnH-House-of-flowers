@@ -7,6 +7,7 @@ import {
   Edit,
   Eye,
   Trash2,
+  Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,14 +36,19 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { UPDATE_STORE_SETTINGS_MUTATION } from "@/queries";
+import {
+  READ_STORE_IMAGES_QUERY,
+  UPDATE_STORE_SETTINGS_MUTATION,
+} from "@/queries";
 import { SystemSettingsSkeleton } from "../skeletons";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 
 import { useAtom } from "jotai";
 import { storeAtom } from "@/states";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "date-fns";
+import { StoreImage } from "@/types";
+import { Link } from "react-router-dom";
 
 const generalFormSchema = z.object({
   storeName: z.string().min(1, "Store name is required"),
@@ -70,6 +76,9 @@ export default function SystemSettings() {
   const [updateStoreSettings, { loading: updating }] = useMutation(
     UPDATE_STORE_SETTINGS_MUTATION,
   );
+  const { data: storeImagesData, loading: fetchingStoreImages } = useQuery<{
+    storeImages: { data: StoreImage[]; hasNextPage: boolean; total: number };
+  }>(READ_STORE_IMAGES_QUERY);
   const { toast } = useToast();
 
   const generalForm = useForm<GeneralFormValues>({
@@ -134,46 +143,6 @@ export default function SystemSettings() {
     }
   }
 
-  const storeImages = [
-    {
-      id: "1",
-      event: "Summer Sale 2024",
-      description: "Bright and vibrant summer theme with tropical elements",
-      images: [
-        { alt: "Summer beach scene", image: "/summer-beach-scene.png" },
-        { alt: "Tropical fruits", image: "/tropical-fruits.png" },
-      ],
-      startDate: new Date("2024-06-01"),
-      endDate: new Date("2024-08-31"),
-      createdAt: new Date("2024-05-15"),
-      updatedAt: new Date("2024-05-20"),
-    },
-    {
-      id: "2",
-      event: "Holiday Collection",
-      description: "Festive winter theme with snow and holiday decorations",
-      images: [{ alt: "Winter wonderland", image: "/winter-wonderland.png" }],
-      startDate: new Date("2024-12-01"),
-      endDate: new Date("2024-12-31"),
-      createdAt: new Date("2024-11-01"),
-      updatedAt: new Date("2024-11-05"),
-    },
-    {
-      id: "3",
-      event: "Spring Launch",
-      description: "Fresh spring theme with blooming flowers and pastel colors",
-      images: [
-        { alt: "Spring flowers", image: "/spring-flowers-meadow.png" },
-        { alt: "Cherry blossoms", image: "/cherry-blossoms-garden.png" },
-        { alt: "Green meadow", image: "/green-meadow.png" },
-      ],
-      startDate: new Date("2024-03-01"),
-      endDate: new Date("2024-05-31"),
-      createdAt: new Date("2024-02-15"),
-      updatedAt: new Date("2024-02-20"),
-    },
-  ];
-
   async function onPolicySubmit(values: PolicyFormValues) {
     try {
       const { data: updatedData } = await updateStoreSettings({
@@ -211,6 +180,15 @@ export default function SystemSettings() {
     updating ||
     generalForm.formState.isSubmitting ||
     policyForm.formState.isSubmitting;
+
+  const CreateNewThemeBTN = () => (
+    <Button className="ml-auto" asChild>
+      <Link to="/settings/add-theme">
+        <Upload className="h-4 w-4 mr-2" />
+        Create New Theme
+      </Link>
+    </Button>
+  );
 
   return (
     <Tabs defaultValue="general" className="space-y-4">
@@ -522,14 +500,19 @@ export default function SystemSettings() {
                 theme.
               </CardDescription>
             </div>
-            <Button className="ml-auto">
-              <Upload className="h-4 w-4 mr-2" />
-              Create New Theme
-            </Button>
+            {(storeImagesData?.storeImages.data?.length ?? 0) > 0 && (
+              <CreateNewThemeBTN />
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {storeImages.length === 0 ? (
+              {fetchingStoreImages ? (
+                <div className="flex flex-col gap-y-2  justify-center w-full items-center min-h-40">
+                  <Loader className=" animate-spin w-16 h-16" />
+                  <p className="text-xs">Fetching data...</p>
+                </div>
+              ) : !storeImagesData?.storeImages.data.length ||
+                storeImagesData?.storeImages.data.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Upload className="mx-auto h-16 w-16 mb-4 opacity-50" />
                   <h3 className="text-lg font-medium mb-2">
@@ -538,33 +521,36 @@ export default function SystemSettings() {
                   <p className="mb-4">
                     Create your first theme image collection to get started
                   </p>
-                  <Button>Create New Theme</Button>
+                  <CreateNewThemeBTN />
                 </div>
               ) : (
                 <div className="grid gap-6">
-                  {storeImages.map((storeImage) => (
+                  {storeImagesData.storeImages.data.map((storeImage) => (
                     <Card key={storeImage.id} className="overflow-hidden">
                       <div className="flex flex-col lg:flex-row">
                         {/* Image Gallery */}
                         <div className="lg:w-1/3 p-4">
-                          {storeImage.images.length > 0 ? (
+                          {storeImage.image.length > 0 ? (
                             <div className="space-y-2">
                               <img
                                 src={
-                                  storeImage.images[0].image ||
-                                  "/placeholder.svg"
+                                  storeImage.image[0].image ||
+                                  "https://blocks.astratic.com/img/general-img-landscape.png"
                                 }
-                                alt={storeImage.images[0].alt}
+                                alt={storeImage.image[0].alt}
                                 className="w-full h-48 object-cover rounded-lg border"
                               />
-                              {storeImage.images.length > 1 && (
+                              {storeImage.image.length > 1 && (
                                 <div className="flex gap-2 overflow-x-auto">
-                                  {storeImage.images
+                                  {storeImage.image
                                     .slice(1)
                                     .map((img, idx: number) => (
                                       <img
                                         key={idx}
-                                        src={img.image || "/placeholder.svg"}
+                                        src={
+                                          img.image ||
+                                          "https://blocks.astratic.com/img/general-img-landscape.png"
+                                        }
                                         alt={img.alt}
                                         className="w-16 h-16 object-cover rounded border flex-shrink-0"
                                       />
@@ -642,7 +628,7 @@ export default function SystemSettings() {
                                 IMAGES
                               </Label>
                               <p className="font-medium">
-                                {storeImage.images.length} image(s)
+                                {storeImage.image.length} image(s)
                               </p>
                             </div>
                           </div>
@@ -666,10 +652,12 @@ export default function SystemSettings() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="ml-auto">
-              <Upload className="h-4 w-4 mr-2" />
-              Create New Theme
-            </Button>
+            {storeImagesData?.storeImages.data.length &&
+            storeImagesData.storeImages.data.length > 3 ? (
+              <>
+                <CreateNewThemeBTN />
+              </>
+            ) : null}
           </CardFooter>
         </Card>
       </TabsContent>
