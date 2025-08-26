@@ -3,13 +3,20 @@ import {
   ReadStoreImage,
 } from "../types/store-images.js";
 import { prisma } from "../services/prisma.js";
-import { PaginationResult } from "src/types/index.js";
-import { Prisma, StoreImage } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const createStoreImage = async (data: CreateStoreImageInput) => {
-  return await prisma.storeImage.create({
+  const storeImage = await prisma.storeImage.create({
     data,
   });
+
+  if (!storeImage) throw new Error("Failed to create store image");
+
+  return {
+    ...storeImage,
+    createdAt: storeImage.createdAt.toISOString(),
+    updatedAt: storeImage.updatedAt.toISOString(),
+  };
 };
 
 export const updateStoreImage = async (
@@ -22,16 +29,32 @@ export const updateStoreImage = async (
 
   if (!isExist || isExist === 0) throw new Error("Store image not found");
 
-  return await prisma.storeImage.update({
+  const storeImage = await prisma.storeImage.update({
     data,
     where: { id },
   });
+
+  if (!storeImage) throw new Error("Failed to update store image");
+
+  return {
+    ...storeImage,
+    createdAt: storeImage.createdAt.toISOString(),
+    updatedAt: storeImage.updatedAt.toISOString(),
+  };
 };
 
 export const readStoreImage = async (id: string) => {
-  return await prisma.storeImage.findFirst({
+  const storeImage = await prisma.storeImage.findFirst({
     where: { id },
   });
+
+  if (!storeImage) throw new Error("Store image not found");
+
+  return {
+    ...storeImage,
+    createdAt: storeImage.createdAt.toISOString(),
+    updatedAt: storeImage.updatedAt.toISOString(),
+  };
 };
 
 export const readStoreImages = async ({
@@ -58,7 +81,11 @@ export const readStoreImages = async ({
   const total = await prisma.storeImage.count({ where });
 
   return {
-    data: storeImages,
+    data: storeImages.map((storeImage) => ({
+      ...storeImage,
+      createdAt: storeImage.createdAt.toISOString(),
+      updatedAt: storeImage.updatedAt.toISOString(),
+    })),
     hasNextPage: storeImages.length === pagination?.limit,
     total,
   };
