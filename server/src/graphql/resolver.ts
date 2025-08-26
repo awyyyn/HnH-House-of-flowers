@@ -48,6 +48,7 @@ import {
   settingsResolver,
   createCustomizeOrderResolver,
   addCustomizedBouquetToCartResolver,
+  readStoreImagesResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -56,6 +57,7 @@ export const resolvers = {
     notificationSent: notificationSentSubscription,
   },
   Query: {
+    storeImages: readStoreImagesResolver,
     component: readComponentResolver,
     components: readComponentsResolver,
     user: userResolver,

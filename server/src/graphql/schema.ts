@@ -7,6 +7,10 @@ export const typeDefs = gql`
   }
 
   type Query {
+    storeImages(
+      filter: String
+      pagination: PaginationInput
+    ): StoreImagesPaginationResult
     user(filter: String!): User
     component(id: ID!): Component
     components(
@@ -330,6 +334,12 @@ export const typeDefs = gql`
   type UsersPaginationResult {
     total: Int!
     data: [User]
+    hasNextPage: Boolean!
+  }
+
+  type StoreImagesPaginationResult {
+    total: Int!
+    data: [StoreImage]
     hasNextPage: Boolean!
   }
 
