@@ -6,6 +6,7 @@ export type CreateStoreImageInput = Omit<
 >;
 
 export type ReadStoreImage = {
+  filter?: string;
   pagination?: {
     page: number;
     limit: number;
