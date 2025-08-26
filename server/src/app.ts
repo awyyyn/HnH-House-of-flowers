@@ -108,6 +108,7 @@ app.use("/api", routes);
           "Product",
           "ReadReviews",
           "Components",
+          "StoreImages",
         ];
         const token = req.headers.authorization?.split(" ")[1];
 
