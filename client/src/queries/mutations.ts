@@ -4,6 +4,7 @@ import {
   componentFragment,
   customizeFragment,
   productFragment,
+  storeImageFragment,
   userFragment,
 } from "./fragments";
 
@@ -537,6 +538,24 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       quantity
       cartId
       price
+    }
+  }
+`;
+
+export const CREATE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($createStoreImageInput: CreateStoreImageInput) {
+    createStoreImage(createStoreImageInput: $createStoreImageInput) {
+      ...StoreImageFragment
+    }
+  }
+`;
+
+export const UPDATE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($id: ID!, $data: CreateStoreImageInput) {
+    updateStoreImage(id: $id, data: $data) {
+      ...StoreImageFragment
     }
   }
 `;

@@ -3,6 +3,7 @@ import {
   componentFragment,
   customizeFragment,
   productFragment,
+  storeImageFragment,
   userFragment,
 } from "./fragments";
 
@@ -480,6 +481,19 @@ export const READ_COMPONENT_QUERY = gql`
   query ($id: ID!) {
     component(id: $id) {
       ...ComponentFragment
+    }
+  }
+`;
+
+export const READ_STORE_IMAGES_QUERY = gql`
+  ${storeImageFragment}
+  query StoreImages($filter: String, $pagination: PaginationInput) {
+    storeImages(filter: $filter, pagination: $pagination) {
+      total
+      data {
+        ...StoreImageFragment
+      }
+      hasNextPage
     }
   }
 `;
