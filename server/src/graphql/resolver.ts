@@ -49,6 +49,8 @@ import {
   createCustomizeOrderResolver,
   addCustomizedBouquetToCartResolver,
   readStoreImagesResolver,
+  createStoreImageResolver,
+  updateStoreImageResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -81,6 +83,8 @@ export const resolvers = {
     readReviews: readReviewsResolver,
   },
   Mutation: {
+    createStoreImage: createStoreImageResolver,
+    updateStoreImage: updateStoreImageResolver,
     addCustomizedBouquetToCart: addCustomizedBouquetToCartResolver,
     createComponent: createComponentResolver,
     updateComponent: updateComponentResolver,

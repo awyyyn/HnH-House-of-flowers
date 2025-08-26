@@ -66,6 +66,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    createStoreImage(createStoreImageInput: CreateStoreImageInput): StoreImage
+    updateStoreImage(id: ID!, data: CreateStoreImageInput): StoreImage
     addCustomizedBouquetToCart(
       quantity: Int!
       price: Float!
@@ -182,6 +184,19 @@ export const typeDefs = gql`
       socialMedia: SocialMediaInput!
       policies: PoliciesInput!
     ): StoreSettings
+  }
+
+  input ImageInput {
+    alt: String!
+    image: String!
+  }
+
+  input CreateStoreImageInput {
+    event: String!
+    description: String
+    image: [ImageInput]
+    startDate: String!
+    endDate: String!
   }
 
   type StoreImage {
