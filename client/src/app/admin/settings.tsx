@@ -49,6 +49,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "date-fns";
 import { StoreImage } from "@/types";
 import { Link, useLocation } from "react-router-dom";
+import { DeleteDialogTheme } from "./components/delete-theme-modal";
 
 const generalFormSchema = z.object({
   storeName: z.string().min(1, "Store name is required"),
@@ -595,14 +596,7 @@ export default function SystemSettings() {
                                   Edit
                                 </Link>
                               </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-destructive hover:text-destructive bg-transparent"
-                              >
-                                <Trash2 className="h-4 w-4 mr-1" />
-                                Delete
-                              </Button>
+                              <DeleteDialogTheme storeImage={storeImage} />
                             </div>
                           </div>
 
