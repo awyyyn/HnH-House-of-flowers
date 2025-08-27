@@ -16,3 +16,4 @@ export * from "./bouquet-items-model.js";
 export * from "./settings-model.js";
 export * from "./customize-order-model.js";
 export * from "./components.js";
+export * from "./store-images-model.js";

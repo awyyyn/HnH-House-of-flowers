@@ -102,3 +102,14 @@ export const readStoreImages = async ({
 export const deleteStoreImage = async (id: string) => {
   return await prisma.storeImage.delete({ where: { id } });
 };
+
+export const readCurrentStoreImage = async () => {
+  return await prisma.storeImage.findFirst({
+    where: {
+      AND: [
+        { startDate: { lte: new Date() } },
+        { endDate: { gte: new Date() } },
+      ],
+    },
+  });
+};
