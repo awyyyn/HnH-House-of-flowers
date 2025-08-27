@@ -71,21 +71,32 @@ interface ImageData {
 
 const existingStoreImages: StoreImage[] = [];
 
-export default function CreateThemeForm() {
+interface CreateThemeFormProps {
+  defaultValue?: StoreImage;
+}
+
+export default function CreateThemeForm({
+  defaultValue,
+}: CreateThemeFormProps) {
   const form = useForm<FormDataType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      event: "",
-      description: "",
-      images: [],
-      startDate: undefined,
-      endDate: undefined,
-    },
+    defaultValues: defaultValue
+      ? {
+          ...defaultValue,
+          startDate: new Date(defaultValue.startDate),
+          endDate: new Date(defaultValue.endDate),
+        }
+      : {
+          event: "",
+          description: "",
+          images: [],
+          startDate: undefined,
+          endDate: undefined,
+        },
   });
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(
     new Set(),
   );
-  const [] = use;
 
   const addImage = () => {
     const currentImages = form.getValues("images");
