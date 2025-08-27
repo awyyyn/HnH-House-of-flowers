@@ -8,18 +8,20 @@ import {
 import { ChevronRight, Flower } from "lucide-react";
 
 import { Link } from "react-router-dom";
-import { Product, Review } from "@/types";
+import { Product, Review, StoreImage } from "@/types";
 
 import { useEffect, useState } from "react";
 import { HomeSkeleton } from "./skeletons";
 import { formatCurrency } from "@/lib";
 import ReviewCard from "@/components/custom/review-card";
+import HeroCarousel from "./user/components/carousel";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{
     topProducts: Product[];
     reviews: Review[];
+    storeImage?: StoreImage;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +30,7 @@ export default function Home() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/home`);
       const data = await res.json();
       setData(data);
+
       setError(null);
     } catch (err) {
       console.error("FETCH_DATA_ERR", err);
@@ -63,6 +66,8 @@ export default function Home() {
       ) : (
         <div className="flex min-h-screen flex-col">
           <main className="flex-1">
+            {data.storeImage && <HeroCarousel images={data.storeImage.image} />}
+
             <section className="relative">
               <div className="container px-4 py-16 md:py-24 lg:py-32">
                 <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-[1fr_500px]">
