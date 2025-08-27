@@ -41,8 +41,11 @@ import {
 import { FileUpload } from "@/components";
 import { StoreImage } from "@/types";
 import { toast } from "@/hooks/use-toast";
-import { useMutation } from "@apollo/client";
-import { CREATE_STORE_IMAGE_MUTATION } from "@/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CREATE_STORE_IMAGE_MUTATION,
+  READ_STORE_IMAGES_QUERY,
+} from "@/queries";
 
 const formSchema = z
   .object({
@@ -71,8 +74,6 @@ interface ImageData {
   image: string;
 }
 
-const existingStoreImages: StoreImage[] = [];
-
 interface CreateThemeFormProps {
   defaultValue?: StoreImage;
 }
@@ -96,17 +97,25 @@ export default function CreateThemeForm({
           endDate: undefined,
         },
   });
+  const { data, loading: fetchingStoreImages } = useQuery<{
+    storeImages: { data: StoreImage[]; hasNextPage: boolean; total: number };
+  }>(READ_STORE_IMAGES_QUERY);
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(
     new Set(),
   );
   const [createStoreImage, { loading }] = useMutation(
     CREATE_STORE_IMAGE_MUTATION,
+    {
+      refetchQueries: [READ_STORE_IMAGES_QUERY],
+    },
   );
 
   const addImage = () => {
     const currentImages = form.getValues("images");
     form.setValue("images", [...currentImages, { alt: "", image: "" }]);
   };
+
+  const existingStoreImages = data?.storeImages.data || [];
 
   const removeImage = (index: number) => {
     const currentImages = form.getValues("images");
@@ -296,9 +305,6 @@ export default function CreateThemeForm({
       });
     }
   };
-
-  console.log(form.formState.errors, "qq err");
-
   return (
     <Card>
       <CardHeader>
@@ -314,6 +320,7 @@ export default function CreateThemeForm({
             className="space-y-6"
           >
             <FormField
+              disabled={loading}
               control={form.control}
               name="event"
               render={({ field }) => (
@@ -330,6 +337,7 @@ export default function CreateThemeForm({
             <FormField
               control={form.control}
               name="description"
+              disabled={loading}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
@@ -349,6 +357,7 @@ export default function CreateThemeForm({
               <FormField
                 control={form.control}
                 name="startDate"
+                disabled={loading}
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Event Date</FormLabel>
@@ -444,6 +453,7 @@ export default function CreateThemeForm({
 
             <FormField
               control={form.control}
+              disabled={loading}
               name="images"
               render={({ field }) => (
                 <FormItem>
@@ -618,7 +628,11 @@ export default function CreateThemeForm({
         <Button
           type="submit"
           onClick={form.handleSubmit(handleSubmit)}
-          // disabled={!dateValidation.isValid || !form.formState.isValid}
+          disabled={
+            // !dateValidation.isValid ||
+            // !form.formState.isValid ||
+            form.formState.isSubmitting || loading
+          }
         >
           Save Theme Settings
         </Button>
