@@ -50,6 +50,7 @@ import { formatDate } from "date-fns";
 import { StoreImage } from "@/types";
 import { Link, useLocation } from "react-router-dom";
 import { DeleteDialogTheme } from "./components/delete-theme-modal";
+import PreviewTheme from "./components/preview-theme";
 
 const generalFormSchema = z.object({
   storeName: z.string().min(1, "Store name is required"),
@@ -584,10 +585,7 @@ export default function SystemSettings() {
                               </p>
                             </div>
                             <div className="flex gap-2">
-                              <Button variant="outline" size="sm">
-                                <Eye className="h-4 w-4 mr-1" />
-                                Preview
-                              </Button>
+                              <PreviewTheme images={storeImage.image} />
                               <Button asChild variant="outline" size="sm">
                                 <Link
                                   to={`/settings/edit-theme/${storeImage.id}`}
