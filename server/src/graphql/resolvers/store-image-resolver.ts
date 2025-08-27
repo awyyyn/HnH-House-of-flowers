@@ -1,6 +1,7 @@
 import { GraphQLError } from "graphql";
 import {
   createStoreImage,
+  deleteStoreImage,
   readStoreImage,
   readStoreImages,
   updateStoreImage,
@@ -51,6 +52,17 @@ export const readStoreImageResolver = async (
 ) => {
   try {
     return await readStoreImage(id);
+  } catch (error) {
+    throw new GraphQLError("Internal Server Error!");
+  }
+};
+
+export const deleteStoreImageResolver = async (
+  _: never,
+  { id }: { id: string },
+) => {
+  try {
+    return await deleteStoreImage(id);
   } catch (error) {
     throw new GraphQLError("Internal Server Error!");
   }

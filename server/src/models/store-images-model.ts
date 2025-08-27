@@ -98,3 +98,7 @@ export const readStoreImages = async ({
     total,
   };
 };
+
+export const deleteStoreImage = async (id: string) => {
+  return await prisma.storeImage.delete({ where: { id } });
+};
