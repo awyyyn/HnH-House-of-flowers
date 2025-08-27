@@ -581,9 +581,13 @@ export default function SystemSettings() {
                                 <Eye className="h-4 w-4 mr-1" />
                                 Preview
                               </Button>
-                              <Button variant="outline" size="sm">
-                                <Edit className="h-4 w-4 mr-1" />
-                                Edit
+                              <Button asChild variant="outline" size="sm">
+                                <Link
+                                  to={`/settings/edit-theme/${storeImage.id}`}
+                                >
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  Edit
+                                </Link>
                               </Button>
                               <Button
                                 variant="outline"

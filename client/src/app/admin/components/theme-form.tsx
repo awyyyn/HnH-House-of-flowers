@@ -46,6 +46,7 @@ import {
   CREATE_STORE_IMAGE_MUTATION,
   READ_STORE_IMAGES_QUERY,
 } from "@/queries";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z
   .object({
@@ -85,7 +86,11 @@ export default function CreateThemeForm({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValue
       ? {
-          ...defaultValue,
+          event: defaultValue.event,
+          description: defaultValue.description || "",
+          images: defaultValue.image.length
+            ? defaultValue.image
+            : [{ alt: "", image: "" }],
           startDate: new Date(defaultValue.startDate),
           endDate: new Date(defaultValue.endDate),
         }
@@ -97,6 +102,7 @@ export default function CreateThemeForm({
           endDate: undefined,
         },
   });
+  const navigate = useNavigate();
   const { data, loading: fetchingStoreImages } = useQuery<{
     storeImages: { data: StoreImage[]; hasNextPage: boolean; total: number };
   }>(READ_STORE_IMAGES_QUERY);
@@ -279,7 +285,7 @@ export default function CreateThemeForm({
       return;
     }
     try {
-      await createStoreImage({
+      const newStoreImage = await createStoreImage({
         variables: {
           createStoreImageInput: {
             event: data.event,
@@ -291,11 +297,16 @@ export default function CreateThemeForm({
         },
       });
 
+      console.log(newStoreImage, "newStoreImage");
+
       toast({
         title: "Success",
         description: "Theme settings saved successfully",
         variant: "success",
       });
+      navigate(
+        `/settings/edit-theme/${newStoreImage.data.createStoreImage.id}`,
+      );
     } catch (error) {
       toast({
         title: "Error",
@@ -305,6 +316,7 @@ export default function CreateThemeForm({
       });
     }
   };
+
   return (
     <Card>
       <CardHeader>
