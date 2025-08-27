@@ -50,6 +50,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   CREATE_STORE_IMAGE_MUTATION,
   READ_STORE_IMAGES_QUERY,
+  UPDATE_STORE_IMAGE_MUTATION,
 } from "@/queries";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -115,7 +116,7 @@ export default function CreateThemeForm({
     new Set(),
   );
   const [createStoreImage, { loading }] = useMutation(
-    CREATE_STORE_IMAGE_MUTATION,
+    defaultValue ? UPDATE_STORE_IMAGE_MUTATION : CREATE_STORE_IMAGE_MUTATION,
     {
       refetchQueries: [READ_STORE_IMAGES_QUERY],
     },
@@ -149,7 +150,7 @@ export default function CreateThemeForm({
   };
 
   const getDateRangesForValidation = () => {
-    return existingStoreImages
+    let existingRanges = existingStoreImages
       .map((img) => ({
         id: img.id,
         start: img.startDate,
@@ -157,6 +158,12 @@ export default function CreateThemeForm({
         event: img.event,
       }))
       .filter((range) => range.start && range.end);
+
+    if (defaultValue) {
+      existingRanges = existingRanges.filter((r) => r.id !== defaultValue.id);
+    }
+
+    return existingRanges;
   };
 
   const adjustYearForEvent = (date: Date, isEndDate = false) => {
@@ -289,29 +296,38 @@ export default function CreateThemeForm({
     if (!validation.isValid) {
       return;
     }
+
+    const values = {
+      event: data.event,
+      description: data.description || "",
+      image: data.images,
+      startDate: data.startDate.toISOString(),
+      endDate: data.endDate.toISOString(),
+    };
+
+    let variables = {};
+
+    if (defaultValue) {
+      variables = { id: defaultValue.id, data: values };
+    } else {
+      variables = {
+        createStoreImageInput: values,
+      };
+    }
+
     try {
       const newStoreImage = await createStoreImage({
-        variables: {
-          createStoreImageInput: {
-            event: data.event,
-            description: data.description || "",
-            image: data.images,
-            startDate: data.startDate.toISOString(),
-            endDate: data.endDate.toISOString(),
-          },
-        },
+        variables,
       });
 
-      console.log(newStoreImage, "newStoreImage");
+      const link = `/settings/edit-theme/${newStoreImage.data.createStoreImage.id}`;
 
       toast({
         title: "Success",
         description: "Theme settings saved successfully",
         variant: "success",
       });
-      navigate(
-        `/settings/edit-theme/${newStoreImage.data.createStoreImage.id}`,
-      );
+      navigate(link);
     } catch (error) {
       toast({
         title: "Error",
