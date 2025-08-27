@@ -559,3 +559,11 @@ export const UPDATE_STORE_IMAGE_MUTATION = gql`
     }
   }
 `;
+export const DELETE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($id: ID!) {
+    deleteStoreImage(id: $id) {
+      ...StoreImageFragment
+    }
+  }
+`;
