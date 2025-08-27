@@ -7,6 +7,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    storeImage(id: ID!): StoreImage
     storeImages(
       filter: String
       pagination: PaginationInput

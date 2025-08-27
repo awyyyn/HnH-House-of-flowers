@@ -56,6 +56,8 @@ export const readStoreImage = async (id: string) => {
 
   return {
     ...storeImage,
+    startDate: storeImage.startDate.toISOString(),
+    endDate: storeImage.endDate.toISOString(),
     createdAt: storeImage.createdAt.toISOString(),
     updatedAt: storeImage.updatedAt.toISOString(),
   };

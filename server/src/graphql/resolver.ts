@@ -51,6 +51,7 @@ import {
   readStoreImagesResolver,
   createStoreImageResolver,
   updateStoreImageResolver,
+  readStoreImageResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -59,6 +60,7 @@ export const resolvers = {
     notificationSent: notificationSentSubscription,
   },
   Query: {
+    storeImage: readStoreImageResolver,
     storeImages: readStoreImagesResolver,
     component: readComponentResolver,
     components: readComponentsResolver,
