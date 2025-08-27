@@ -62,7 +62,6 @@ export default function Home() {
         </div>
       ) : (
         <div className="flex min-h-screen flex-col">
-          {" "}
           <main className="flex-1">
             <section className="relative">
               <div className="container px-4 py-16 md:py-24 lg:py-32">

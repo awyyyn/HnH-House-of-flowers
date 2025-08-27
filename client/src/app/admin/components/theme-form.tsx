@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Upload, X } from "lucide-react";
+import { CalendarIcon, ChevronLeft, Upload, X } from "lucide-react";
 import {
   format,
   isWithinInterval,
@@ -38,7 +38,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FileUpload } from "@/components";
+import {
+  FileUpload,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components";
 import { StoreImage } from "@/types";
 import { toast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@apollo/client";
@@ -46,7 +51,7 @@ import {
   CREATE_STORE_IMAGE_MUTATION,
   READ_STORE_IMAGES_QUERY,
 } from "@/queries";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const formSchema = z
   .object({
@@ -319,11 +324,27 @@ export default function CreateThemeForm({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Theme Image Setting</CardTitle>
-        <CardDescription>
-          Configure the main image to visually represent your board's theme.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center gap-2">
+        {defaultValue && (
+          <Tooltip>
+            <TooltipTrigger>
+              <Button asChild>
+                <Link to={`/settings?tab=theme`}>
+                  <ChevronLeft />
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Back to themes</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+        <div>
+          <CardTitle>Theme Image Setting</CardTitle>
+          <CardDescription>
+            Configure the main image to visually represent your board's theme.
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>

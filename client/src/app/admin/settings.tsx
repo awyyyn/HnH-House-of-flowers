@@ -48,7 +48,7 @@ import { storeAtom } from "@/states";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "date-fns";
 import { StoreImage } from "@/types";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const generalFormSchema = z.object({
   storeName: z.string().min(1, "Store name is required"),
@@ -80,6 +80,9 @@ export default function SystemSettings() {
     storeImages: { data: StoreImage[]; hasNextPage: boolean; total: number };
   }>(READ_STORE_IMAGES_QUERY);
   const { toast } = useToast();
+  const { search } = useLocation();
+
+  const searchParams = new URLSearchParams(search);
 
   const generalForm = useForm<GeneralFormValues>({
     resolver: zodResolver(generalFormSchema),
@@ -191,7 +194,10 @@ export default function SystemSettings() {
   );
 
   return (
-    <Tabs defaultValue="general" className="space-y-4">
+    <Tabs
+      defaultValue={searchParams.get("tab") || "general"}
+      className="space-y-4"
+    >
       <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 w-full">
         <TabsTrigger
           disabled={submitting}
