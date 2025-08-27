@@ -41,6 +41,8 @@ import {
 import { FileUpload } from "@/components";
 import { StoreImage } from "@/types";
 import { toast } from "@/hooks/use-toast";
+import { useMutation } from "@apollo/client";
+import { CREATE_STORE_IMAGE_MUTATION } from "@/queries";
 
 const formSchema = z
   .object({
@@ -96,6 +98,9 @@ export default function CreateThemeForm({
   });
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(
     new Set(),
+  );
+  const [createStoreImage, { loading }] = useMutation(
+    CREATE_STORE_IMAGE_MUTATION,
   );
 
   const addImage = () => {
@@ -259,12 +264,37 @@ export default function CreateThemeForm({
     return () => subscription.unsubscribe();
   }, [form]);
 
-  const handleSubmit = (data: FormDataType) => {
+  const handleSubmit = async (data: FormDataType) => {
     const validation = validateDateRange(data.startDate, data.endDate);
     if (!validation.isValid) {
       return;
     }
-    console.log(data, "qq");
+    try {
+      await createStoreImage({
+        variables: {
+          createStoreImageInput: {
+            event: data.event,
+            description: data.description || "",
+            image: data.images,
+            startDate: data.startDate.toISOString(),
+            endDate: data.endDate.toISOString(),
+          },
+        },
+      });
+
+      toast({
+        title: "Success",
+        description: "Theme settings saved successfully",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          (error as Error).message || "Failed to save theme settings",
+        variant: "destructive",
+      });
+    }
   };
 
   console.log(form.formState.errors, "qq err");
