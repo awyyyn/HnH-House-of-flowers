@@ -1,7 +1,7 @@
 import { READ_STORE_IMAGE_QUERY } from "@/queries";
 import { StoreImage } from "@/types";
 import { useQuery } from "@apollo/client";
-import * as React from "react";
+
 import { useParams } from "react-router-dom";
 import CreateThemeForm from "./components/theme-form";
 

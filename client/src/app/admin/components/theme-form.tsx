@@ -320,14 +320,16 @@ export default function CreateThemeForm({
         variables,
       });
 
-      const link = `/settings/edit-theme/${newStoreImage.data.createStoreImage.id}`;
-
       toast({
         title: "Success",
         description: "Theme settings saved successfully",
         variant: "success",
       });
-      navigate(link);
+      if (!defaultValue) {
+        navigate(
+          `/settings/edit-theme/${newStoreImage.data.createStoreImage.id}`,
+        );
+      }
     } catch (error) {
       toast({
         title: "Error",
