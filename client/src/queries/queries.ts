@@ -497,3 +497,12 @@ export const READ_STORE_IMAGES_QUERY = gql`
     }
   }
 `;
+
+export const READ_STORE_IMAGE_QUERY = gql`
+  ${storeImageFragment}
+  query ($id: ID!) {
+    storeImage(id: $id) {
+      ...StoreImageFragment
+    }
+  }
+`;
