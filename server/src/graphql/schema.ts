@@ -67,6 +67,7 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    deleteStoreImage(id: ID!): StoreImage
     createStoreImage(createStoreImageInput: CreateStoreImageInput): StoreImage
     updateStoreImage(id: ID!, data: CreateStoreImageInput): StoreImage
     addCustomizedBouquetToCart(
