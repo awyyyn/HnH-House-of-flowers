@@ -5,8 +5,6 @@ import {
   Image,
   Upload,
   Edit,
-  Eye,
-  Trash2,
   Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -340,6 +340,8 @@ export default function CreateThemeForm({
     }
   };
 
+  if (fetchingStoreImages) return <div>Loading...</div>;
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-2">
