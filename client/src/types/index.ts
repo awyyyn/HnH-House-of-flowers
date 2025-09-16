@@ -119,6 +119,7 @@ export interface DataTableProps<TData, TValue> {
   filterName?: string;
   pagination: DataTablePagination;
   setPagination: Dispatch<SetStateAction<DataTablePagination>>;
+  hasFilter?: string;
 }
 
 export type StoreSettings = {
