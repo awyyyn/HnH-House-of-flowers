@@ -738,7 +738,7 @@ export const createOrderWithCustomization = async ({
       data: {
         name: `CSTM${count.toString().padEnd(4, "0")}`,
         note: customData.note || "",
-        totalPrice: 0,
+        totalPrice: customData.totalPrice,
         wrapperColor: customData.wrapperColor || "",
         components: {
           connect: customData.components.map((id) => ({ id })),
