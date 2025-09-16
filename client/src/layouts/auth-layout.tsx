@@ -6,11 +6,18 @@ export default function AuthLayout() {
   const { theme } = useTheme();
   const { isAuthenticated, role } = useAuth();
   const { state } = useLocation();
+  const path = localStorage.getItem("lastPathname");
 
   if (isAuthenticated)
     return (
       <Navigate
-        to={role === "USER" ? (state ? state.from : "/") : "/dashboard"}
+        to={
+          role === "USER"
+            ? state
+              ? state.from || path
+              : path || "/"
+            : "/dashboard"
+        }
       />
     );
 
