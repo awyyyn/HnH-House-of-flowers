@@ -366,21 +366,25 @@ export default function OrderDetailDialog({
                 Subtotal (
                 {order.isPreOrder
                   ? "1 item"
-                  : `${order.orderItems.reduce(
-                      (acc, item) => acc + item.quantity,
-                      0,
-                    )} item`}
+                  : order.customize
+                    ? "1 Item"
+                    : `${order.orderItems.reduce(
+                        (acc, item) => acc + item.quantity,
+                        0,
+                      )} item`}
                 )
               </span>
               <span>
                 {order.isPreOrder
                   ? formatCurrency(order.totalPrice)
-                  : formatCurrency(
-                      order.orderItems.reduce(
-                        (acc, item) => acc + item.price,
-                        0,
-                      ),
-                    )}
+                  : order.customize
+                    ? order.totalPrice
+                    : formatCurrency(
+                        order.orderItems.reduce(
+                          (acc, item) => acc + item.price,
+                          0,
+                        ),
+                      )}
               </span>
             </div>
             {order.shippingFee && (
