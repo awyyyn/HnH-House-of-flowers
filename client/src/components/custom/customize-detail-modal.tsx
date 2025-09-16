@@ -31,11 +31,6 @@ export function CustomizeDetailsModal({
   customize,
   trigger,
 }: CustomizeDetailsModalProps) {
-  const formatPrice = (price?: number) => {
-    if (price === undefined || price === null) return "N/A";
-    return `$${price.toFixed(2)}`;
-  };
-
   const getColorPreview = (color?: string) => {
     if (!color) return null;
     return (
@@ -88,7 +83,7 @@ export function CustomizeDetailsModal({
                   </label>
                   <p className="text-sm font-semibold flex items-center gap-1">
                     <DollarSignIcon className="w-3 h-3" />
-                    {formatPrice(customize.totalPrice)}
+                    {customize.totalPrice}
                   </p>
                 </div>
               </div>
@@ -180,7 +175,7 @@ export function CustomizeDetailsModal({
                           Product Price
                         </label>
                         <p className="text-sm font-semibold">
-                          {formatPrice(customize.product.price)}
+                          {customize.product.price}
                         </p>
                       </div>
                     )}
@@ -244,7 +239,10 @@ export function CustomizeDetailsModal({
                         </div>
                         <div className="text-right space-y-1">
                           <p className="text-sm font-semibold">
-                            {formatPrice(component.price)}
+                            {Intl.NumberFormat("en-PH", {
+                              style: "currency",
+                              currency: "PHP",
+                            }).format(component.price || 0)}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Qty: {component.quantity}
@@ -261,7 +259,8 @@ export function CustomizeDetailsModal({
                         />
                       )}
 
-                      {component.availableColors &&
+                      {component.type === "WRAPPER" &&
+                        component.availableColors &&
                         component.availableColors.length > 0 && (
                           <div>
                             <label className="text-xs font-medium text-muted-foreground">
