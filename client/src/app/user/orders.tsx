@@ -391,7 +391,7 @@ export default function Orders() {
             <div>
               <p className="text-sm font-medium">Items</p>
               <p className="text-sm text-muted-foreground">
-                {order.isPreOrder ? (
+                {order.isPreOrder || order.customize ? (
                   "1 item"
                 ) : (
                   <>
