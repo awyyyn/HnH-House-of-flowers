@@ -268,7 +268,6 @@ export const getBestSellingProducts = async (take: number = 5) => {
     },
     take,
   });
-  console.log(products, "qqq");
 
   products = products.filter((product) => product._count.orderItem > 0);
 
