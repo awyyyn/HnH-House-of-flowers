@@ -143,7 +143,7 @@ export default function AddToCartInline(product: Product) {
         quantity={quantity}
       />
 
-      {product.category === "BOUQUET" && (
+      {product.category === "BOUQUET" && product.status === "IN_STOCK" && (
         <Button
           onClick={() => {
             if (!isAuthenticated) {
