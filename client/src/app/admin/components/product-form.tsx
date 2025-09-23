@@ -23,7 +23,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components";
-import { flowerTagOptions, productCategory, productStatus } from "@/constants";
+import {
+  flowerTagOptions,
+  flowerVariantOptions,
+  productCategory,
+  productStatus,
+} from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import {
   CREATE_PRODUCT_MUTATION,
@@ -58,11 +63,20 @@ const formSchema = z
     status: z.string().nonempty("Required"),
     tags: z.array(z.string()).optional(),
     flowerVariant: z
-      .enum(["HANDMADE", "FRESH"], {
-        message: "You must select a flower variant",
-      })
+      .enum(
+        [
+          "HANDMADE",
+          "FRESH",
+          "IMPORTED_FLOWER",
+          "DRIED_FLOWER",
+          "MONEY_BOUQUET",
+          "BOBO_BALLOONS",
+        ],
+        {
+          message: "You must select a flower variant",
+        },
+      )
       .optional(),
-    handMadeFlowerVariant: z.string().optional(),
     otherFee: z.preprocess(
       (val) => {
         if (val === "" || val === null || val === undefined) return undefined;
@@ -98,19 +112,6 @@ const formSchema = z
           path: ["flowerVariant"],
           message: "Flower variant is required for flower components",
         });
-      }
-
-      if (data.flowerVariant && data.flowerVariant === "HANDMADE") {
-        if (
-          !data.handMadeFlowerVariant ||
-          data.handMadeFlowerVariant.trim() === ""
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Handmade flower variant is required for handmade flowers",
-            path: ["handMadeFlowerVariant"],
-          });
-        }
       }
     }
     if (isNaN(parseInt(data.price))) {
@@ -192,7 +193,6 @@ export default function ProductForm({
       flower: product?.components[0]?.id ?? "",
       wrapper: product?.components[1]?.id ?? "",
       flowerVariant: product?.flowerVariant,
-      handMadeFlowerVariant: product?.handMadeFlowerVariant ?? "",
     },
   });
 
@@ -233,7 +233,6 @@ export default function ProductForm({
         otherFee: isBuoquet ? values.otherFee : 0,
         components: isBuoquet ? components : [],
         flowerVariant: values.flowerVariant,
-        handMadeFlowerVariant: values.handMadeFlowerVariant,
       };
 
       const variables = editing ? { id: String(product?.id), data } : data;
@@ -460,7 +459,6 @@ export default function ProductForm({
 
                         if (v !== "FLOWER") {
                           form.resetField("flowerVariant");
-                          form.resetField("handMadeFlowerVariant");
                         }
                       }}
                       defaultValue={form.getValues("category")}
@@ -541,64 +539,20 @@ export default function ProductForm({
                         type="single"
                         unselectable="on"
                       >
-                        <ToggleGroupItem
-                          value={FlowerVariant.FRESH}
-                          aria-label="Toggle fresh"
-                        >
-                          <span>Fresh Flower</span>
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                          value={FlowerVariant.HANDMADE}
-                          aria-label="Toggle handmade"
-                        >
-                          <span>Handmade Flower</span>
-                        </ToggleGroupItem>
+                        {flowerVariantOptions.map((flower) => (
+                          <ToggleGroupItem
+                            key={flower.value}
+                            value={flower.value}
+                            aria-label={`Toggle ${flower.label}`}
+                          >
+                            <span>{flower.label}</span>
+                          </ToggleGroupItem>
+                        ))}
                       </ToggleGroup>
                       <FormMessage className="dark:text-primary" />
                     </FormItem>
                   )}
                 />
-
-                {form.watch("flowerVariant") === FlowerVariant.HANDMADE && (
-                  <FormField
-                    control={form.control}
-                    name="handMadeFlowerVariant"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col items-start">
-                        <FormLabel className="text-black  dark:text-white ">
-                          Handmade Flower Variant
-                        </FormLabel>
-                        <ToggleGroup
-                          className=""
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          type="single"
-                          unselectable="on"
-                        >
-                          <ToggleGroupItem
-                            value="variant 1"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 1</span>
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="variant 2"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 2</span>
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="variant 3"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 3</span>
-                          </ToggleGroupItem>
-                        </ToggleGroup>
-                        <FormMessage className="dark:text-primary" />
-                      </FormItem>
-                    )}
-                  />
-                )}
               </>
             )}
 
@@ -823,7 +777,17 @@ export default function ProductForm({
                         {imgs.length > 0 ? (
                           <>
                             <div className="absolute cursor-pointer place-content-center z-50 backdrop-blur-md  hidden group-hover:grid h-full w-full">
-                              <Button type="button">Remove</Button>
+                              <Button
+                                onClick={() => {
+                                  const newImages = imgs.filter(
+                                    (img) => imgs[0] !== img,
+                                  );
+                                  setImgs(newImages);
+                                }}
+                                type="button"
+                              >
+                                Remove
+                              </Button>
                             </div>
                             <img
                               src={imgs[0]}

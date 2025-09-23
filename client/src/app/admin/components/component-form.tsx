@@ -27,6 +27,7 @@ import {
 } from "@/queries";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { flowerVariantOptions } from "@/constants";
 
 const formSchema = z
   .object({
@@ -42,11 +43,20 @@ const formSchema = z
     isAvailable: z.boolean().default(true),
     availableColors: z.array(z.string()).optional(),
     flowerVariant: z
-      .enum(["HANDMADE", "FRESH"], {
-        message: "You must select a flower variant",
-      })
+      .enum(
+        [
+          "HANDMADE",
+          "FRESH",
+          "IMPORTED_FLOWER",
+          "DRIED_FLOWER",
+          "MONEY_BOUQUET",
+          "BOBO_BALLOONS",
+        ],
+        {
+          message: "You must select a flower variant",
+        },
+      )
       .optional(),
-    handMadeFlowerVariant: z.string().optional(),
   })
   .required({
     stock: true,
@@ -59,19 +69,6 @@ const formSchema = z
           path: ["flowerVariant"],
           message: "Flower variant is required for flower components",
         });
-      }
-
-      if (data.flowerVariant && data.flowerVariant === "HANDMADE") {
-        if (
-          !data.handMadeFlowerVariant ||
-          data.handMadeFlowerVariant.trim() === ""
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Handmade flower variant is required for handmade flowers",
-            path: ["handMadeFlowerVariant"],
-          });
-        }
       }
     }
   });
@@ -97,7 +94,6 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       price: value?.price || 0,
       type: value?.type || "FLOWER",
       flowerVariant: value?.flowerVariant || "FRESH",
-      handMadeFlowerVariant: value?.handMadeFlowerVariant || "",
     },
   });
   const navigate = useNavigate();
@@ -113,7 +109,6 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       form.setValue("isAvailable", value.isAvailable || true);
       form.setValue("availableColors", value.availableColors || []);
       form.setValue("flowerVariant", value.flowerVariant);
-      form.setValue("handMadeFlowerVariant", value.handMadeFlowerVariant || "");
     }
   }, [value]);
 
@@ -133,7 +128,6 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
         isAvailable: values.isAvailable,
         availableColors: values.availableColors || [],
         flowerVariant: values.flowerVariant,
-        handMadeFlowerVariant: values.handMadeFlowerVariant,
       };
 
       const variables =
@@ -361,7 +355,6 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                       aria-label="Toggle wrapper"
                       onClick={() => {
                         form.resetField("flowerVariant");
-                        form.resetField("handMadeFlowerVariant");
                       }}
                     >
                       <span>Wrapper</span>
@@ -395,64 +388,20 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                         type="single"
                         unselectable="on"
                       >
-                        <ToggleGroupItem
-                          value={FlowerVariant.FRESH}
-                          aria-label="Toggle fresh"
-                        >
-                          <span>Fresh Flower</span>
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                          value={FlowerVariant.HANDMADE}
-                          aria-label="Toggle handmade"
-                        >
-                          <span>Handmade Flower</span>
-                        </ToggleGroupItem>
+                        {flowerVariantOptions.map((flower) => (
+                          <ToggleGroupItem
+                            key={flower.value}
+                            value={flower.value}
+                            aria-label={`Toggle ${flower.label}`}
+                          >
+                            <span>{flower.label}</span>
+                          </ToggleGroupItem>
+                        ))}
                       </ToggleGroup>
                       <FormMessage className="dark:text-primary" />
                     </FormItem>
                   )}
                 />
-
-                {form.watch("flowerVariant") === FlowerVariant.HANDMADE && (
-                  <FormField
-                    control={form.control}
-                    name="handMadeFlowerVariant"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col items-start">
-                        <FormLabel className="text-black  dark:text-white ">
-                          Handmade Flower Variant
-                        </FormLabel>
-                        <ToggleGroup
-                          className=""
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          type="single"
-                          unselectable="on"
-                        >
-                          <ToggleGroupItem
-                            value="variant 1"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 1</span>
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="variant 2"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 2</span>
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="variant 3"
-                            aria-label="Toggle fresh"
-                          >
-                            <span>Variant 3</span>
-                          </ToggleGroupItem>
-                        </ToggleGroup>
-                        <FormMessage className="dark:text-primary" />
-                      </FormItem>
-                    )}
-                  />
-                )}
               </>
             )}
 
