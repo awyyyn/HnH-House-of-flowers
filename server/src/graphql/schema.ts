@@ -78,6 +78,8 @@ export const typeDefs = gql`
       components: [String!]!
       note: String
       wrapperColor: String
+      bill: Int
+      billQuantity: Int
     ): CartItem
     createComponent(
       name: String!
@@ -224,7 +226,7 @@ export const typeDefs = gql`
     totalPrice: Float!
     components: [String!]!
     wrapperColor: String
-    bill: String
+    bill: Int
     billQuantity: Int
   }
 
@@ -571,7 +573,7 @@ export const typeDefs = gql`
     wrapperColor: String
     product: Product
     productId: String
-    bill: String
+    bill: Int
     billQuantity: Int
 
     # bouquetItems: BouquetItems
