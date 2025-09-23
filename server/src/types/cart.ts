@@ -31,4 +31,6 @@ export interface AddCustomizeBouquetToCartInput {
   components: string[];
   note?: string;
   wrapperColor?: string;
+  bill?: number;
+  billQuantity?: number;
 }
