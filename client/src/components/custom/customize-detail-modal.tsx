@@ -15,12 +15,13 @@ import { Button } from "@/components/ui/button";
 import {
   PackageIcon,
   PaletteIcon,
-  DollarSignIcon,
   FileTextIcon,
   Info,
+  PhilippinePeso,
 } from "lucide-react";
 import { Customize } from "@/types";
 import { RichTextEditor } from "./rich-text-editor";
+import { defaultRichTextEditorValue } from "@/constants";
 
 interface CustomizeDetailsModalProps {
   customize: Customize;
@@ -36,7 +37,7 @@ export function CustomizeDetailsModal({
     return (
       <div
         className="w-4 h-4 rounded-full border border-gray-300 inline-block mr-2"
-        style={{ backgroundColor: color.toLowerCase() }}
+        style={{ backgroundColor: `#${color.toLowerCase()}` }}
         title={color}
       />
     );
@@ -82,13 +83,46 @@ export function CustomizeDetailsModal({
                     Total Price
                   </label>
                   <p className="text-sm font-semibold flex items-center gap-1">
-                    <DollarSignIcon className="w-3 h-3" />
+                    <PhilippinePeso className="w-3 h-3" />
                     {customize.totalPrice}
                   </p>
                 </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Wrapper Color
+                  </label>
+                  <p className="text-sm font-semibold">
+                    {customize.wrapperColor || "Default Color"}
+                  </p>
+                </div>
+
+                {!!customize.bill && (
+                  <div className="col-span-2">
+                    <h1 className=" text-sm font-medium">Money Bouquet</h1>
+                    <div className="grid grid-cols-2">
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Bill
+                        </label>
+                        <p className="text-sm font-semibold">
+                          {customize.bill}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Quantity
+                        </label>
+                        <p className="text-sm font-semibold">
+                          {customize.billQuantity}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {customize.note && (
+              {customize.note === defaultRichTextEditorValue && (
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Note
@@ -259,13 +293,13 @@ export function CustomizeDetailsModal({
                         />
                       )}
 
-                      {component.type === "WRAPPER" &&
+                      {/*{component.type === "WRAPPER" &&
                         component.availableColors &&
                         component.availableColors.length > 0 && (
                           <div>
                             <label className="text-xs font-medium text-muted-foreground">
                               Available Colors:
-                            </label>
+                            </label>ss
                             <div className="flex gap-1 mt-1">
                               {component.availableColors.map((color, index) => (
                                 <div
@@ -280,7 +314,7 @@ export function CustomizeDetailsModal({
                               ))}
                             </div>
                           </div>
-                        )}
+                        )}*/}
                     </div>
                   ))}
                 </div>
