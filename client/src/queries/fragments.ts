@@ -84,6 +84,8 @@ export const customizeFragment = gql`
     id
     createdAt
     wrapperColor
+    bill
+    billQuantity
   }
 `;
 

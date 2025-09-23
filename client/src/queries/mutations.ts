@@ -377,6 +377,7 @@ export const CREATE_CUSTOMOMIZE_ORDER_MUTATION = gql`
       formattedId
       totalPrice
       isPreOrder
+
       payment {
         checkoutUrl
       }
@@ -513,6 +514,8 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
     $components: [String!]!
     $note: String
     $wrapperColor: String
+    $bill: Int
+    $billQuantity: Int
   ) {
     addCustomizedBouquetToCart(
       quantity: $quantity
@@ -522,6 +525,8 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       components: $components
       note: $note
       wrapperColor: $wrapperColor
+      bill: $bill
+      billQuantity: $billQuantity
     ) {
       id
       productId

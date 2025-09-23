@@ -140,6 +140,7 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
         colors
         type
         isAvailable
+
         createdAt
         updatedAt
       }
