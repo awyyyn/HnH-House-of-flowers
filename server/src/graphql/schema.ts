@@ -224,6 +224,8 @@ export const typeDefs = gql`
     totalPrice: Float!
     components: [String!]!
     wrapperColor: String
+    bill: String
+    billQuantity: Int
   }
 
   type Component {
@@ -245,6 +247,10 @@ export const typeDefs = gql`
   enum FlowerVariant {
     FRESH
     HANDMADE
+    IMPORTED_FLOWER
+    DRIED_FLOWER
+    MONEY_BOUQUET
+    BOBO_BALLOONS
   }
   enum ComponentType {
     FLOWER
@@ -565,6 +571,8 @@ export const typeDefs = gql`
     wrapperColor: String
     product: Product
     productId: String
+    bill: String
+    billQuantity: Int
 
     # bouquetItems: BouquetItems
 
