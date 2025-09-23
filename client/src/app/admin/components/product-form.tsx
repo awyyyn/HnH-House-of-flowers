@@ -35,7 +35,7 @@ import {
   READ_COMPONENTS_QUERY,
   UPDATE_PRODUCT_MUTATION,
 } from "@/queries";
-import { Component, FlowerVariant, Product, ProductStatus } from "@/types";
+import { Component, Product, ProductStatus } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";

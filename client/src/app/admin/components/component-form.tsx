@@ -14,7 +14,7 @@ import {
   ToggleGroupItem,
 } from "@/components";
 import { toast } from "@/hooks/use-toast";
-import { Component, ComponentType, FlowerVariant } from "@/types";
+import { Component, ComponentType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
