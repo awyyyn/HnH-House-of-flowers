@@ -6,6 +6,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input,
   RichTextEditor,
   Select,
   SelectContent,
@@ -38,17 +39,46 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts";
 import { cartAtom } from "@/states";
 
-const formSchema = z.object({
-  flower: z.string({
-    message: "You must pick your preferred flower",
-  }),
-  wrapper: z.string({
-    message: "You must pick your preferred wrapper",
-  }),
-  wrapperColor: z.string().optional(),
-  note: z.string().optional(),
-  totalPrice: z.number(),
-});
+const formSchema = z
+  .object({
+    flower: z.string({
+      message: "You must pick your preferred flower",
+    }),
+    wrapper: z.string({
+      message: "You must pick your preferred wrapper",
+    }),
+    wrapperColor: z.string().optional(),
+    note: z.string().optional(),
+    totalPrice: z.number(),
+    bill: z.number().optional(),
+    billQuantity: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!!data.bill && !data.billQuantity) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "If you select a bill, you must also specify the quantity",
+        path: ["billQuantity"],
+      });
+    }
+    if (data.billQuantity) {
+      if (isNaN(parseInt(data.billQuantity))) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Quantity must be a valid number",
+          path: ["billQuantity"],
+        });
+      }
+
+      if (Number(data.billQuantity) < 5) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Minimum quantity is 5",
+          path: ["billQuantity"],
+        });
+      }
+    }
+  });
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -103,8 +133,19 @@ const Customize2 = () => {
     (wrapper) => wrapper.id === data?.product?.components[1].id,
   )?.price;
 
+  // optionsStates
+
   const watchedFlower = form.watch("flower");
   const watchedWrapper = form.watch("wrapper");
+  const watchedBill = form.watch("bill");
+  const watchedBillQuantity = form.watch("billQuantity");
+  const addedOtherFee = (watchedBill || 0) * Number(watchedBillQuantity || 0);
+
+  useEffect(() => {
+    if (watchedBill) {
+      form.setValue("billQuantity", "5");
+    }
+  }, [watchedBill]);
 
   useEffect(() => {
     if (watchedFlower && watchedWrapper) {
@@ -116,9 +157,13 @@ const Customize2 = () => {
       tot -= flowerOldPrice || 0;
       tot += flower?.price || 0;
       tot += wrapper?.price || 0;
+      if (watchedBill && watchedBillQuantity) {
+        tot += Number(watchedBill) * Number(watchedBillQuantity || 0);
+      }
+
       form.setValue("totalPrice", tot || 0);
     }
-  }, [watchedFlower, watchedWrapper]);
+  }, [watchedFlower, watchedWrapper, watchedBill, watchedBillQuantity]);
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -169,7 +214,10 @@ const Customize2 = () => {
             totalPrice: values.totalPrice,
             components: [values.flower, values.wrapper],
             wrapperColor: values.wrapperColor || "",
+            bill: values.bill || 0,
+            billQuantity: values.billQuantity || 0,
           },
+
           // TODO: Add type of delivery
         },
       });
@@ -211,6 +259,7 @@ const Customize2 = () => {
       });
     }
     const values = form.getValues();
+
     try {
       const { data } = await addToCart({
         variables: {
@@ -221,6 +270,8 @@ const Customize2 = () => {
           components: [values.flower, values.wrapper],
           note: values.note || "",
           wrapperColor: values.wrapperColor || "",
+          bill: values.bill || 0,
+          billQuantity: values.billQuantity || 0,
         },
       });
 
@@ -236,6 +287,7 @@ const Customize2 = () => {
         variant: "success",
       });
     } catch (err) {
+      console.log(err, "qq");
       toast({
         title: "Error Occurred!",
         description: (err as Error).message,
@@ -510,6 +562,104 @@ const Customize2 = () => {
                         </FormItem>
                       )}
                     />
+                    <div className=" ">
+                      <div className="col-span-4">
+                        <h1 className="text-black dark:text-white ">
+                          Money Bouquey
+                        </h1>
+                      </div>
+                      <div className="flex w-full  gap-5    items-start">
+                        <div className="  w-[70%] md:w-[85%]   ">
+                          <div className="grid grid-cols-3 gap-5 mr-4">
+                            <FormField
+                              control={form.control}
+                              name="bill"
+                              render={({ field }) => (
+                                <FormItem className="  col-span-2 w-full   t">
+                                  <FormLabel className="text-sm">
+                                    Bill
+                                  </FormLabel>
+                                  <Select
+                                    disabled={creatingOrder || addingToCart}
+                                    onValueChange={(v) => {
+                                      field.onChange(parseInt(v));
+                                      return v;
+                                    }}
+                                    {...field}
+                                    value={field.value?.toString() || ""}
+                                  >
+                                    <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
+                                      <SelectValue placeholder="Select a flower" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Bill</SelectLabel>
+                                        {[50, 100, 200, 500, 1000].map(
+                                          (bill) => (
+                                            <SelectItem
+                                              value={bill.toString()}
+                                              key={bill}
+                                              className="capitalize  w-full  "
+                                            >
+                                              {Intl.NumberFormat("en-PH", {
+                                                currency: "PHP",
+                                                style: "currency",
+                                              }).format(bill)}{" "}
+                                              Bill
+                                            </SelectItem>
+                                          ),
+                                        )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+
+                                  <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                                </FormItem>
+                              )}
+                            />
+                            {!!watchedBill && (
+                              <FormField
+                                control={form.control}
+                                name="billQuantity"
+                                render={({ field }) => (
+                                  <FormItem className=" ">
+                                    <FormLabel className="text-sm">
+                                      Quantity
+                                    </FormLabel>
+                                    <Input
+                                      type="text"
+                                      {...field}
+                                      value={field.value?.toString() || ""}
+                                      onInput={(e) => {
+                                        // ✅ Allow deleting all digits
+                                        e.currentTarget.value =
+                                          e.currentTarget.value.replace(
+                                            /\D/g,
+                                            "",
+                                          );
+                                      }}
+                                    />
+                                    <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                          </div>
+                        </div>
+                        <div className="">
+                          <h3>Price:</h3>
+                          <p>
+                            {Intl.NumberFormat("en-PH", {
+                              currency: "PHP",
+                              style: "currency",
+                            }).format(
+                              (watchedBill || 0) *
+                                (Number(watchedBillQuantity) || 0),
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                     <FormField
                       control={form.control}
                       name="note"
@@ -578,7 +728,7 @@ const Customize2 = () => {
                           {Intl.NumberFormat("en-PH", {
                             currency: "PHP",
                             style: "currency",
-                          }).format(product.otherFee || 0)}
+                          }).format(product.otherFee || 0 + addedOtherFee)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
