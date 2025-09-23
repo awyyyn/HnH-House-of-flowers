@@ -7,7 +7,6 @@ export const FlowerTags = {
   BIRTHDAY: "BIRTHDAY",
   GRADUATION: "GRADUATION",
   WEDDING: "WEDDING",
-  CROCHET: "CROCHET",
 } as const;
 
 export type FlowerTags = (typeof FlowerTags)[keyof typeof FlowerTags];

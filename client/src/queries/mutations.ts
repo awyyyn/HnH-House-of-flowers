@@ -4,6 +4,7 @@ import {
   componentFragment,
   customizeFragment,
   productFragment,
+  storeImageFragment,
   userFragment,
 } from "./fragments";
 
@@ -376,6 +377,7 @@ export const CREATE_CUSTOMOMIZE_ORDER_MUTATION = gql`
       formattedId
       totalPrice
       isPreOrder
+
       payment {
         checkoutUrl
       }
@@ -512,6 +514,8 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
     $components: [String!]!
     $note: String
     $wrapperColor: String
+    $bill: Int
+    $billQuantity: Int
   ) {
     addCustomizedBouquetToCart(
       quantity: $quantity
@@ -521,6 +525,8 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       components: $components
       note: $note
       wrapperColor: $wrapperColor
+      bill: $bill
+      billQuantity: $billQuantity
     ) {
       id
       productId
@@ -537,6 +543,32 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       quantity
       cartId
       price
+    }
+  }
+`;
+
+export const CREATE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($createStoreImageInput: CreateStoreImageInput) {
+    createStoreImage(createStoreImageInput: $createStoreImageInput) {
+      ...StoreImageFragment
+    }
+  }
+`;
+
+export const UPDATE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($id: ID!, $data: CreateStoreImageInput) {
+    updateStoreImage(id: $id, data: $data) {
+      ...StoreImageFragment
+    }
+  }
+`;
+export const DELETE_STORE_IMAGE_MUTATION = gql`
+  ${storeImageFragment}
+  mutation ($id: ID!) {
+    deleteStoreImage(id: $id) {
+      ...StoreImageFragment
     }
   }
 `;

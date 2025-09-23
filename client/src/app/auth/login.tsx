@@ -77,7 +77,7 @@ export default function Login() {
 
       if (data.data.user.role === "USER") {
         if (state) {
-          return navigate(state.from, { replace: true });
+          return navigate(state.from, { replace: true, state });
         }
 
         navigate("/");
@@ -188,6 +188,7 @@ export default function Login() {
                 <Link
                   to="/auth/register"
                   className="text-primary ml-2 hover:underline"
+                  state={state}
                 >
                   Sign up
                 </Link>

@@ -48,6 +48,11 @@ import {
   settingsResolver,
   createCustomizeOrderResolver,
   addCustomizedBouquetToCartResolver,
+  readStoreImagesResolver,
+  createStoreImageResolver,
+  updateStoreImageResolver,
+  readStoreImageResolver,
+  deleteStoreImageResolver,
 } from "./resolvers/index.js";
 
 export const resolvers = {
@@ -56,6 +61,8 @@ export const resolvers = {
     notificationSent: notificationSentSubscription,
   },
   Query: {
+    storeImage: readStoreImageResolver,
+    storeImages: readStoreImagesResolver,
     component: readComponentResolver,
     components: readComponentsResolver,
     user: userResolver,
@@ -79,6 +86,9 @@ export const resolvers = {
     readReviews: readReviewsResolver,
   },
   Mutation: {
+    deleteStoreImage: deleteStoreImageResolver,
+    createStoreImage: createStoreImageResolver,
+    updateStoreImage: updateStoreImageResolver,
     addCustomizedBouquetToCart: addCustomizedBouquetToCartResolver,
     createComponent: createComponentResolver,
     updateComponent: updateComponentResolver,

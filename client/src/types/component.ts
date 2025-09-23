@@ -34,6 +34,13 @@ export const ComponentType = {
 
 export type ComponentType = (typeof ComponentType)[keyof typeof ComponentType];
 
-export const FlowerVariant = { HANDMADE: "HANDMADE", FRESH: "FRESH" } as const;
+export const FlowerVariant = {
+  HANDMADE: "HANDMADE",
+  FRESH: "FRESH",
+  IMPORTED_FLOWERR: "IMPORTED_FLOWER",
+  DRIED_FLOWER: "DRIED_FLOWER",
+  MONEY_BOUQUET: "MONEY_BOUQUET",
+  BOBO_BALLOONS: "BOBO_BALLOONS",
+} as const;
 
 export type FlowerVariant = (typeof FlowerVariant)[keyof typeof FlowerVariant];

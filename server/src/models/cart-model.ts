@@ -52,6 +52,8 @@ export const addCustomizeBouquetToCart = async ({
   quantity,
   note,
   wrapperColor,
+  bill,
+  billQuantity,
 }: AddCustomizeBouquetToCartInput) => {
   const product = await readProduct(productId);
 
@@ -71,6 +73,8 @@ export const addCustomizeBouquetToCart = async ({
           },
           note,
           wrapperColor,
+          bill,
+          billQuantity,
           product: {
             connect: {
               id: productId,

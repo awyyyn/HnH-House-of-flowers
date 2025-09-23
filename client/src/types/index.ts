@@ -6,6 +6,7 @@ export * from "./bouquet-item.js";
 export * from "./notification.js";
 export * from "./review.js";
 export * from "./component.js";
+export * from "./store-image.js";
 
 import { Dispatch, SetStateAction, SVGProps } from "react";
 import { User, UserRole } from "./user.js";
@@ -118,6 +119,7 @@ export interface DataTableProps<TData, TValue> {
   filterName?: string;
   pagination: DataTablePagination;
   setPagination: Dispatch<SetStateAction<DataTablePagination>>;
+  hasFilter?: string;
 }
 
 export type StoreSettings = {

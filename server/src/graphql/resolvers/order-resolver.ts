@@ -120,6 +120,7 @@ export const createOrderResolver = async (
       typeOfDelivery: "PICKUP",
       userId: undefined,
       typeOfPayment: "CASH",
+
       preOrder,
       payment: {
         checkoutUrl: "no-checkout-url",
@@ -143,7 +144,7 @@ export const createOrderResolver = async (
         message: content.message,
         userId: app.id!,
         type: "ORDER",
-        idToGo: order.id,
+        idToGo: order.formattedId,
         title: content.title,
         toShop: true,
       });
@@ -196,6 +197,8 @@ export const createCustomizeOrderResolver = async (
       totalPrice: number;
       components: string[];
       wrapperColor?: string;
+      bill?: number;
+      billQuantity?: number;
     };
     deliveryType?: OrderDeliveryType;
   },
@@ -223,7 +226,7 @@ export const createCustomizeOrderResolver = async (
       message: content.message,
       userId: id!,
       type: "ORDER",
-      idToGo: order.id,
+      idToGo: order.formattedId,
       title: content.title,
       toShop: true,
     });

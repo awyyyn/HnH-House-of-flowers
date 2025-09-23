@@ -239,11 +239,12 @@ export const getBestSellingProducts = async (take: number = 5) => {
         some: {
           order: {
             completedAt: {
-              gte: sub(new Date(), { months: 1 }),
+              gte: sub(new Date(), { days: 30 }),
             },
           },
         },
       },
+      //
     },
     select: {
       _count: {
@@ -254,8 +255,11 @@ export const getBestSellingProducts = async (take: number = 5) => {
       id: true,
       name: true,
       images: true,
+      Customize: true,
+
       price: true,
       category: true,
+      orderItem: true,
     },
     orderBy: {
       orderItem: {

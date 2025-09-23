@@ -166,7 +166,7 @@ export const createCheckoutSessionResolver = async (
       message: content.message,
       userId: app.id!,
       type: "ORDER",
-      idToGo: order.id,
+      idToGo: order.formattedId,
       title: content.title,
       toShop: true,
     });

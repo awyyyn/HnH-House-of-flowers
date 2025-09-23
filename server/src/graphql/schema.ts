@@ -7,6 +7,11 @@ export const typeDefs = gql`
   }
 
   type Query {
+    storeImage(id: ID!): StoreImage
+    storeImages(
+      filter: String
+      pagination: PaginationInput
+    ): StoreImagesPaginationResult
     user(filter: String!): User
     component(id: ID!): Component
     components(
@@ -62,6 +67,9 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    deleteStoreImage(id: ID!): StoreImage
+    createStoreImage(createStoreImageInput: CreateStoreImageInput): StoreImage
+    updateStoreImage(id: ID!, data: CreateStoreImageInput): StoreImage
     addCustomizedBouquetToCart(
       quantity: Int!
       price: Float!
@@ -70,6 +78,8 @@ export const typeDefs = gql`
       components: [String!]!
       note: String
       wrapperColor: String
+      bill: Int
+      billQuantity: Int
     ): CartItem
     createComponent(
       name: String!
@@ -180,12 +190,44 @@ export const typeDefs = gql`
     ): StoreSettings
   }
 
+  input ImageInput {
+    alt: String!
+    image: String!
+  }
+
+  input CreateStoreImageInput {
+    event: String!
+    description: String
+    image: [ImageInput]
+    startDate: String!
+    endDate: String!
+  }
+
+  type StoreImage {
+    id: ID!
+    event: String!
+    description: String
+    image: [Image]
+    startDate: String!
+    endDate: String!
+
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Image {
+    alt: String!
+    image: String!
+  }
+
   input CustomData {
     productId: String!
     note: String
     totalPrice: Float!
     components: [String!]!
     wrapperColor: String
+    bill: Int
+    billQuantity: Int
   }
 
   type Component {
@@ -207,6 +249,10 @@ export const typeDefs = gql`
   enum FlowerVariant {
     FRESH
     HANDMADE
+    IMPORTED_FLOWER
+    DRIED_FLOWER
+    MONEY_BOUQUET
+    BOBO_BALLOONS
   }
   enum ComponentType {
     FLOWER
@@ -313,6 +359,12 @@ export const typeDefs = gql`
   type UsersPaginationResult {
     total: Int!
     data: [User]
+    hasNextPage: Boolean!
+  }
+
+  type StoreImagesPaginationResult {
+    total: Int!
+    data: [StoreImage]
     hasNextPage: Boolean!
   }
 
@@ -521,6 +573,8 @@ export const typeDefs = gql`
     wrapperColor: String
     product: Product
     productId: String
+    bill: Int
+    billQuantity: Int
 
     # bouquetItems: BouquetItems
 

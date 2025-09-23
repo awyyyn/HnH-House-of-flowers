@@ -11,3 +11,4 @@ export * from "./notification-resolver.js";
 export * from "./review-resolver.js";
 export * from "./settings-resolver.js";
 export * from "./order-resolver.js";
+export * from "./store-image-resolver.js";

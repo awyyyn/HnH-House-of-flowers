@@ -84,5 +84,23 @@ export const customizeFragment = gql`
     id
     createdAt
     wrapperColor
+    bill
+    billQuantity
+  }
+`;
+
+export const storeImageFragment = gql`
+  fragment StoreImageFragment on StoreImage {
+    id
+    event
+    description
+    image {
+      alt
+      image
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
   }
 `;

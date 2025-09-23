@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { Navigate, useRoutes } from "react-router-dom";
 import { AdminLayout, AuthLayout, UserLayout } from "./layouts";
 
 import NotFound from "./app/not-found";
@@ -71,6 +71,8 @@ const Home = loadable(() => import("./app/home"));
 const ComponentsPage = loadable(() => import("./app/admin/components"));
 const AddComponentPage = loadable(() => import("./app/admin/add-component"));
 const Customize2 = loadable(() => import("./app/user/customize2"));
+const AddNewTheme = loadable(() => import("./app/admin/add-new-theme"));
+const EditTheme = loadable(() => import("./app/admin/edit-theme"));
 
 export default function App() {
   const publicRoutes = [
@@ -102,8 +104,30 @@ export default function App() {
             path: "dashboard",
           },
           {
-            element: <Settings fallback={<SystemSettingsSkeleton />} />,
             path: "settings",
+            children: [
+              {
+                index: true,
+                element: <Settings fallback={<SystemSettingsSkeleton />} />,
+              },
+              {
+                path: "add-theme",
+                element: <AddNewTheme />,
+              },
+              {
+                path: "edit-theme",
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="/settings" />,
+                  },
+                  {
+                    path: ":id",
+                    element: <EditTheme />,
+                  },
+                ],
+              },
+            ],
           },
           {
             path: "users",

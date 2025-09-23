@@ -23,12 +23,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatOrderDate } from "@/lib/utils";
 import { format, formatDate } from "date-fns";
-import { BouquetItem, Order } from "@/types";
+import { Order } from "@/types";
 import { useAuth } from "@/contexts";
 import { Link } from "react-router-dom";
-
-import { GET_ALL_BOUQUET_ITEMS_QUERY } from "@/queries";
-import { useQuery } from "@apollo/client";
 import { CustomizeDetailsModal } from "@/components/custom/customize-detail-modal";
 
 interface OrderDetailDialogProps {
@@ -53,27 +50,19 @@ export default function OrderDetailDialog({
     if (order.status === "READY_FOR_PICKUP") return 2; // Same level as SHIPPED
     return statuses.indexOf(order.status);
   };
-  const { loading } = useQuery<{
-    bouquetItems: { data: BouquetItem[]; hasNextPage: boolean; total: number };
-  }>(GET_ALL_BOUQUET_ITEMS_QUERY, {
-    variables: {
-      isAvailable: true,
-    },
-    fetchPolicy: "no-cache",
-  });
 
   const { user } = useAuth();
 
   const statusStep = getStatusStep();
-
-  if (loading) return null;
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>Order #{order.id.slice(-6)}</DialogTitle>
+            <DialogTitle>
+              Order {order.customizeId} {order.formattedId}
+            </DialogTitle>
             <DialogClose asChild>
               <Button variant="ghost" size="icon">
                 <X className="h-4 w-4" />
@@ -304,6 +293,23 @@ export default function OrderDetailDialog({
                   </li>
                 ))}
               </ul>
+              {!!order.customize.bill && (
+                <>
+                  <p className="text-sm">Money Bouquet</p>
+                  <ul className="ml-5 list-disc pl-2">
+                    <li className="text-sm">
+                      Bill:{" "}
+                      {Intl.NumberFormat("en-PH", {
+                        style: "currency",
+                        currency: "PHP",
+                      }).format(order.customize.bill)}
+                    </li>
+                    <li className="text-sm">
+                      Quantity: {order.customize.billQuantity}
+                    </li>
+                  </ul>
+                </>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -366,27 +372,31 @@ export default function OrderDetailDialog({
                 Subtotal (
                 {order.isPreOrder
                   ? "1 item"
-                  : `${order.orderItems.reduce(
-                      (acc, item) => acc + item.quantity,
-                      0,
-                    )} item`}
+                  : order.customize
+                    ? "1 Item"
+                    : `${order.orderItems.reduce(
+                        (acc, item) => acc + item.quantity,
+                        0,
+                      )} item`}
                 )
               </span>
               <span>
                 {order.isPreOrder
                   ? formatCurrency(order.totalPrice)
-                  : formatCurrency(
-                      order.orderItems.reduce(
-                        (acc, item) => acc + item.price,
-                        0,
-                      ),
-                    )}
+                  : order.customize
+                    ? order.totalPrice
+                    : formatCurrency(
+                        order.orderItems.reduce(
+                          (acc, item) => acc + item.price,
+                          0,
+                        ),
+                      )}
               </span>
             </div>
-            {order.shippingFee && (
+            {order.typeOfDelivery === "DELIVERY" && (
               <div className="flex justify-between text-sm">
                 <span>Delivery Fee</span>
-                <span>{formatCurrency(order.shippingFee)}</span>
+                <span>{formatCurrency(order?.shippingFee || 0)}</span>
               </div>
             )}
             <Separator className="my-2" />
