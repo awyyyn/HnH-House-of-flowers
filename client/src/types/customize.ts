@@ -11,6 +11,8 @@ export interface Customize {
   wrapperColor?: string;
   product: Product;
   productId: string;
+  bill?: number;
+  billQuantity?: number;
 
   createdAt: Date;
   updatedAt: Date;
