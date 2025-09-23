@@ -658,6 +658,8 @@ export const createOrderWithCustomization = async ({
     totalPrice: number;
     components: string[];
     wrapperColor?: string;
+    bill?: number;
+    billQuantity?: number;
   };
   deliveryType?: OrderDeliveryType;
   customerId: string;
@@ -743,6 +745,8 @@ export const createOrderWithCustomization = async ({
         components: {
           connect: customData.components.map((id) => ({ id })),
         },
+        bill: customData.bill,
+        billQuantity: customData.billQuantity,
         product: {
           connect: { id: customData.productId },
         },
@@ -752,6 +756,7 @@ export const createOrderWithCustomization = async ({
             totalPrice: customData.totalPrice,
             typeOfDelivery: deliveryType || "PICKUP",
             shippingFee: store?.deliveryFee,
+
             typeOfPayment: "GCASH",
             payment: {
               create: {
