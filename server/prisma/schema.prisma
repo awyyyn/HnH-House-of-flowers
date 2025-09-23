@@ -114,7 +114,7 @@ model Customize {
   wrapperColor String?
   product      Product     @relation(fields: [productId], references: [id])
   productId    String      @db.ObjectId
-  bill         String?     @default("")
+  bill         Int?
   billQuantity Int?
 
   order Order[]
