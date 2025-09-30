@@ -67,6 +67,7 @@ export function CheckoutModal({
           fromCartItem: false,
           typeOfDelivery: deliveryType,
           typeOfPayment: paymentType,
+          preOrder: isPreOrder || false,
         },
         refetchQueries: [GET_PRODUCT_QUERY, GET_PRODUCTS_QUERY],
       });
@@ -128,7 +129,7 @@ export function CheckoutModal({
           disabled={loading || product.stock === 0}
         >
           <Zap className="mr-2 h-3 w-3" />
-          {isPreOrder ? "Pre-Order" : "Buy Now"}
+          {isPreOrder ? "Pre-dd Order" : "Buy Now"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

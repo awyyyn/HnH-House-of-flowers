@@ -1,31 +1,53 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { useAuth } from "@/contexts";
 import { UserRole } from "@/types";
 import { Loader } from "./loader";
+import { useEffect } from "react";
 
 interface ProtectedRouteProps {
-	allowedRoles: UserRole[];
+  allowedRoles: UserRole[];
 }
 
 export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
-	const { isAuthenticated, role, loading, user } = useAuth();
+  const { isAuthenticated, role, loading, user } = useAuth();
+  const location = useLocation();
 
-	if (loading) return <Loader />;
+  useEffect(() => {
+    // Function to handle beforeunload event
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Save the current path to localStorage or sessionStorage
+      localStorage.setItem("lastPath", location.pathname);
 
-	if (!isAuthenticated) return <Navigate to="/auth/login" />;
+      // Optional: Customize the message shown when trying to leave (works in some browsers)
+      event.returnValue =
+        "Are you sure you want to leave? Your work may not be saved.";
+    };
 
-	if (role !== null && !allowedRoles.includes(role)) {
-		return <Navigate to="/unauthorized" />;
-	}
+    // Add the event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-	if (role !== null && (user.status === "UNVERIFIED" || !user.verifiedAt)) {
-		return <Navigate to="/verify-account" />;
-	}
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [location]);
 
-	if (role !== null && (user.phoneNumber === null || !user.phoneNumber)) {
-		return <Navigate to="/set-up-account" />;
-	}
+  if (loading) return <Loader />;
 
-	return <Outlet />;
+  if (!isAuthenticated) return <Navigate to="/auth/login" />;
+
+  if (role !== null && !allowedRoles.includes(role)) {
+    return <Navigate to="/unauthorized" />;
+  }
+
+  if (role !== null && (user.status === "UNVERIFIED" || !user.verifiedAt)) {
+    return <Navigate to="/verify-account" />;
+  }
+
+  if (role !== null && (user.phoneNumber === null || !user.phoneNumber)) {
+    return <Navigate to="/set-up-account" />;
+  }
+
+  return <Outlet />;
 }

@@ -6,7 +6,7 @@ export default function AuthLayout() {
   const { theme } = useTheme();
   const { isAuthenticated, role } = useAuth();
   const { state } = useLocation();
-  const path = localStorage.getItem("lastPathname");
+  const path = localStorage.getItem("lastPath");
 
   if (isAuthenticated)
     return (
@@ -16,7 +16,7 @@ export default function AuthLayout() {
             ? state
               ? state.from || path
               : path || "/"
-            : "/dashboard"
+            : path || "/dashboard"
         }
       />
     );

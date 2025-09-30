@@ -32,6 +32,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import {
   CREATE_PRODUCT_MUTATION,
+  GET_PRODUCT_QUERY,
+  GET_PRODUCTS_QUERY,
   READ_COMPONENTS_QUERY,
   UPDATE_PRODUCT_MUTATION,
 } from "@/queries";
@@ -76,7 +78,8 @@ const formSchema = z
           message: "You must select a flower variant",
         },
       )
-      .optional(),
+      .optional()
+      .nullable(),
     otherFee: z.preprocess(
       (val) => {
         if (val === "" || val === null || val === undefined) return undefined;
@@ -239,6 +242,7 @@ export default function ProductForm({
 
       await addProduct({
         variables,
+        refetchQueries: [GET_PRODUCTS_QUERY, GET_PRODUCT_QUERY],
       });
 
       navigate("/products");
@@ -299,10 +303,12 @@ export default function ProductForm({
   const watchedCategory = form.watch("category");
   const shouldShowTags = ["FLOWER", "BOUQUET"].includes(watchedCategory);
   const shouldShowComponents = watchedCategory === "BOUQUET";
-  const flowerOptions =
-    componentsState.filter((comp) => comp.type === "FLOWER") || [];
-  const wrapperOptions =
-    componentsState.filter((comp) => comp.type === "WRAPPER") || [];
+  const flowerOptions = (
+    componentsState.filter((comp) => comp.type === "FLOWER") || []
+  ).filter((f) => f.isAvailable && f.quantity > 0);
+  const wrapperOptions = (
+    componentsState.filter((comp) => comp.type === "WRAPPER") || []
+  ).filter((f) => f.isAvailable && f.quantity > 0);
   const category = form.watch("category");
   const flower = form.watch("flower");
   const wrapper = form.watch("wrapper");
@@ -534,20 +540,22 @@ export default function ProductForm({
                       </FormLabel>
                       <ToggleGroup
                         className=""
-                        value={field.value}
+                        value={field.value === null ? undefined : field.value}
                         onValueChange={field.onChange}
                         type="single"
                         unselectable="on"
                       >
-                        {flowerVariantOptions.map((flower) => (
-                          <ToggleGroupItem
-                            key={flower.value}
-                            value={flower.value}
-                            aria-label={`Toggle ${flower.label}`}
-                          >
-                            <span>{flower.label}</span>
-                          </ToggleGroupItem>
-                        ))}
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 w-full">
+                          {flowerVariantOptions.map((flower) => (
+                            <ToggleGroupItem
+                              key={flower.value}
+                              value={flower.value}
+                              aria-label={`Toggle ${flower.label}`}
+                            >
+                              <span>{flower.label}</span>
+                            </ToggleGroupItem>
+                          ))}
+                        </div>
                       </ToggleGroup>
                       <FormMessage className="dark:text-primary" />
                     </FormItem>
@@ -604,26 +612,36 @@ export default function ProductForm({
                               <SelectContent>
                                 <SelectGroup>
                                   <SelectLabel>Flowers</SelectLabel>
-                                  {flowerOptions.map((flower) => (
-                                    <SelectItem
-                                      value={flower.id}
-                                      key={flower.id}
-                                      className="capitalize  w-full  "
-                                    >
-                                      <div className="   flex  items-center gap-3">
-                                        <img
-                                          src={
-                                            flower.image ||
-                                            "https://blocks.astratic.com/img/general-img-landscape.png"
-                                          }
-                                          alt={flower.name}
-                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                        />
+                                  {flowerOptions.length > 0 ? (
+                                    flowerOptions.map((flower) => (
+                                      <SelectItem
+                                        value={flower.id}
+                                        key={flower.id}
+                                        className="capitalize  w-full  "
+                                      >
+                                        <div className="   flex  items-center gap-3">
+                                          <img
+                                            src={
+                                              flower.image ||
+                                              "https://blocks.astratic.com/img/general-img-landscape.png"
+                                            }
+                                            alt={flower.name}
+                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                          />
 
-                                        <p className=" ">{flower.name}</p>
-                                      </div>
+                                          <p className=" ">{flower.name}</p>
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem
+                                      value="no-data"
+                                      key="no-data"
+                                      disabled
+                                    >
+                                      No flower components available
                                     </SelectItem>
-                                  ))}
+                                  )}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
@@ -670,26 +688,37 @@ export default function ProductForm({
                               <SelectContent>
                                 <SelectGroup>
                                   <SelectLabel>Wrappers</SelectLabel>
-                                  {wrapperOptions.map((wrapper) => (
+                                  {wrapperOptions.length > 0 ? (
+                                    wrapperOptions.map((wrapper) => (
+                                      <SelectItem
+                                        value={wrapper.id}
+                                        key={wrapper.id}
+                                        className="capitalize  w-full  "
+                                      >
+                                        <div className="   flex  items-center gap-3">
+                                          <img
+                                            src={
+                                              wrapper.image ||
+                                              "https://blocks.astratic.com/img/general-img-landscape.png"
+                                            }
+                                            alt={wrapper.name}
+                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                          />
+
+                                          <p className=" ">{wrapper.name}</p>
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
                                     <SelectItem
-                                      value={wrapper.id}
-                                      key={wrapper.id}
+                                      disabled
+                                      value={"no-data"}
+                                      key={"no-data"}
                                       className="capitalize  w-full  "
                                     >
-                                      <div className="   flex  items-center gap-3">
-                                        <img
-                                          src={
-                                            wrapper.image ||
-                                            "https://blocks.astratic.com/img/general-img-landscape.png"
-                                          }
-                                          alt={wrapper.name}
-                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                        />
-
-                                        <p className=" ">{wrapper.name}</p>
-                                      </div>
+                                      No wrapper components available
                                     </SelectItem>
-                                  ))}
+                                  )}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>

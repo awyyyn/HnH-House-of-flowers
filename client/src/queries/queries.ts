@@ -427,6 +427,7 @@ export const HOME_QUERY = gql`
 
 export const READ_PRODUCT_WITH_REVIEWS = gql`
   ${productFragment}
+  ${componentFragment}
   query ReadReviews(
     $id: ID!
     $productId: String!
@@ -450,6 +451,9 @@ export const READ_PRODUCT_WITH_REVIEWS = gql`
 
     product(id: $id) {
       ...ProductFragment
+      components {
+        ...ComponentFragment
+      }
     }
   }
 `;
