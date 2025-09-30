@@ -67,6 +67,7 @@ export function CheckoutModal({
           fromCartItem: false,
           typeOfDelivery: deliveryType,
           typeOfPayment: paymentType,
+          preOrder: isPreOrder || false,
         },
         refetchQueries: [GET_PRODUCT_QUERY, GET_PRODUCTS_QUERY],
       });

@@ -206,6 +206,7 @@ export const CHECKOUT_MUTATION = gql`
     $typeOfDelivery: OrderDeliveryType!
     $typeOfPayment: OrderPaymentType!
     $fromCartItem: Boolean
+    $preOrder: Boolean
   ) {
     createCheckoutSession(
       line_items: $lineItems
@@ -213,6 +214,7 @@ export const CHECKOUT_MUTATION = gql`
       typeOfDelivery: $typeOfDelivery
       typeOfPayment: $typeOfPayment
       fromCartItem: $fromCartItem
+      preOrder: $preOrder
     ) {
       id
       payment {
