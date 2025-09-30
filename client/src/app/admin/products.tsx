@@ -72,9 +72,10 @@ export default function ProductsPage() {
         return (
           <Badge
             variant={productStatusColorMap[row.original.status]}
-            className="capitalize"
+            className="first-letter:uppercase"
           >
-            {row.original.status.toLowerCase().replace("_", " ")}
+            {row.original.status.slice(0, 1)}
+            {row.original.status.toLowerCase().replace(/_/g, " ").slice(1)}
           </Badge>
         );
       },
