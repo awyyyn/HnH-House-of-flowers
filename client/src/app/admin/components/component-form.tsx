@@ -91,7 +91,7 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       image: value?.image || "",
       isAvailable: value?.isAvailable || true,
       name: value?.name || "",
-      price: value?.price || 0,
+      price: value?.price || 1,
       type: value?.type || "FLOWER",
       flowerVariant: value?.flowerVariant || "FRESH",
     },
@@ -102,8 +102,8 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
     if (value) {
       form.setValue("name", value.name);
       form.setValue("description", value.description || "");
-      form.setValue("stock", value.quantity || 0);
-      form.setValue("price", value.price || 0);
+      form.setValue("stock", value.quantity || 1);
+      form.setValue("price", value.price || 1);
       form.setValue("image", value.image || "");
       form.setValue("type", value.type || "FLOWER");
       form.setValue("isAvailable", value.isAvailable || true);

@@ -299,8 +299,9 @@ export default function ProductForm({
   const watchedCategory = form.watch("category");
   const shouldShowTags = ["FLOWER", "BOUQUET"].includes(watchedCategory);
   const shouldShowComponents = watchedCategory === "BOUQUET";
-  const flowerOptions =
-    componentsState.filter((comp) => comp.type === "FLOWER") || [];
+  const flowerOptions = (
+    componentsState.filter((comp) => comp.type === "FLOWER") || []
+  ).filter((f) => f.isAvailable && f.quantity > 0);
   const wrapperOptions =
     componentsState.filter((comp) => comp.type === "WRAPPER") || [];
   const category = form.watch("category");
