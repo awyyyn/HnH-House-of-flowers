@@ -32,6 +32,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import {
   CREATE_PRODUCT_MUTATION,
+  GET_PRODUCT_QUERY,
+  GET_PRODUCTS_QUERY,
   READ_COMPONENTS_QUERY,
   UPDATE_PRODUCT_MUTATION,
 } from "@/queries";
@@ -76,7 +78,8 @@ const formSchema = z
           message: "You must select a flower variant",
         },
       )
-      .optional(),
+      .optional()
+      .nullable(),
     otherFee: z.preprocess(
       (val) => {
         if (val === "" || val === null || val === undefined) return undefined;
@@ -239,6 +242,7 @@ export default function ProductForm({
 
       await addProduct({
         variables,
+        refetchQueries: [GET_PRODUCTS_QUERY, GET_PRODUCT_QUERY],
       });
 
       navigate("/products");
@@ -258,6 +262,8 @@ export default function ProductForm({
       });
     }
   };
+
+  console.log(form.formState.errors, "qqqq");
 
   const handleFileUpload = (files: File[]) => {
     const url = `https://api.cloudinary.com/v1_1/${
@@ -535,20 +541,22 @@ export default function ProductForm({
                       </FormLabel>
                       <ToggleGroup
                         className=""
-                        value={field.value}
+                        value={field.value === null ? undefined : field.value}
                         onValueChange={field.onChange}
                         type="single"
                         unselectable="on"
                       >
-                        {flowerVariantOptions.map((flower) => (
-                          <ToggleGroupItem
-                            key={flower.value}
-                            value={flower.value}
-                            aria-label={`Toggle ${flower.label}`}
-                          >
-                            <span>{flower.label}</span>
-                          </ToggleGroupItem>
-                        ))}
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 w-full">
+                          {flowerVariantOptions.map((flower) => (
+                            <ToggleGroupItem
+                              key={flower.value}
+                              value={flower.value}
+                              aria-label={`Toggle ${flower.label}`}
+                            >
+                              <span>{flower.label}</span>
+                            </ToggleGroupItem>
+                          ))}
+                        </div>
                       </ToggleGroup>
                       <FormMessage className="dark:text-primary" />
                     </FormItem>
