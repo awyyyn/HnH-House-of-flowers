@@ -51,6 +51,8 @@ export const createCheckoutSessionResolver = async (
       checkoutUrl: "no-url",
     };
 
+    // return console.log(JSON.stringify(line_items, null, 2));
+
     await Promise.all(
       line_items.map(async (item) => {
         const product = await readProduct(item.id);
@@ -79,6 +81,32 @@ export const createCheckoutSessionResolver = async (
 
       const store = await getStore();
 
+      console.log(JSON.stringify(line_items, null, 2));
+
+      const items = [
+        ...line_items.map((item) => ({
+          currency: "PHP",
+          quantity: item.quantity,
+          amount: item.amount * 100,
+          name: item.name,
+          description: "Information about the product",
+          images: item.images,
+        })),
+      ];
+
+      if (typeOfDelivery === "DELIVERY") {
+        items.push({
+          currency: "PHP",
+          quantity: 1,
+          amount: Number(store?.deliveryFee || 0) * 100,
+          name: "Delivery Fee",
+          description: "Charge for delivery",
+          images: [
+            "https://cdn1.iconfinder.com/data/icons/logistics-transportation-vehicles/202/logistic-shipping-vehicles-002-512.png",
+          ],
+        });
+      }
+
       const options = {
         method: "POST",
         headers: {
@@ -93,26 +121,7 @@ export const createCheckoutSessionResolver = async (
               show_description: true,
               show_line_items: true,
               description: "Payment for items",
-              line_items: [
-                ...line_items.map((item) => ({
-                  currency: "PHP",
-                  quantity: item.quantity,
-                  amount: item.amount * 100,
-                  name: item.name,
-                  description: "Information about the product",
-                  images: item.images,
-                })),
-                typeOfDelivery === "DELIVERY" && {
-                  currency: "PHP",
-                  quantity: 1,
-                  amount: Number(store?.deliveryFee || 0) * 100,
-                  name: "Delivery Fee",
-                  description: "Charge for delivery",
-                  images: [
-                    "https://cdn1.iconfinder.com/data/icons/logistics-transportation-vehicles/202/logistic-shipping-vehicles-002-512.png",
-                  ],
-                },
-              ],
+              line_items: items,
               payment_method_types: ["gcash", "paymaya"],
               success_url: `${environment.CLIENT_URL}/checkout/success`,
               cancel_url: `${environment.CLIENT_URL}/checkout/cancel`,
@@ -125,6 +134,7 @@ export const createCheckoutSessionResolver = async (
       const data = await response.json();
 
       if (response.status !== 200) {
+        console.log(data, "qqqq");
         throw new GraphQLError("Failed to checkout");
       }
 
@@ -175,7 +185,7 @@ export const createCheckoutSessionResolver = async (
 
     return order;
   } catch (err) {
-    console.log(err);
+    console.log(err, "qqqs");
     throw new GraphQLError((err as GraphQLError).message);
   }
 };

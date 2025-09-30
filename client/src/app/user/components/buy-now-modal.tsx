@@ -128,7 +128,7 @@ export function CheckoutModal({
           disabled={loading || product.stock === 0}
         >
           <Zap className="mr-2 h-3 w-3" />
-          {isPreOrder ? "Pre-Order" : "Buy Now"}
+          {isPreOrder ? "Pre-dd Order" : "Buy Now"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
