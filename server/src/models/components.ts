@@ -71,10 +71,13 @@ export const readComponents = async ({
     ];
   }
 
+  if (typeof isAvailable !== "undefined") {
+    where.isAvailable = isAvailable;
+  }
+
   const components = await prisma.component.findMany({
     where: {
       ...where,
-      isAvailable: !!isAvailable,
     },
     skip: pagination ? pagination.limit * pagination?.page : undefined,
     take: pagination ? pagination.limit : undefined,
