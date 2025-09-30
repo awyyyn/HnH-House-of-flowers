@@ -263,8 +263,6 @@ export default function ProductForm({
     }
   };
 
-  console.log(form.formState.errors, "qqqq");
-
   const handleFileUpload = (files: File[]) => {
     const url = `https://api.cloudinary.com/v1_1/${
       import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
@@ -308,8 +306,9 @@ export default function ProductForm({
   const flowerOptions = (
     componentsState.filter((comp) => comp.type === "FLOWER") || []
   ).filter((f) => f.isAvailable && f.quantity > 0);
-  const wrapperOptions =
-    componentsState.filter((comp) => comp.type === "WRAPPER") || [];
+  const wrapperOptions = (
+    componentsState.filter((comp) => comp.type === "WRAPPER") || []
+  ).filter((f) => f.isAvailable && f.quantity > 0);
   const category = form.watch("category");
   const flower = form.watch("flower");
   const wrapper = form.watch("wrapper");
@@ -613,26 +612,36 @@ export default function ProductForm({
                               <SelectContent>
                                 <SelectGroup>
                                   <SelectLabel>Flowers</SelectLabel>
-                                  {flowerOptions.map((flower) => (
-                                    <SelectItem
-                                      value={flower.id}
-                                      key={flower.id}
-                                      className="capitalize  w-full  "
-                                    >
-                                      <div className="   flex  items-center gap-3">
-                                        <img
-                                          src={
-                                            flower.image ||
-                                            "https://blocks.astratic.com/img/general-img-landscape.png"
-                                          }
-                                          alt={flower.name}
-                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                        />
+                                  {flowerOptions.length > 0 ? (
+                                    flowerOptions.map((flower) => (
+                                      <SelectItem
+                                        value={flower.id}
+                                        key={flower.id}
+                                        className="capitalize  w-full  "
+                                      >
+                                        <div className="   flex  items-center gap-3">
+                                          <img
+                                            src={
+                                              flower.image ||
+                                              "https://blocks.astratic.com/img/general-img-landscape.png"
+                                            }
+                                            alt={flower.name}
+                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                          />
 
-                                        <p className=" ">{flower.name}</p>
-                                      </div>
+                                          <p className=" ">{flower.name}</p>
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem
+                                      value="no-data"
+                                      key="no-data"
+                                      disabled
+                                    >
+                                      No flower components available
                                     </SelectItem>
-                                  ))}
+                                  )}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
@@ -679,26 +688,37 @@ export default function ProductForm({
                               <SelectContent>
                                 <SelectGroup>
                                   <SelectLabel>Wrappers</SelectLabel>
-                                  {wrapperOptions.map((wrapper) => (
+                                  {wrapperOptions.length > 0 ? (
+                                    wrapperOptions.map((wrapper) => (
+                                      <SelectItem
+                                        value={wrapper.id}
+                                        key={wrapper.id}
+                                        className="capitalize  w-full  "
+                                      >
+                                        <div className="   flex  items-center gap-3">
+                                          <img
+                                            src={
+                                              wrapper.image ||
+                                              "https://blocks.astratic.com/img/general-img-landscape.png"
+                                            }
+                                            alt={wrapper.name}
+                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                          />
+
+                                          <p className=" ">{wrapper.name}</p>
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
                                     <SelectItem
-                                      value={wrapper.id}
-                                      key={wrapper.id}
+                                      disabled
+                                      value={"no-data"}
+                                      key={"no-data"}
                                       className="capitalize  w-full  "
                                     >
-                                      <div className="   flex  items-center gap-3">
-                                        <img
-                                          src={
-                                            wrapper.image ||
-                                            "https://blocks.astratic.com/img/general-img-landscape.png"
-                                          }
-                                          alt={wrapper.name}
-                                          className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                        />
-
-                                        <p className=" ">{wrapper.name}</p>
-                                      </div>
+                                      No wrapper components available
                                     </SelectItem>
-                                  ))}
+                                  )}
                                 </SelectGroup>
                               </SelectContent>
                             </Select>

@@ -728,7 +728,9 @@ const Customize2 = () => {
                           {Intl.NumberFormat("en-PH", {
                             currency: "PHP",
                             style: "currency",
-                          }).format(product.otherFee || 0 + addedOtherFee)}
+                          }).format(
+                            (addedOtherFee || 0) + (product.otherFee || 0),
+                          )}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
