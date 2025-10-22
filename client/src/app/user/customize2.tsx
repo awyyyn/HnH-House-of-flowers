@@ -20,8 +20,7 @@ import {
 import {
   ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN,
   CREATE_CUSTOMOMIZE_ORDER_MUTATION,
-  GET_PRODUCT_QUERY,
-  READ_COMPONENTS_QUERY,
+  GET_CUSTOMIZE_OPTIONS_QUERY,
 } from "@/queries";
 import { componentsAtom } from "@/states/components";
 import { Component, Product } from "@/types";
@@ -49,6 +48,7 @@ const formSchema = z
     totalPrice: z.number(),
     bill: z.number().optional(),
     billQuantity: z.string().optional(),
+    otherProducts: z.array(z.string()).optional(),
   })
   .superRefine((data, ctx) => {
     if (!!data.bill && !data.billQuantity) {
@@ -96,8 +96,11 @@ const Customize2 = () => {
     ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN,
   );
   const [flwrsNum, setFlwrsNum] = useState<number>(1);
+  const [additionalProducts, setAdditionalProducts] = useState<number>(1);
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
-
+  const [additionalProductsOptions, setAdditionalProductsOptions] = useState<
+    Product[]
+  >([]);
   const { data, loading } = useQuery<{
     components: { data: Component[]; hasNextPage: boolean; total: number };
     product: Product;
@@ -106,6 +109,9 @@ const Customize2 = () => {
   }>(GET_CUSTOMIZE_OPTIONS_QUERY, {
     variables: {
       id: productId,
+      isAvailable: true,
+      giftsCategory: "GIFT",
+      chocolatesCategory: "CHOCOLATE",
     },
     onCompleted(data) {
       setComponentsState(data.components.data || []);
@@ -116,11 +122,17 @@ const Customize2 = () => {
       setFlwrsNum(data.product.flowerComponents?.length || 1);
       form.setValue("wrapper", data.product.wrapperComponent?.id || "");
       form.setValue("totalPrice", data.product.price || 0);
+      setAdditionalProductsOptions(
+        [...(data.chocolates.data || []), ...(data.gifts.data || [])].filter(
+          (item) => item.stock > 1 && item.status === "IN_STOCK",
+        ),
+      );
     },
   });
   const [totalPrice, setTotalPrice] = useState<number>(
     data?.product.price || 0,
   );
+  const [additionalPrdctsFees, setAdditionalPrdctsFees] = useState<number>(0);
   const [flowerFees, setFlowerFees] = useState<number>(0);
 
   const flowerOptions =
@@ -137,46 +149,35 @@ const Customize2 = () => {
 
   // optionsStates
 
-  const watchedFlower = form.watch("flowers");
-  const watchedWrapper = form.watch("wrapper");
-  const watchedBill = form.watch("bill");
-  const watchedBillQuantity = form.watch("billQuantity");
-  const addedOtherFee = (watchedBill || 0) * Number(watchedBillQuantity || 0);
-
   useEffect(() => {
-    if (watchedBill) {
-      form.setValue("billQuantity", "5");
-    }
-  }, [watchedBill]);
+    let total = 0;
+    const addtprdcts = form.watch("otherProducts");
+    const totalProducts = (addtprdcts || []).reduce((acc, prdctId) => {
+      const product = additionalProductsOptions.find((p) => p.id === prdctId);
+      return acc + (product?.price || 0);
+    }, 0);
 
-  useEffect(() => {
-    if (watchedFlower && watchedWrapper) {
-      // const flower = flowerOptions.find((flr) => flr.id === watchedFlower);
-      // const wrapper = wrapperOptions.find((wrp) => wrp.id === watchedWrapper);
-      // let tot = product.price;
-      // tot -= wrapperOldPrice || 0;
-      // tot -= flowerOldPrice || 0;
-      // tot += flower?.price || 0;
-      // tot += wrapper?.price || 0;
-      // if (watchedBill && watchedBillQuantity) {
-      //   tot += Number(watchedBill) * Number(watchedBillQuantity || 0);
-      // }
-      // form.setValue("totalPrice", tot || 0);
-    }
-  }, [watchedFlower, watchedWrapper, watchedBill, watchedBillQuantity]);
-
-  useEffect(() => {
     const flowers = form.watch("flowers");
 
-    const total = (flowers || []).reduce((acc, flwrId) => {
+    const totalFlowers = (flowers || []).reduce((acc, flwrId) => {
       const flower = flowerOptions.find((f) => f.id === flwrId);
       return acc + (flower?.price || 0);
     }, 0);
 
-    setFlowerFees(total);
+    const wrapper =
+      wrapperOptions.find((wrapper) => wrapper.id === form.getValues("wrapper"))
+        ?.price || 0;
 
-    console.log(total, "qqqq");
-  }, [flwrsNum, totalPrice, data, componentsState]);
+    total += totalFlowers;
+    total += totalProducts;
+    total += wrapper;
+    total += product.serviceFee || 0;
+    total += product.otherFee || 0;
+
+    setFlowerFees(totalFlowers);
+    setAdditionalPrdctsFees(totalProducts);
+    form.setValue("totalPrice", total);
+  }, [additionalProducts, data, totalPrice, flwrsNum]);
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -210,6 +211,7 @@ const Customize2 = () => {
 
   async function handleSubmit(values: FormData) {
     try {
+      // return console.log(values, "qqqq");
       if (!isAuthenticated) {
         return navigate("/auth/login", {
           state: {
@@ -512,7 +514,7 @@ const Customize2 = () => {
                           <div className="flex items-center w-full  gap-5  ">
                             <div className="w-[70%] md:w-[85%]">
                               <FormLabel className="text-black dark:text-white ">
-                                Flower Component
+                                Flower Components
                               </FormLabel>
                             </div>
                           </div>
@@ -583,45 +585,47 @@ const Customize2 = () => {
                                         </SelectContent>
                                       </Select>
                                     </div>
-                                    <div className="">
-                                      <h3>Price:</h3>
-                                      <p>
-                                        {Intl.NumberFormat("en-PH", {
-                                          currency: "PHP",
-                                          style: "currency",
-                                        }).format(
-                                          flowerOptions.find(
-                                            (flower) =>
-                                              flower.id ===
-                                              (form.getValues()?.flowers ||
-                                                [])![index],
-                                          )?.price || 0,
-                                        )}
-                                      </p>
+                                    <div className="flex gap-2 items-end justify-start">
+                                      <div>
+                                        <h3>Price:</h3>
+                                        <p>
+                                          {Intl.NumberFormat("en-PH", {
+                                            currency: "PHP",
+                                            style: "currency",
+                                          }).format(
+                                            flowerOptions.find(
+                                              (flower) =>
+                                                flower.id ===
+                                                (form.getValues()?.flowers ||
+                                                  [])![index],
+                                            )?.price || 0,
+                                          )}
+                                        </p>
+                                      </div>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => {
+                                          const flwrs =
+                                            form.getValues("flowers") || [];
+
+                                          if (flwrs.length >= index) {
+                                            flwrs.splice(index, 1);
+                                            form.setValue("flowers", flwrs);
+                                          }
+                                          console.log(flwrs, "qq");
+                                          setFlwrsNum((num) => num - 1);
+                                        }}
+                                        type="button"
+                                        disabled={
+                                          form.getValues("flowers")?.length ===
+                                          1
+                                        }
+                                        className="mt-0.5"
+                                      >
+                                        Remove
+                                      </Button>
                                     </div>
                                   </div>
-
-                                  <Button
-                                    size="sm"
-                                    onClick={() => {
-                                      const flwrs =
-                                        form.getValues("flowers") || [];
-
-                                      if (flwrs.length >= index) {
-                                        flwrs.splice(index, 1);
-                                        form.setValue("flowers", flwrs);
-                                      }
-                                      console.log(flwrs, "qq");
-                                      setFlwrsNum((num) => num - 1);
-                                    }}
-                                    type="button"
-                                    disabled={
-                                      form.getValues("flowers")?.length === 1
-                                    }
-                                    className="mt-0.5"
-                                  >
-                                    Remove
-                                  </Button>
                                 </div>
                               ),
                             )}
@@ -633,6 +637,136 @@ const Customize2 = () => {
                             type="button"
                           >
                             Add Flower
+                          </Button>
+
+                          <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="otherProducts"
+                      render={() => (
+                        <FormItem className="flex w-full flex-col  items-start">
+                          <div className="flex items-center w-full  gap-5  ">
+                            <div className="w-[70%] md:w-[85%]">
+                              <FormLabel className="text-black dark:text-white ">
+                                Additional Products
+                              </FormLabel>
+                            </div>
+                          </div>
+
+                          {Array.from({ length: additionalProducts }).map(
+                            (_, index: number) => (
+                              <div key={index} className="w-full">
+                                <div className="flex items-center w-full  gap-5  ">
+                                  <div className="w-[70%] md:w-[85%]">
+                                    <Select
+                                      key={index}
+                                      // onValueChange={field.onChange}
+                                      onValueChange={(value) => {
+                                        console.log(value);
+                                        const prdcts =
+                                          form.getValues("otherProducts") || [];
+                                        prdcts[index] = value;
+                                        form.setValue("otherProducts", prdcts);
+                                        setTotalPrice((p) => p + 1);
+                                      }}
+                                    >
+                                      <SelectTrigger className="w-full  mt-1 border-gray-300 dark:bg-zinc-900">
+                                        <SelectValue placeholder="Select a product" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>
+                                            Product {index + 1}
+                                          </SelectLabel>
+                                          {additionalProductsOptions.length >
+                                          0 ? (
+                                            additionalProductsOptions.map(
+                                              (product) => (
+                                                <SelectItem
+                                                  value={product.id}
+                                                  key={product.id}
+                                                  className="capitalize  w-full  "
+                                                >
+                                                  <div className="   flex  items-center gap-3">
+                                                    <img
+                                                      src={
+                                                        product.images[0] ||
+                                                        "https://blocks.astratic.com/img/general-img-landscape.png"
+                                                      }
+                                                      alt={product.name}
+                                                      className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                                    />
+
+                                                    <p className=" ">
+                                                      {product.name}
+                                                    </p>
+                                                  </div>
+                                                </SelectItem>
+                                              ),
+                                            )
+                                          ) : (
+                                            <SelectItem
+                                              value="no-data"
+                                              key="no-data"
+                                              disabled
+                                            >
+                                              No products available
+                                            </SelectItem>
+                                          )}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="flex gap-2 items-end justify-start">
+                                    <div className="">
+                                      <h3>Price:</h3>
+                                      <p>
+                                        {Intl.NumberFormat("en-PH", {
+                                          currency: "PHP",
+                                          style: "currency",
+                                        }).format(
+                                          additionalProductsOptions.find(
+                                            (product) =>
+                                              product.id ===
+                                              (form.getValues()
+                                                ?.otherProducts || [])![index],
+                                          )?.price || 0,
+                                        )}
+                                      </p>
+                                    </div>{" "}
+                                    <Button
+                                      size="sm"
+                                      onClick={() => {
+                                        const flwrs =
+                                          form.getValues("otherProducts") || [];
+                                        flwrs.splice(index, 1);
+                                        form.setValue("otherProducts", flwrs);
+                                        console.log(flwrs, "qq");
+                                        setAdditionalProducts((num) => num - 1);
+                                      }}
+                                      type="button"
+                                      className="mt-0.5"
+                                    >
+                                      Remove
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            ),
+                          )}
+
+                          <Button
+                            onClick={() =>
+                              setAdditionalProducts((num) => num + 1)
+                            }
+                            size="sm"
+                            className="mt-1"
+                            type="button"
+                          >
+                            Add Product
                           </Button>
 
                           <FormMessage className="dark:text-primary dark:bg-zinc-900" />
@@ -778,16 +912,12 @@ const Customize2 = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <h3 className="">Flower Fee:</h3>
+                        <h3 className="">Flowers Fee:</h3>
                         <span className="text-lg font-thin">
-                          {/*{Intl.NumberFormat("en-PH", {
+                          {Intl.NumberFormat("en-PH", {
                             currency: "PHP",
                             style: "currency",
-                          }).format(
-                            flowerOptions.find(
-                              (f) => f.id === form.watch("flower"),
-                            )?.price || 0,
-                          )}*/}
+                          }).format(flowerFees)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -800,6 +930,24 @@ const Customize2 = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
+                        <h3 className="">Additional Fees:</h3>
+                        <span className="text-lg font-thin">
+                          {Intl.NumberFormat("en-PH", {
+                            currency: "PHP",
+                            style: "currency",
+                          }).format(additionalPrdctsFees || 0)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <h3 className="">Other Fees:</h3>
+                        <span className="text-lg font-thin">
+                          {Intl.NumberFormat("en-PH", {
+                            currency: "PHP",
+                            style: "currency",
+                          }).format(product.otherFee || 0)}
+                        </span>
+                      </div>
+                      {/*<div className="flex items-center justify-between">
                         <h3 className="">Other Fee:</h3>
                         <span className="text-lg font-thin">
                           {Intl.NumberFormat("en-PH", {
@@ -809,7 +957,7 @@ const Customize2 = () => {
                             (addedOtherFee || 0) + (product.otherFee || 0),
                           )}
                         </span>
-                      </div>
+                      </div>*/}
                       <div className="flex items-center justify-between">
                         <h3 className="text-xl">Total Customization Price: </h3>
                         <span className="text-xl font-medium">
