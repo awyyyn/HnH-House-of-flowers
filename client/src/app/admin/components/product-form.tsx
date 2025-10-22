@@ -734,7 +734,7 @@ export default function ProductForm({
                                       <SelectContent>
                                         <SelectGroup>
                                           <SelectLabel>
-                                            Flower {index + 2}
+                                            Flower {index + 1}
                                           </SelectLabel>
                                           {flowerOptions.length > 0 ? (
                                             flowerOptions.map((flower) => (
