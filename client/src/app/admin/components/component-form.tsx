@@ -442,13 +442,23 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                       {img.length > 0 ? (
                         <>
                           <div className="absolute cursor-pointer place-content-center z-50 backdrop-blur-md  hidden group-hover:grid h-full w-full">
-                            <Button type="button">Remove</Button>
+                            <Button
+                              onClick={() => {
+                                form.setValue("image", "");
+                                setImg("");
+                              }}
+                              type="button"
+                            >
+                              Remove
+                            </Button>
                           </div>
                           <img
                             src={img[0]}
                             alt="product img"
                             className="absolute w-full h-full object-contain group rounded-lg"
                           />
+                          <br />
+                          {img}
                         </>
                       ) : (
                         <>
