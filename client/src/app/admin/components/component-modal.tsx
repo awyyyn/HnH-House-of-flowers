@@ -11,6 +11,7 @@ import { Package, Calendar, Palette, PhilippinePeso } from "lucide-react";
 import { Component } from "@/types";
 import { formatDate } from "date-fns";
 import { Button, RichTextEditor } from "@/components";
+import { formatCurrency } from "@/lib";
 
 interface ComponentDetailsModalProps {
   component: Component;
@@ -27,10 +28,7 @@ export function ComponentDetailsModal({
 }: ComponentDetailsModalProps) {
   const formatPrice = (price?: number) => {
     if (!price) return "Free";
-    return new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(price);
+    return formatCurrency(price);
   };
 
   const renderColorPreviews = (colors: string[]) => {
