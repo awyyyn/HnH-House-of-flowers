@@ -42,7 +42,7 @@ import { useMutation, useQuery } from "@apollo/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, Plus, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -105,7 +105,7 @@ const formSchema = z
         .optional(),
     ),
     wrapper: z.string().optional(),
-    flower: z.string().optional(),
+    flowers: z.array(z.string()).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.category === "FLOWER") {
@@ -146,7 +146,7 @@ const formSchema = z
         });
       }
 
-      if (!data.flower || data.flower.trim() === "") {
+      if (!data.flowers || data.flowers.length === 0) {
         ctx.addIssue({
           path: ["flower"],
           code: z.ZodIssueCode.custom,
@@ -173,12 +173,16 @@ export default function ProductForm({
 }) {
   const [uploading, setUploading] = useState(false);
   const [imgs, setImgs] = useState<string[]>(product?.images ?? []);
+  const [totalPrice, setTotalPrice] = useState<number>(product?.price ?? 0);
   const { toast } = useToast();
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
   // const [isEditing, setIsEditing] = useState(editing);
   const navigate = useNavigate();
   const [addProduct] = useMutation(
     editing ? UPDATE_PRODUCT_MUTATION : CREATE_PRODUCT_MUTATION,
+  );
+  const [flowersNum, setFlowersNum] = useState<number>(
+    product?.flowerComponents?.length ?? 1,
   );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -193,8 +197,8 @@ export default function ProductForm({
       tags: product?.tags ?? [],
       serviceFee: product?.serviceFee ?? 0,
       otherFee: product?.otherFee ?? 0,
-      flower: product?.components[0]?.id ?? "",
-      wrapper: product?.components[1]?.id ?? "",
+      flowers: product?.flowerComponents?.map((flower) => flower.id) ?? [],
+      wrapper: product?.wrapperComponent?.id ?? "",
       flowerVariant: product?.flowerVariant,
     },
   });
@@ -216,12 +220,8 @@ export default function ProductForm({
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const components = [];
       const isBuoquet = values.category === "BOUQUET";
-      if (values.flower && values.flower.trim() !== "")
-        components.push(values.flower);
-      if (values.wrapper && values.wrapper.trim() !== "")
-        components.push(values.wrapper);
+
       // eslint-disable-next-line
       const data: any = {
         name: values.name,
@@ -234,7 +234,8 @@ export default function ProductForm({
         tags: isBuoquet || values.category === "FLOWER" ? values.tags : [],
         serviceFee: isBuoquet ? values.serviceFee : 0,
         otherFee: isBuoquet ? values.otherFee : 0,
-        components: isBuoquet ? components : [],
+        flowerComponents: isBuoquet ? values.flowers : [],
+        wrapperComponent: isBuoquet ? values.wrapper : null,
         flowerVariant: values.flowerVariant,
       };
 
@@ -310,16 +311,20 @@ export default function ProductForm({
     componentsState.filter((comp) => comp.type === "WRAPPER") || []
   ).filter((f) => f.isAvailable && f.quantity > 0);
   const category = form.watch("category");
-  const flower = form.watch("flower");
+  const flowers = form.watch("flowers");
   const wrapper = form.watch("wrapper");
   const serviceFee = form.watch("serviceFee");
   const otherFee = form.watch("otherFee");
 
   // Auto-update price when any of the watched values change
-  useMemo(() => {
+  useEffect(() => {
     if (category === "BOUQUET") {
-      const flowerPrice =
-        flowerOptions.find((f) => f.id === flower)?.price || 0;
+      const flowerPrice = (flowers || []).reduce((acc, flowerId) => {
+        const flower = flowerOptions.find((f) => f.id === flowerId);
+        return acc + (flower?.price || 0);
+      }, 0);
+
+      console.log("qqq price", flowerPrice);
 
       const wrapperPrice =
         wrapperOptions.find((w) => w.id === wrapper)?.price || 0;
@@ -335,12 +340,38 @@ export default function ProductForm({
     } else {
       form.setValue("serviceFee", 0);
       form.setValue("otherFee", 0);
-      form.setValue("flower", "");
+      form.setValue("flowers", []);
       form.setValue("wrapper", "");
     }
-  }, [category, flower, wrapper, serviceFee, otherFee]);
+  }, [
+    category,
+    // flowers,
+    wrapper,
+    serviceFee,
+    otherFee,
+    form,
+    totalPrice,
+  ]);
+
+  useEffect(() => {
+    if (product && editing) {
+      const flowerPrice = (product.flowerComponents || [])?.reduce(
+        (acc, flower) => acc + (flower.price || 0),
+        0,
+      );
+      const wrapperPrice = product.wrapperComponent?.price || 0;
+      const serviceFee = product.serviceFee || 0;
+      const otherFee = product.otherFee || 0;
+
+      form.setValue(
+        "price",
+        (flowerPrice + wrapperPrice + serviceFee + otherFee).toString(),
+      );
+    }
+  }, [product, editing]);
 
   // TODO: ADD LOADING UI
+  console.log(form.formState.errors, "qqq");
 
   return (
     <Form {...form}>
@@ -593,74 +624,203 @@ export default function ProductForm({
                 <div className="">
                   <FormField
                     control={form.control}
-                    name="flower"
-                    render={({ field }) => (
+                    name="flowers"
+                    render={() => (
                       <FormItem className="flex w-full flex-col  items-start">
-                        <div className="flex items-center w-full  gap-5  ">
-                          <div className="w-[70%] md:w-[85%]">
-                            <FormLabel className="text-black dark:text-white ">
-                              Flower Component
-                            </FormLabel>
+                        <div className="flex w-full flex-col  items-start">
+                          <FormLabel className="text-black dark:text-white ">
+                            Flower Components
+                          </FormLabel>
+                          <div className="flex items-center w-full  gap-5  ">
+                            <div className="w-[70%] md:w-[85%]">
+                              <Select
+                                defaultValue={
+                                  product?.flowerComponents?.[0]?.id || ""
+                                }
+                                onValueChange={(value) => {
+                                  let flwrs = form.getValues("flowers") || [];
+                                  if (flwrs.length > 0) {
+                                    flwrs[0] = value;
+                                  } else {
+                                    flwrs = [value];
+                                  }
+                                  form.setValue("flowers", flwrs);
+                                  setTotalPrice((n) => n + 1);
+                                }}
+                              >
+                                <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
+                                  <SelectValue placeholder="Select a flower" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>Flowers</SelectLabel>
+                                    {flowerOptions.length > 0 ? (
+                                      flowerOptions.map((flower) => (
+                                        <SelectItem
+                                          value={flower.id}
+                                          key={flower.id}
+                                          className="capitalize  w-full  "
+                                        >
+                                          <div className="   flex  items-center gap-3">
+                                            <img
+                                              src={
+                                                flower.image ||
+                                                "https://blocks.astratic.com/img/general-img-landscape.png"
+                                              }
+                                              alt={flower.name}
+                                              className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                            />
 
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={form.getValues("flower")}
-                            >
-                              <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
-                                <SelectValue placeholder="Select a flower" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Flowers</SelectLabel>
-                                  {flowerOptions.length > 0 ? (
-                                    flowerOptions.map((flower) => (
+                                            <p className=" ">{flower.name}</p>
+                                          </div>
+                                        </SelectItem>
+                                      ))
+                                    ) : (
                                       <SelectItem
-                                        value={flower.id}
-                                        key={flower.id}
-                                        className="capitalize  w-full  "
+                                        value="no-data"
+                                        key="no-data"
+                                        disabled
                                       >
-                                        <div className="   flex  items-center gap-3">
-                                          <img
-                                            src={
-                                              flower.image ||
-                                              "https://blocks.astratic.com/img/general-img-landscape.png"
-                                            }
-                                            alt={flower.name}
-                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                          />
-
-                                          <p className=" ">{flower.name}</p>
-                                        </div>
+                                        No flower components available
                                       </SelectItem>
-                                    ))
-                                  ) : (
-                                    <SelectItem
-                                      value="no-data"
-                                      key="no-data"
-                                      disabled
-                                    >
-                                      No flower components available
-                                    </SelectItem>
-                                  )}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="">
-                            <h3>Price:</h3>
-                            <p>
-                              {Intl.NumberFormat("en-PH", {
-                                currency: "PHP",
-                                style: "currency",
-                              }).format(
-                                flowerOptions.find(
-                                  (flower) =>
-                                    flower.id === form.getValues().flower,
-                                )?.price || 0,
-                              )}
-                            </p>
+                                    )}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="">
+                              <h3>Price:</h3>
+                              <p>
+                                {Intl.NumberFormat("en-PH", {
+                                  currency: "PHP",
+                                  style: "currency",
+                                }).format(
+                                  flowerOptions.find(
+                                    (flower) =>
+                                      flower.id ===
+                                        form.getValues()?.flowers![0] || "",
+                                  )?.price || 0,
+                                )}
+                              </p>
+                            </div>
                           </div>
                         </div>
+
+                        {flowersNum > 1 &&
+                          Array.from({ length: flowersNum - 1 }).map(
+                            (_, index: number) => (
+                              <div key={index} className="w-full">
+                                <div className="flex items-center w-full  gap-5  ">
+                                  <div className="w-[70%] md:w-[85%]">
+                                    <Select
+                                      defaultValue={
+                                        product?.flowerComponents?.[index + 1]
+                                          ?.id || ""
+                                      }
+                                      key={index}
+                                      // onValueChange={field.onChange}
+                                      onValueChange={(value) => {
+                                        console.log(value);
+                                        const flwrs =
+                                          form.getValues("flowers") || [];
+                                        flwrs[index + 1] = value;
+                                        form.setValue("flowers", flwrs);
+                                        setTotalPrice((p) => p + 1);
+                                      }}
+                                    >
+                                      <SelectTrigger className="w-full  mt-1 border-gray-300 dark:bg-zinc-900">
+                                        <SelectValue placeholder="Select a flower" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>
+                                            Flower {index + 2}
+                                          </SelectLabel>
+                                          {flowerOptions.length > 0 ? (
+                                            flowerOptions.map((flower) => (
+                                              <SelectItem
+                                                value={flower.id}
+                                                key={flower.id}
+                                                className="capitalize  w-full  "
+                                              >
+                                                <div className="   flex  items-center gap-3">
+                                                  <img
+                                                    src={
+                                                      flower.image ||
+                                                      "https://blocks.astratic.com/img/general-img-landscape.png"
+                                                    }
+                                                    alt={flower.name}
+                                                    className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                                  />
+
+                                                  <p className=" ">
+                                                    {flower.name}
+                                                  </p>
+                                                </div>
+                                              </SelectItem>
+                                            ))
+                                          ) : (
+                                            <SelectItem
+                                              value="no-data"
+                                              key="no-data"
+                                              disabled
+                                            >
+                                              No flower components available
+                                            </SelectItem>
+                                          )}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="">
+                                    <h3>Price:</h3>
+                                    <p>
+                                      {Intl.NumberFormat("en-PH", {
+                                        currency: "PHP",
+                                        style: "currency",
+                                      }).format(
+                                        flowerOptions.find(
+                                          (flower) =>
+                                            flower.id ===
+                                            form.getValues()?.flowers![
+                                              index + 1
+                                            ],
+                                        )?.price || 0,
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    const flwrs =
+                                      form.getValues("flowers") || [];
+
+                                    if (flwrs.length >= index + 1) {
+                                      flwrs.splice(index + 1, 1);
+                                      form.setValue("flowers", flwrs);
+                                    }
+                                    console.log(flwrs, "qq");
+                                    setFlowersNum((num) => num - 1);
+                                  }}
+                                  type="button"
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            ),
+                          )}
+
+                        <Button
+                          onClick={() => setFlowersNum((num) => num + 1)}
+                          size="sm"
+                          className="mt-1"
+                          type="button"
+                        >
+                          add Flower
+                        </Button>
+
                         <FormMessage className="dark:text-primary dark:bg-zinc-900" />
                       </FormItem>
                     )}
