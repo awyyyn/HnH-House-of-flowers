@@ -6,7 +6,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
   RichTextEditor,
   Select,
   SelectContent,
@@ -41,9 +40,7 @@ import { cartAtom } from "@/states";
 
 const formSchema = z
   .object({
-    flower: z.string({
-      message: "You must pick your preferred flower",
-    }),
+    flowers: z.array(z.string()).min(1, "You must pick at least one flower"),
     wrapper: z.string({
       message: "You must pick your preferred wrapper",
     }),
@@ -98,17 +95,26 @@ const Customize2 = () => {
   const [addToCart, { loading: addingToCart }] = useMutation(
     ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN,
   );
+  const [flwrsNum, setFlwrsNum] = useState<number>(1);
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
   const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
     variables: {
       id: productId,
     },
     onCompleted(data) {
-      form.setValue("flower", data.product.components[0].id);
-      form.setValue("wrapper", data.product.components[1].id);
+      form.setValue(
+        "flowers",
+        (data.product.flowerComponents || [])?.map((flwr) => flwr.id),
+      );
+      setFlwrsNum(data.product.flowerComponents?.length || 1);
+      form.setValue("wrapper", data.product.wrapperComponent?.id || "");
       form.setValue("totalPrice", data.product.price || 0);
     },
   });
+  const [totalPrice, setTotalPrice] = useState<number>(
+    data?.product.price || 0,
+  );
+  const [flowerFees, setFlowerFees] = useState<number>(0);
 
   useQuery<{
     components: { data: Component[]; hasNextPage: boolean; total: number };
@@ -126,16 +132,16 @@ const Customize2 = () => {
   const wrapperOptions =
     componentsState.filter((comp) => comp.type === "WRAPPER") || [];
 
-  const flowerOldPrice = flowerOptions.find(
-    (flower) => flower.id === data?.product?.components[0].id,
-  )?.price;
-  const wrapperOldPrice = wrapperOptions.find(
-    (wrapper) => wrapper.id === data?.product?.components[1].id,
-  )?.price;
+  // const flowerOldPrice = flowerOptions.find(
+  //   (flower) => flower.id === data?.product?.components[0].id,
+  // )?.price;
+  // const wrapperOldPrice = wrapperOptions.find(
+  //   (wrapper) => wrapper.id === data?.product?.components[1].id,
+  // )?.price;
 
   // optionsStates
 
-  const watchedFlower = form.watch("flower");
+  const watchedFlower = form.watch("flowers");
   const watchedWrapper = form.watch("wrapper");
   const watchedBill = form.watch("bill");
   const watchedBillQuantity = form.watch("billQuantity");
@@ -149,21 +155,32 @@ const Customize2 = () => {
 
   useEffect(() => {
     if (watchedFlower && watchedWrapper) {
-      const flower = flowerOptions.find((flr) => flr.id === watchedFlower);
-      const wrapper = wrapperOptions.find((wrp) => wrp.id === watchedWrapper);
-
-      let tot = product.price;
-      tot -= wrapperOldPrice || 0;
-      tot -= flowerOldPrice || 0;
-      tot += flower?.price || 0;
-      tot += wrapper?.price || 0;
-      if (watchedBill && watchedBillQuantity) {
-        tot += Number(watchedBill) * Number(watchedBillQuantity || 0);
-      }
-
-      form.setValue("totalPrice", tot || 0);
+      // const flower = flowerOptions.find((flr) => flr.id === watchedFlower);
+      // const wrapper = wrapperOptions.find((wrp) => wrp.id === watchedWrapper);
+      // let tot = product.price;
+      // tot -= wrapperOldPrice || 0;
+      // tot -= flowerOldPrice || 0;
+      // tot += flower?.price || 0;
+      // tot += wrapper?.price || 0;
+      // if (watchedBill && watchedBillQuantity) {
+      //   tot += Number(watchedBill) * Number(watchedBillQuantity || 0);
+      // }
+      // form.setValue("totalPrice", tot || 0);
     }
   }, [watchedFlower, watchedWrapper, watchedBill, watchedBillQuantity]);
+
+  useEffect(() => {
+    const flowers = form.watch("flowers");
+
+    const total = (flowers || []).reduce((acc, flwrId) => {
+      const flower = flowerOptions.find((f) => f.id === flwrId);
+      return acc + (flower?.price || 0);
+    }, 0);
+
+    setFlowerFees(total);
+
+    console.log(total, "qqqq");
+  }, [flwrsNum, totalPrice, data, componentsState]);
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -176,10 +193,10 @@ const Customize2 = () => {
   function handleSetComponent(type: Component["type"]) {
     switch (type) {
       case "FLOWER": {
-        const flwr = flowerOptions.find(
-          (flr) => flr.id === form.watch("flower"),
-        );
-        if (flwr) setComponent(flwr);
+        // const flwr = flowerOptions.find(
+        //   (flr) => flr.id === form.watch("flower"),
+        // );
+        // if (flwr) setComponent(flwr);
         break;
       }
 
@@ -212,7 +229,7 @@ const Customize2 = () => {
             productId: product.id,
             note: values.note || "",
             totalPrice: values.totalPrice,
-            components: [values.flower, values.wrapper],
+            // components: [values.flower, values.wrapper],
             wrapperColor: values.wrapperColor || "",
             bill: values.bill || 0,
             billQuantity: values.billQuantity || 0,
@@ -267,7 +284,7 @@ const Customize2 = () => {
           price: values.totalPrice,
           productId: product.id,
           cartId: user.cart.id,
-          components: [values.flower, values.wrapper],
+          // components: [values.flower, values.wrapper],
           note: values.note || "",
           wrapperColor: values.wrapperColor || "",
           bill: values.bill || 0,
@@ -385,6 +402,9 @@ const Customize2 = () => {
                                 // value={field.value}
                                 // defaultValue={form.getValues("wrapper")}
                                 {...field}
+                                defaultValue={
+                                  product.wrapperComponent?.id || ""
+                                }
                               >
                                 <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
                                   <SelectValue placeholder="Select a flower" />
@@ -490,79 +510,140 @@ const Customize2 = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="flower"
-                      render={({ field }) => (
+                      name="flowers"
+                      render={() => (
                         <FormItem className="flex w-full flex-col  items-start">
                           <div className="flex items-center w-full  gap-5  ">
                             <div className="w-[70%] md:w-[85%]">
                               <FormLabel className="text-black dark:text-white ">
                                 Flower Component
                               </FormLabel>
-
-                              <Select
-                                disabled={creatingOrder || addingToCart}
-                                onValueChange={field.onChange}
-                                {...field}
-                              >
-                                <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
-                                  <SelectValue placeholder="Select a flower" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectGroup>
-                                    <SelectLabel>Fllowers</SelectLabel>
-                                    {flowerOptions.map((flower) => (
-                                      <SelectItem
-                                        value={flower.id}
-                                        key={flower.id}
-                                        className="capitalize  w-full  "
-                                      >
-                                        <div className="   flex  items-center gap-3">
-                                          <img
-                                            src={
-                                              flower.image ||
-                                              "https://blocks.astratic.com/img/general-img-landscape.png"
-                                            }
-                                            alt={flower.name}
-                                            className="w-6 h-6 rounded-full mr-2 shadow-sm border"
-                                          />
-
-                                          <p className=" ">{flower.name}</p>
-                                        </div>
-                                      </SelectItem>
-                                    ))}
-                                  </SelectGroup>
-                                </SelectContent>
-                              </Select>
                             </div>
-                            <div className="">
-                              <h3>Price:</h3>
-                              <p>
-                                {Intl.NumberFormat("en-PH", {
-                                  currency: "PHP",
-                                  style: "currency",
-                                }).format(
-                                  flowerOptions.find(
-                                    (flower) =>
-                                      flower.id === form.getValues().flower,
-                                  )?.price || 0,
-                                )}
-                              </p>
-                            </div>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="ghost"
-                              className="self-end mb-1"
-                              onClick={() => handleSetComponent("FLOWER")}
-                            >
-                              <Info />
-                            </Button>
                           </div>
+
+                          {(product?.flowerComponents || [])?.length > 0 &&
+                            Array.from({ length: flwrsNum }).map(
+                              (_, index: number) => (
+                                <div key={index} className="w-full">
+                                  <div className="flex items-center w-full  gap-5  ">
+                                    <div className="w-[70%] md:w-[85%]">
+                                      <Select
+                                        defaultValue={
+                                          product?.flowerComponents?.[index]
+                                            ?.id || ""
+                                        }
+                                        key={index}
+                                        // onValueChange={field.onChange}
+                                        onValueChange={(value) => {
+                                          console.log(value);
+                                          const flwrs =
+                                            form.getValues("flowers") || [];
+                                          flwrs[index] = value;
+                                          form.setValue("flowers", flwrs);
+                                          setTotalPrice((p) => p + 1);
+                                        }}
+                                      >
+                                        <SelectTrigger className="w-full  mt-1 border-gray-300 dark:bg-zinc-900">
+                                          <SelectValue placeholder="Select a flower" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectGroup>
+                                            <SelectLabel>
+                                              Flower {index + 1}
+                                            </SelectLabel>
+                                            {flowerOptions.length > 0 ? (
+                                              flowerOptions.map((flower) => (
+                                                <SelectItem
+                                                  value={flower.id}
+                                                  key={flower.id}
+                                                  className="capitalize  w-full  "
+                                                >
+                                                  <div className="   flex  items-center gap-3">
+                                                    <img
+                                                      src={
+                                                        flower.image ||
+                                                        "https://blocks.astratic.com/img/general-img-landscape.png"
+                                                      }
+                                                      alt={flower.name}
+                                                      className="w-6 h-6 rounded-full mr-2 shadow-sm border"
+                                                    />
+
+                                                    <p className=" ">
+                                                      {flower.name}
+                                                    </p>
+                                                  </div>
+                                                </SelectItem>
+                                              ))
+                                            ) : (
+                                              <SelectItem
+                                                value="no-data"
+                                                key="no-data"
+                                                disabled
+                                              >
+                                                No flower components available
+                                              </SelectItem>
+                                            )}
+                                          </SelectGroup>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="">
+                                      <h3>Price:</h3>
+                                      <p>
+                                        {Intl.NumberFormat("en-PH", {
+                                          currency: "PHP",
+                                          style: "currency",
+                                        }).format(
+                                          flowerOptions.find(
+                                            (flower) =>
+                                              flower.id ===
+                                              (form.getValues()?.flowers ||
+                                                [])![index],
+                                          )?.price || 0,
+                                        )}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      const flwrs =
+                                        form.getValues("flowers") || [];
+
+                                      if (flwrs.length >= index) {
+                                        flwrs.splice(index, 1);
+                                        form.setValue("flowers", flwrs);
+                                      }
+                                      console.log(flwrs, "qq");
+                                      setFlwrsNum((num) => num - 1);
+                                    }}
+                                    type="button"
+                                    disabled={
+                                      form.getValues("flowers")?.length === 1
+                                    }
+                                    className="mt-0.5"
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              ),
+                            )}
+
+                          <Button
+                            onClick={() => setFlwrsNum((num) => num + 1)}
+                            size="sm"
+                            className="mt-1"
+                            type="button"
+                          >
+                            Add Flower
+                          </Button>
+
                           <FormMessage className="dark:text-primary dark:bg-zinc-900" />
                         </FormItem>
                       )}
                     />
-                    <div className=" ">
+                    {/*<div className=" ">
                       <div className="col-span-4">
                         <h1 className="text-black dark:text-white ">
                           Money Bouquey
@@ -659,7 +740,7 @@ const Customize2 = () => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </div>*/}
                     <FormField
                       control={form.control}
                       name="note"
@@ -703,14 +784,14 @@ const Customize2 = () => {
                       <div className="flex items-center justify-between">
                         <h3 className="">Flower Fee:</h3>
                         <span className="text-lg font-thin">
-                          {Intl.NumberFormat("en-PH", {
+                          {/*{Intl.NumberFormat("en-PH", {
                             currency: "PHP",
                             style: "currency",
                           }).format(
                             flowerOptions.find(
                               (f) => f.id === form.watch("flower"),
                             )?.price || 0,
-                          )}
+                          )}*/}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
