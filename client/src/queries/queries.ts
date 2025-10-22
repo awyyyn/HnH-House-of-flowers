@@ -50,8 +50,8 @@ export const GET_PRODUCTS_QUERY = gql`
     $flowerVariants: [FlowerVariant]
   ) {
     products(
-      pagination: $pagination
       category: $category
+      pagination: $pagination
       filter: $filter
       status: $status
       tags: $tags
@@ -531,6 +531,56 @@ export const READ_STORE_IMAGE_QUERY = gql`
   query ($id: ID!) {
     storeImage(id: $id) {
       ...StoreImageFragment
+    }
+  }
+`;
+
+export const GET_CUSTOMIZE_OPTIONS_QUERY = gql`
+  ${productFragment}
+  ${componentFragment}
+  query (
+    $id: ID!
+    $componentType: ComponentType
+    $filter: String
+    $pagination: PaginationInput
+    $isAvailable: Boolean
+    $giftsCategory: ProductCategory
+    $chocolatesCategory: ProductCategory
+  ) {
+    product(id: $id) {
+      ...ProductFragment
+      flowerComponents {
+        ...ComponentFragment
+      }
+      wrapperComponent {
+        ...ComponentFragment
+      }
+    }
+    components(
+      componentType: $componentType
+      filter: $filter
+      pagination: $pagination
+      isAvailable: $isAvailable
+    ) {
+      total
+      data {
+        ...ComponentFragment
+      }
+      hasNextPage
+    }
+    gifts: products(category: $giftsCategory) {
+      data {
+        ...ProductFragment
+      }
+      hasNextPage
+      total
+    }
+    chocolates: products(category: $chocolatesCategory) {
+      data {
+        ...ProductFragment
+      }
+      hasNextPage
+      total
     }
   }
 `;
