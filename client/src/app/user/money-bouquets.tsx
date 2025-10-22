@@ -1,0 +1,67 @@
+import { GET_PRODUCTS_QUERY } from "@/queries";
+import { PaginationResult, Product } from "@/types";
+import { useQuery } from "@apollo/client";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { CardSkeleton } from "../skeletons";
+
+import { PackageSearch } from "lucide-react";
+import { EmptyState, Helmet } from "@/components";
+import ProductCard from "./components/product-card";
+import PaginationComponent from "./components/pagination";
+
+export default function MoneyBouquets() {
+  const [params] = useSearchParams();
+  const [page, setPage] = useState(Number(params.get("page") ?? 1));
+  const navigate = useNavigate();
+
+  const { data, loading } = useQuery<{ products: PaginationResult<Product> }>(
+    GET_PRODUCTS_QUERY,
+    {
+      variables: {
+        category: "BOUQUET",
+        status: ["IN_STOCK", "PRE_ORDER"],
+        pagination: {
+          page: page - 1,
+          limit: 10,
+        },
+        flowerVariants: [""],
+      },
+    },
+  );
+
+  if (loading) return <CardSkeleton />;
+
+  return (
+    <>
+      <Helmet title="Bouquets" />
+      {data?.products.data.length === 0 ? (
+        <EmptyState
+          description="We're currently updating our inventory. Please check back soon for new products."
+          icon={PackageSearch}
+          title="No products available"
+        />
+      ) : (
+        <>
+          <div className="grid grid-cols-6 sm:grid-cols-9 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
+            {data?.products.data.map((product) => (
+              <ProductCard {...product} key={`product-card-${product.id}`} />
+            ))}
+          </div>
+          <div className="my-5">
+            <PaginationComponent
+              currentPage={page}
+              onPageChange={(pg) => {
+                setPage(pg);
+                navigate(`/bouquets?page=${pg}`);
+              }}
+              pageSize={10}
+              totalItems={data?.products.total ?? 0}
+            />
+          </div>
+        </>
+      )}
+    </>
+  );
+}
