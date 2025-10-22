@@ -47,6 +47,7 @@ export const GET_PRODUCTS_QUERY = gql`
     $filter: String
     $status: [ProductStatus]
     $tags: [FlowerTag]
+    $flowerVariants: [FlowerVariant]
   ) {
     products(
       pagination: $pagination
@@ -54,6 +55,7 @@ export const GET_PRODUCTS_QUERY = gql`
       filter: $filter
       status: $status
       tags: $tags
+      flowerVariants: $flowerVariants
     ) {
       data {
         ...ProductFragment
@@ -70,7 +72,10 @@ export const GET_PRODUCT_QUERY = gql`
   query Product($id: ID!) {
     product(id: $id) {
       ...ProductFragment
-      components {
+      flowerComponents {
+        ...ComponentFragment
+      }
+      wrapperComponent {
         ...ComponentFragment
       }
     }
@@ -165,8 +170,14 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
       customizeId
       customize {
         ...CustomizeFragment
-        components {
+        flowerComponents {
           ...ComponentFragment
+        }
+        wrapperComponent {
+          ...ComponentFragment
+        }
+        otherProducts {
+          ...ProductFragment
         }
       }
       # customize {
@@ -252,8 +263,14 @@ export const READ_ORDERS_QUERY = gql`
         shippingFee
         customize {
           ...CustomizeFragment
-          components {
+          flowerComponents {
             ...ComponentFragment
+          }
+          wrapperComponent {
+            ...ComponentFragment
+          }
+          otherProducts {
+            ...ProductFragment
           }
         }
         status
@@ -451,8 +468,14 @@ export const READ_PRODUCT_WITH_REVIEWS = gql`
 
     product(id: $id) {
       ...ProductFragment
-      components {
+      flowerComponents {
         ...ComponentFragment
+      }
+      wrapperComponent {
+        ...ComponentFragment
+      }
+      otherProducts {
+        ...ProductFragment
       }
     }
   }
