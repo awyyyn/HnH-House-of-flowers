@@ -97,11 +97,18 @@ const Customize2 = () => {
   );
   const [flwrsNum, setFlwrsNum] = useState<number>(1);
   const [componentsState, setComponentsState] = useAtom(componentsAtom);
-  const { data, loading } = useQuery<{ product: Product }>(GET_PRODUCT_QUERY, {
+
+  const { data, loading } = useQuery<{
+    components: { data: Component[]; hasNextPage: boolean; total: number };
+    product: Product;
+    gifts: { data: Product[]; hasNextPage: boolean; total: number };
+    chocolates: { data: Product[]; hasNextPage: boolean; total: number };
+  }>(GET_CUSTOMIZE_OPTIONS_QUERY, {
     variables: {
       id: productId,
     },
     onCompleted(data) {
+      setComponentsState(data.components.data || []);
       form.setValue(
         "flowers",
         (data.product.flowerComponents || [])?.map((flwr) => flwr.id),
@@ -115,17 +122,6 @@ const Customize2 = () => {
     data?.product.price || 0,
   );
   const [flowerFees, setFlowerFees] = useState<number>(0);
-
-  useQuery<{
-    components: { data: Component[]; hasNextPage: boolean; total: number };
-  }>(READ_COMPONENTS_QUERY, {
-    variables: {
-      isAvailable: true,
-    },
-    onCompleted(data) {
-      setComponentsState(data.components.data || []);
-    },
-  });
 
   const flowerOptions =
     componentsState.filter((comp) => comp.type === "FLOWER") || [];
