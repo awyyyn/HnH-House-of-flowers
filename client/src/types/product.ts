@@ -22,7 +22,8 @@ export interface Product {
   otherFee?: number;
   serviceFee?: number;
   price: number;
-  components: Component[];
+  flowerComponents?: Component[];
+  wrapperComponent?: Component;
 
   flowerVariant?: FlowerVariant;
   handMadeFlowerVariant?: string;

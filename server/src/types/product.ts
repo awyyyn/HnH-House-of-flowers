@@ -28,6 +28,8 @@ export type ProductCategory = "FLOWER" | "BOUQUET" | "CHOCOLATE" | "GIFT";
 
 export type ProductInput = Omit<Product, "id" | "createdAt" | "updatedAt"> & {
   serviceFee?: number;
-  components?: string[];
   otherFee?: number;
+  flowerComponents?: string[];
+  wrapperComponent?: string;
+  otherProducts?: string[];
 };
