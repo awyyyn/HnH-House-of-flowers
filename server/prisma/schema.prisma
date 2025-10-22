@@ -250,7 +250,11 @@ model Product {
   handMadeFlowerVariant String?        @default("")
 
   // components
-  components String[] @default([])
+  flowerComponents String[] @db.ObjectId
+  wrapperComponent String?  @db.ObjectId
+
+  // other products
+  otherProducts String[] @db.ObjectId
 
   reviews Review[]
 
