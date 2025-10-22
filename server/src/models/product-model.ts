@@ -6,14 +6,19 @@ import { Prisma } from "@prisma/client";
 export const createProduct = async (values: ProductInput) => {
   return await prisma.$transaction(async (prsma) => {
     let components: Component[] = [];
+    let wrapperComponent: any | null = null;
+    let products: any[] = [];
 
-    if (values?.components && values.components.length > 0) {
+    if (values?.flowerComponents && values.flowerComponents.length > 0) {
       components = (
         await Promise.all(
-          values.components.map(async (id) => {
+          values.flowerComponents.map(async (id) => {
             const cmpnnt = await prsma.component.update({
               where: {
                 id,
+                quantity: {
+                  gte: 1,
+                },
               },
               data: {
                 quantity: {
@@ -39,15 +44,80 @@ export const createProduct = async (values: ProductInput) => {
         }));
     }
 
+    if (values.wrapperComponent) {
+      wrapperComponent = await prisma.component.update({
+        where: {
+          id: values.wrapperComponent,
+          quantity: {
+            gte: 1,
+          },
+        },
+        data: {
+          quantity: {
+            decrement: 1,
+          },
+        },
+      });
+
+      if (!wrapperComponent)
+        throw new Error("There was an error updating product!");
+
+      wrapperComponent = await prisma.component.findUnique({
+        where: { id: values.wrapperComponent },
+      });
+
+      wrapperComponent = {
+        ...wrapperComponent,
+        createdAt: wrapperComponent.createdAt.toISOString(),
+        updatedAt: wrapperComponent.updatedAt.toISOString(),
+      };
+    }
+
+    if (values.otherProducts && values.otherProducts.length > 0) {
+      products = await Promise.all(
+        values.otherProducts.map(async (id) => {
+          const product = await prisma.product.update({
+            where: {
+              id,
+              stock: {
+                gte: 1,
+              },
+            },
+            data: {
+              stock: {
+                decrement: 1,
+              },
+            },
+          });
+
+          if (!product) throw new Error("There was an error updating product!");
+
+          return {
+            ...product,
+            createdAt: product.createdAt.toISOString(),
+            updatedAt: product.updatedAt.toISOString(),
+          };
+        }),
+      );
+    }
+
     const newProduct = await prisma.product.create({
-      data: values,
+      data: {
+        ...values,
+      },
     });
 
     if (!newProduct) throw new Error("Failed to create product");
 
+    console.log(values, "qqq values");
+    console.log(wrapperComponent, "qqq wrapperComponents");
+    console.log(components, "qqq flowerComponents");
+
     return {
       ...newProduct,
-      components,
+      flowerComponents: components,
+      wrapperComponent,
+      otherProducts: products,
     };
   });
 };
@@ -61,15 +131,23 @@ export const updateProduct = async (
       where: { id },
       data: values,
     });
-    let components: Component[] = [];
+    let flowerComponents: Component[] = [];
+    let wrapperComponent: Component | null = null;
+    let otherProducts: any[] = [];
 
-    if (updatedProduct?.components.length) {
-      components = (
+    if (
+      updatedProduct?.flowerComponents &&
+      updatedProduct.flowerComponents.length > 0
+    ) {
+      flowerComponents = (
         await Promise.all(
-          updatedProduct.components.map(async (id) => {
+          updatedProduct.flowerComponents.map(async (id) => {
             const cmpnnt = await prsma.component.update({
               where: {
                 id,
+                quantity: {
+                  gte: 1,
+                },
               },
               data: {
                 quantity: {
@@ -95,9 +173,70 @@ export const updateProduct = async (
         }));
     }
 
+    if (updatedProduct?.wrapperComponent) {
+      wrapperComponent = await prisma.component
+        .update({
+          where: {
+            id: updatedProduct.wrapperComponent,
+            quantity: {
+              gte: 1,
+            },
+          },
+          data: {
+            quantity: {
+              decrement: 1,
+            },
+          },
+        })
+        .then((data) => {
+          return {
+            ...data,
+            createdAt: new Date(data.createdAt).toISOString(),
+            updatedAt: new Date(data.updatedAt).toISOString(),
+          };
+        });
+
+      if (!wrapperComponent)
+        throw new Error("There was an error updating product!");
+    }
+
+    if (
+      updatedProduct.otherProducts &&
+      updatedProduct.otherProducts.length > 0
+    ) {
+      otherProducts = await Promise.all(
+        updatedProduct.otherProducts.map(async (id) => {
+          const otherProductUpdate = await prisma.product.update({
+            where: {
+              id,
+              stock: {
+                gte: 1,
+              },
+            },
+            data: {
+              stock: {
+                decrement: 1,
+              },
+            },
+          });
+
+          if (!otherProductUpdate)
+            throw new Error("There was an error updating product!");
+
+          return {
+            ...otherProductUpdate,
+            createdAt: new Date(otherProductUpdate.createdAt).toISOString(),
+            updatedAt: new Date(otherProductUpdate.updatedAt).toISOString(),
+          };
+        }),
+      );
+    }
+
     return {
       ...updatedProduct,
-      components,
+      flowerComponents,
+      wrapperComponent,
+      otherProducts,
     };
   });
 };
@@ -109,12 +248,14 @@ export const readProduct = async (filter: string) => {
     },
   });
 
-  let components: Component[] = [];
+  let flowerComponents: Component[] = [];
+  let wrapperComponent: any | null = null;
+  let otherProducts: any[] = [];
 
-  if (product?.components.length) {
-    components = (
+  if (product?.flowerComponents.length) {
+    flowerComponents = (
       await Promise.all(
-        product.components.map(async (id) => {
+        product.flowerComponents.map(async (id) => {
           return await prisma.component.findUnique({
             where: { id },
           });
@@ -129,9 +270,41 @@ export const readProduct = async (filter: string) => {
       }));
   }
 
+  if (product?.wrapperComponent) {
+    wrapperComponent = await prisma.component.findUnique({
+      where: { id: product.wrapperComponent },
+    });
+
+    wrapperComponent = {
+      ...wrapperComponent,
+      createdAt: wrapperComponent.createdAt.toISOString(),
+      updatedAt: wrapperComponent.updatedAt.toISOString(),
+    };
+  }
+
+  if (product?.otherProducts.length) {
+    otherProducts = (
+      await Promise.all(
+        product.otherProducts.map(async (id) => {
+          return await prisma.product.findUnique({
+            where: { id },
+          });
+        }),
+      )
+    )
+      .filter((p) => p !== null)
+      .map((p) => ({
+        ...p,
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString(),
+      }));
+  }
+
   return {
     ...product,
-    components,
+    flowerComponents,
+    wrapperComponent,
+    otherProducts,
   };
 };
 
@@ -141,6 +314,7 @@ export const readProducts = async ({
   category,
   status,
   tags,
+  flowerVariants,
 }: ProductFilter = {}) => {
   const where: Prisma.ProductWhereInput = {};
 
@@ -160,6 +334,12 @@ export const readProducts = async ({
         },
       },
     ];
+  }
+
+  if (flowerVariants && flowerVariants.length > 0) {
+    where.flowerVariant = {
+      in: flowerVariants,
+    };
   }
 
   if (category) {
@@ -194,12 +374,14 @@ export const readProducts = async ({
         },
       });
 
-      let components: Component[] = [];
+      let flowerComponents: Component[] = [];
+      let wrapperComponent: any | null = null;
+      let otherProducts: any[] = [];
 
-      if (product.components.length) {
-        components = (
+      if (product.flowerComponents.length) {
+        flowerComponents = (
           await Promise.all(
-            product.components.map(async (id) => {
+            product.flowerComponents.map(async (id) => {
               return await prisma.component.findUnique({
                 where: { id },
               });
@@ -214,9 +396,41 @@ export const readProducts = async ({
           }));
       }
 
+      if (product.wrapperComponent) {
+        wrapperComponent = await prisma.component.findUnique({
+          where: { id: product.wrapperComponent },
+        });
+
+        wrapperComponent = {
+          ...wrapperComponent,
+          createdAt: wrapperComponent.createdAt.toISOString(),
+          updatedAt: wrapperComponent.updatedAt.toISOString(),
+        };
+      }
+
+      if (product.otherProducts.length > 0) {
+        otherProducts = (
+          await Promise.all(
+            product.otherProducts.map(async (id) => {
+              return await prisma.product.findUnique({
+                where: { id },
+              });
+            }),
+          )
+        )
+          .filter((p) => p !== null)
+          .map((p) => ({
+            ...p,
+            createdAt: p.createdAt.toISOString(),
+            updatedAt: p.updatedAt.toISOString(),
+          }));
+      }
+
       return {
         ...product,
-        components,
+        flowerComponents,
+        otherProducts,
+        wrapperComponent,
         avg: avg._avg?.rating || 0,
       };
     }),

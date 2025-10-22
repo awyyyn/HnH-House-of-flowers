@@ -41,10 +41,18 @@ export const productsResolver = async (
     category,
     status = ["DISCONTINUED", "IN_STOCK", "OUT_OF_STOCK", "PRE_ORDER"],
     tags,
+    flowerVariants,
   }: ProductsPaginationArgs,
 ) => {
   try {
-    return await readProducts({ filter, pagination, category, status, tags });
+    return await readProducts({
+      filter,
+      pagination,
+      category,
+      status,
+      tags,
+      flowerVariants,
+    });
   } catch (error) {
     throw new GraphQLError((error as GraphQLError).message);
   }
