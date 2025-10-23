@@ -229,6 +229,7 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 export const READ_ORDERS_QUERY = gql`
   ${customizeFragment}
   ${componentFragment}
+  ${productFragment}
   query Orders(
     $filter: String
     $pagination: PaginationInput
