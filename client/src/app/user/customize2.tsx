@@ -171,8 +171,8 @@ const Customize2 = () => {
     total += totalFlowers;
     total += totalProducts;
     total += wrapper;
-    total += product.serviceFee || 0;
-    total += product.otherFee || 0;
+    total += data?.product.serviceFee || 0;
+    total += data?.product.otherFee || 0;
 
     setFlowerFees(totalFlowers);
     setAdditionalPrdctsFees(totalProducts);
@@ -229,8 +229,9 @@ const Customize2 = () => {
             totalPrice: values.totalPrice,
             // components: [values.flower, values.wrapper],
             wrapperColor: values.wrapperColor || "",
-            bill: values.bill || 0,
-            billQuantity: values.billQuantity || 0,
+            flowerComponents: values.flowers || [],
+            wrapperComponent: values.wrapper || "",
+            otherProducts: values.otherProducts || [],
           },
 
           // TODO: Add type of delivery
@@ -282,7 +283,9 @@ const Customize2 = () => {
           price: values.totalPrice,
           productId: product.id,
           cartId: user.cart.id,
-          // components: [values.flower, values.wrapper],
+          flowerComponents: values.flowers,
+          wrapperComponent: values.wrapper,
+          otherProducts: values.otherProducts,
           note: values.note || "",
           wrapperColor: values.wrapperColor || "",
           bill: values.bill || 0,
@@ -317,7 +320,7 @@ const Customize2 = () => {
 
   return (
     <>
-      <div className="conatiner mx-auto">
+      <div className="conatiner mx-auto pb-10">
         <div className="grid grid-cols-1 gap-3 lg:gap-5 md:grid-cols-2">
           <div className="space-y-5">
             <h1 className="text-xl   flex gap-1 items-center">
