@@ -104,7 +104,7 @@ export function Navbar({ className }: { className?: string }) {
                     className="rounded-full"
                   >
                     <Link to="/cart" className="relative ">
-                      {cart.items.length > 0 && (
+                      {cart && cart.items.length > 0 && (
                         <Badge
                           variant="default"
                           className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full"
@@ -202,7 +202,7 @@ export function Navbar({ className }: { className?: string }) {
               className="rounded-full"
             >
               <Link to="/cart" className="relative ">
-                {cart.items.length > 0 && (
+                {cart && cart.items.length > 0 && (
                   <Badge
                     variant="default"
                     className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full"
