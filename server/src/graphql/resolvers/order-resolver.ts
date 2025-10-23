@@ -32,7 +32,7 @@ export const readOrdersResolver = async (
   }: OrderFilter,
 ) => {
   try {
-    return await readOrders({
+    const t = await readOrders({
       filter,
       pagination,
       status,
@@ -40,6 +40,9 @@ export const readOrdersResolver = async (
       typeOfPayment,
       isPreOrder,
     });
+    console.log(JSON.stringify(t, null, 2));
+
+    return t;
   } catch (error) {
     throw new GraphQLError((error as GraphQLError).message);
   }
