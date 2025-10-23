@@ -195,10 +195,10 @@ export const createCustomizeOrderResolver = async (
       productId: string;
       note?: string;
       totalPrice: number;
-      components: string[];
+      flowerComponents: string[];
+      wrapperComponent: string;
+      otherProducts?: string[];
       wrapperColor?: string;
-      bill?: number;
-      billQuantity?: number;
     };
     deliveryType?: OrderDeliveryType;
   },
