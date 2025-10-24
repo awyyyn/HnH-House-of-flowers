@@ -331,8 +331,26 @@ export const readOrdersByUser = async (userId: string) => {
       customer: true,
     },
   });
+  const data = await Promise.all(
+    (orders || []).map(async (order) => {
+      return {
+        ...order,
+        customize: await readComponentsToGQL(order.customize as Customize),
+        orderItems: await Promise.all(
+          (order.orderItems || []).map(async (item) => {
+            return {
+              ...item,
+              customize: await readComponentsToGQL(
+                order.customize as Customize,
+              ),
+            };
+          }),
+        ),
+      };
+    }),
+  );
 
-  return orders;
+  return data;
 };
 
 export const getMonthlyRevenue = async (year?: number) => {
