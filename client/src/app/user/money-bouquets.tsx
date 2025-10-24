@@ -26,7 +26,7 @@ export default function MoneyBouquets() {
           page: page - 1,
           limit: 10,
         },
-        flowerVariants: [""],
+        flowerVariants: ["MONEY_BOUQUET"],
       },
     },
   );
