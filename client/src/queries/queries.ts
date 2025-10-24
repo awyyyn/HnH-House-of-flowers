@@ -156,6 +156,7 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 
 export const READ_ORDERS_BY_USER_QUERY = gql`
   ${customizeFragment}
+  ${productFragment}
   ${componentFragment}
   query {
     orders: readOrdersByUser {
