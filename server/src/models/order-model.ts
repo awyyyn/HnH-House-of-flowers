@@ -888,6 +888,18 @@ const readFlowerComponents = async (ids: string[]) => {
     .filter((fl) => fl !== null);
 };
 
+const readProduct = async (id) => {
+  const product = await prisma.product.findFirst({
+    where: { id },
+  });
+  return {
+    ...product,
+    flowerComponents: await readFlowerComponents(product.flowerComponents),
+    createdAt: product?.createdAt.toISOString(),
+    updatedAt: product?.updatedAt.toISOString(),
+  };
+};
+
 export const readComponentsToGQL = async (customize: Customize) => {
   const flowerComponents = (
     await Promise.all(
