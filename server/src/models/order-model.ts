@@ -869,6 +869,25 @@ export const createOrderWithCustomization = async ({
   });
 };
 
+const readFlowerComponents = async (ids: string[]) => {
+  return (
+    await Promise.all(
+      ids.map(async (flower) => {
+        const flwr = await prisma.component.findFirst({
+          where: { id: flower },
+        });
+        return {
+          ...flwr,
+          createdAt: flwr?.createdAt.toISOString(),
+          updatedAt: flwr?.updatedAt.toISOString(),
+        };
+      }),
+    )
+  )
+    .filter((fl) => fl !== undefined)
+    .filter((fl) => fl !== null);
+};
+
 export const readComponentsToGQL = async (customize: Customize) => {
   const flowerComponents = (
     await Promise.all(
