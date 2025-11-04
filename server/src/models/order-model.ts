@@ -869,6 +869,19 @@ export const createOrderWithCustomization = async ({
   });
 };
 
+const readWrapperComponent = async (id: string) => {
+  const wrapperComponent = await prisma.component.findFirst({
+    where: { id },
+  });
+  return wrapperComponent
+    ? {
+        ...wrapperComponent,
+        createdAt: wrapperComponent?.createdAt.toISOString(),
+        updatedAt: wrapperComponent?.updatedAt.toISOString(),
+      }
+    : null;
+};
+
 const readFlowerComponents = async (ids: string[]) => {
   return (
     await Promise.all(
