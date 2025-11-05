@@ -469,8 +469,7 @@ export const getBestSellingProducts = async (take: number = 5) => {
       id: true,
       name: true,
       images: true,
-      Customize: true,
-
+      customize: true,
       price: true,
       category: true,
       orderItem: true,
