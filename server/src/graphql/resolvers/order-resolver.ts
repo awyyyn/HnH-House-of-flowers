@@ -56,6 +56,7 @@ export const readOrdersByUserResolver = async (
   try {
     return await readOrdersByUser(app.id);
   } catch (error) {
+    console.log(error);
     throw new GraphQLError((error as GraphQLError).message);
   }
 };
