@@ -7,58 +7,58 @@ import PaginationComponent from "./components/pagination";
 import ProductCard from "./components/product-card";
 import { EmptyState, Helmet } from "@/components";
 import { PackageSearch } from "lucide-react";
-import { ProductsSkeleton } from "../skeletons";
+import { CardSkeleton } from "../skeletons";
 
 export default function Chocolates() {
-	const [params] = useSearchParams();
-	const [page, setPage] = useState(Number(params.get("page") ?? 1));
-	const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const [page, setPage] = useState(Number(params.get("page") ?? 1));
+  const navigate = useNavigate();
 
-	const { data, loading } = useQuery<{ products: PaginationResult<Product> }>(
-		GET_PRODUCTS_QUERY,
-		{
-			variables: {
-				category: "CHOCOLATE",
-				status: ["IN_STOCK", "PRE_ORDER"],
-				pagination: {
-					page: page - 1,
-					limit: 10,
-				},
-			},
-		}
-	);
+  const { data, loading } = useQuery<{ products: PaginationResult<Product> }>(
+    GET_PRODUCTS_QUERY,
+    {
+      variables: {
+        category: "CHOCOLATE",
+        status: ["IN_STOCK", "PRE_ORDER"],
+        pagination: {
+          page: page - 1,
+          limit: 10,
+        },
+      },
+    },
+  );
 
-	if (loading) return <ProductsSkeleton />;
+  if (loading) return <CardSkeleton />;
 
-	return (
-		<>
-			<Helmet title="Chocolates" />
-			{data?.products.data.length === 0 ? (
-				<EmptyState
-					description="We're currently updating our inventory. Please check back soon for new products."
-					icon={PackageSearch}
-					title="No products available"
-				/>
-			) : (
-				<>
-					<div className="grid grid-cols-6 sm:grid-cols-9 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
-						{data?.products.data.map((product) => (
-							<ProductCard {...product} key={`product-card-${product.id}`} />
-						))}
-					</div>
-					<div className="my-5">
-						<PaginationComponent
-							currentPage={page}
-							onPageChange={(pg) => {
-								setPage(pg);
-								navigate(`/chocolates?page=${pg}`);
-							}}
-							pageSize={10}
-							totalItems={data?.products.total ?? 0}
-						/>
-					</div>
-				</>
-			)}
-		</>
-	);
+  return (
+    <>
+      <Helmet title="Chocolates" />
+      {data?.products.data.length === 0 ? (
+        <EmptyState
+          description="We're currently updating our inventory. Please check back soon for new products."
+          icon={PackageSearch}
+          title="No products available"
+        />
+      ) : (
+        <>
+          <div className="grid grid-cols-6 sm:grid-cols-9 justify-center gap-3 sm:gap-5 lg:grid-cols-10 ">
+            {data?.products.data.map((product) => (
+              <ProductCard {...product} key={`product-card-${product.id}`} />
+            ))}
+          </div>
+          <div className="my-5">
+            <PaginationComponent
+              currentPage={page}
+              onPageChange={(pg) => {
+                setPage(pg);
+                navigate(`/chocolates?page=${pg}`);
+              }}
+              pageSize={10}
+              totalItems={data?.products.total ?? 0}
+            />
+          </div>
+        </>
+      )}
+    </>
+  );
 }
