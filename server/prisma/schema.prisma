@@ -110,12 +110,14 @@ model Customize {
   totalPrice Float
 
   //#OLD bouquetItems BouquetItems
-  components   Component[]
-  wrapperColor String?
-  product      Product     @relation(fields: [productId], references: [id])
-  productId    String      @db.ObjectId
-  bill         Int?
-  billQuantity Int?
+  flowerComponents String[]
+  wrapperComponent String
+  otherProducts    String[]
+  wrapperColor     String?
+  product          Product  @relation(fields: [productId], references: [id])
+  productId        String   @db.ObjectId
+  bill             Int?
+  billQuantity     Int?
 
   order Order[]
 
@@ -124,6 +126,7 @@ model Customize {
   updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
   CartItem  CartItem[]
+  Component Component[]
 
   @@map("customizes")
 }
@@ -213,7 +216,7 @@ model Component {
   // TimeStamps
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Customize   Customize? @relation(fields: [customizeId], references: [id])
+  customize   Customize? @relation(fields: [customizeId], references: [id])
   customizeId String?    @db.ObjectId
 
   @@map("components")
@@ -250,7 +253,11 @@ model Product {
   handMadeFlowerVariant String?        @default("")
 
   // components
-  components String[] @default([])
+  flowerComponents String[] @db.ObjectId
+  wrapperComponent String?  @db.ObjectId
+
+  // other products
+  otherProducts String[] @db.ObjectId
 
   reviews Review[]
 
@@ -264,7 +271,7 @@ model Product {
   // TimeStamps
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  Customize Customize[]
+  customize Customize[]
 
   @@map("products")
 }

@@ -73,6 +73,7 @@ const AddComponentPage = loadable(() => import("./app/admin/add-component"));
 const Customize2 = loadable(() => import("./app/user/customize2"));
 const AddNewTheme = loadable(() => import("./app/admin/add-new-theme"));
 const EditTheme = loadable(() => import("./app/admin/edit-theme"));
+const MoneyBouquetsPage = loadable(() => import("./app/user/money-bouquets"));
 
 export default function App() {
   const publicRoutes = [
@@ -295,6 +296,28 @@ export default function App() {
           {
             index: true,
             element: <Bouquets fallback={<CardSkeleton />} />,
+          },
+          {
+            path: ":productId",
+            children: [
+              {
+                index: true,
+                element: <ProductDetails fallback={<ProductInfoSkeleton />} />,
+              },
+              {
+                path: "customize",
+                element: <Customize2 />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "money-bouquets",
+        children: [
+          {
+            index: true,
+            element: <MoneyBouquetsPage fallback={<CardSkeleton />} />,
           },
           {
             path: ":productId",

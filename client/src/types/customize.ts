@@ -7,7 +7,9 @@ export interface Customize {
   note?: string;
   totalPrice: number;
 
-  components: Component[];
+  flowerComponents: Component[];
+  wrapperComponent: Component;
+  otherProducts: Product[];
   wrapperColor?: string;
   product: Product;
   productId: string;

@@ -104,7 +104,7 @@ export function Navbar({ className }: { className?: string }) {
                     className="rounded-full"
                   >
                     <Link to="/cart" className="relative ">
-                      {cart.items.length > 0 && (
+                      {cart && cart.items.length > 0 && (
                         <Badge
                           variant="default"
                           className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full"
@@ -136,7 +136,7 @@ export function Navbar({ className }: { className?: string }) {
 						<MenuItem setActive={setActive} active={null} item="Customize" />
 					</Link>*/}
           <MenuItem setActive={setActive} active={active} item="Products">
-            <div className="text-sm grid grid-cols-2 gap-10 p-4 z-[101]">
+            <div className="text-sm grid grid-cols-2 lg:grid-cols-3 gap-10 p-4 z-[101]">
               <ProductItem
                 handleClose={() => setActive(null)}
                 title="Flowers"
@@ -163,6 +163,13 @@ export function Navbar({ className }: { className?: string }) {
                 title="Gifts"
                 href="/gifts"
                 src="https://www.realsimple.com/thmb/1nO0GmEuF87RSxFBmTWtfo6TZW0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/the-best-gift-giver-GettyImages-1706575747-2089a300e6594496b7f558585a4baefb.jpg"
+                description="Shop unique and thoughtful gifts to make every celebration memorable."
+              />
+              <ProductItem
+                handleClose={() => setActive(null)}
+                title="Money Bouquet"
+                href="/money-bouquets"
+                src="https://flowerstoryco.id/cdn/shop/products/IMG_1539_1024x1024@2x.jpg?v=1646126251\"
                 description="Shop unique and thoughtful gifts to make every celebration memorable."
               />
             </div>
@@ -195,7 +202,7 @@ export function Navbar({ className }: { className?: string }) {
               className="rounded-full"
             >
               <Link to="/cart" className="relative ">
-                {cart.items.length > 0 && (
+                {cart && cart.items.length > 0 && (
                   <Badge
                     variant="default"
                     className="absolute text-[8px] bottom-1.5 right-1.5 p-0 py-0 h-3 w-3 justify-center rounded-full"

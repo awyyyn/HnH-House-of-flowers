@@ -1,6 +1,8 @@
 import { AddCustomizeBouquetToCartInput } from "../types/cart.js";
 import { prisma } from "../services/prisma.js";
 import { readProduct } from "./product-model.js";
+import { readComponentsToGQL } from "./order-model.js";
+import { Customize } from "@prisma/client";
 
 export const createCart = async ({ userId }: { userId: string }) => {
   const cart = await prisma.cart.create({
@@ -32,7 +34,7 @@ export const readCart = async (userId: string) => {
           product: true,
           customize: {
             include: {
-              components: true,
+              // components: true,
               product: true,
             },
           },
@@ -46,13 +48,15 @@ export const readCart = async (userId: string) => {
 
 export const addCustomizeBouquetToCart = async ({
   cartId,
-  components,
   price,
   productId,
   quantity,
   note,
   wrapperColor,
   bill,
+  flowerComponents,
+  wrapperComponent,
+  otherProducts,
   billQuantity,
 }: AddCustomizeBouquetToCartInput) => {
   const product = await readProduct(productId);
@@ -60,7 +64,7 @@ export const addCustomizeBouquetToCart = async ({
   if (!product) throw new Error("Product not found");
   const count = await prisma.customize.count();
 
-  return await prisma.cartItem.create({
+  const cartItem = await prisma.cartItem.create({
     data: {
       price,
       quantity,
@@ -68,9 +72,14 @@ export const addCustomizeBouquetToCart = async ({
         create: {
           name: `CSTM${count.toString().padEnd(4, "0")}`,
           totalPrice: price,
-          components: {
-            connect: components.map((id) => ({ id })),
+          // components: {
+          //   connect: components.map((id) => ({ id })),
+          // },
+          flowerComponents: {
+            set: flowerComponents,
           },
+          wrapperComponent,
+          otherProducts,
           note,
           wrapperColor,
           bill,
@@ -97,10 +106,15 @@ export const addCustomizeBouquetToCart = async ({
       product: true,
       customize: {
         include: {
-          components: true,
+          // components: true,
           product: true,
         },
       },
     },
   });
+
+  return {
+    ...cartItem,
+    customize: await readComponentsToGQL(cartItem.customize as Customize),
+  };
 };

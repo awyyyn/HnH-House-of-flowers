@@ -285,13 +285,19 @@ export default function OrderDetailDialog({
                   }).format(order.customize.totalPrice)}
                 </span>
               </p>
-              <p className="text-sm">Components:</p>
+              <p className="text-sm">Flower Components:</p>
               <ul className="ml-5 list-disc pl-2">
-                {order.customize.components.map((cstm) => (
+                {order.customize.flowerComponents.map((cstm) => (
                   <li className="text-sm" key={cstm.id}>
                     {cstm.name}
                   </li>
                 ))}
+              </ul>
+              <p className="text-sm">Wrapper Component:</p>
+              <ul className="ml-5 list-disc pl-2">
+                <li className="text-sm">
+                  {order.customize.wrapperComponent.name}
+                </li>
               </ul>
               {!!order.customize.bill && (
                 <>

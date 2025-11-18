@@ -3,7 +3,7 @@ import { BouquetItemType } from "./bouquet-item.js";
 import { OrderDeliveryType, OrderPaymentType, OrderStatus } from "./order.js";
 import { ProductCategory, ProductStatus } from "./product.js";
 import { UserRole, UserStatus } from "./user.js";
-import { FlowerTags } from "@prisma/client";
+import { FlowerTags, FlowerVariant } from "@prisma/client";
 export * from "./user.js";
 export * from "./product.js";
 export * from "./cart.js";
@@ -30,6 +30,7 @@ export interface ProductFilter {
   status?: ProductStatus[];
   category?: ProductCategory;
   tags?: FlowerTags[];
+  flowerVariants?: FlowerVariant[];
 }
 
 export interface BouquetItemFilter {
@@ -86,6 +87,7 @@ export interface ProductsPaginationArgs {
     limit: number;
   };
   tags?: FlowerTags[];
+  flowerVariants?: FlowerVariant[];
 }
 
 export interface RegistrationLink {

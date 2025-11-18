@@ -32,6 +32,7 @@ export const typeDefs = gql`
       status: [ProductStatus]
       pagination: PaginationInput
       tags: [FlowerTag]
+      flowerVariants: [FlowerVariant]
     ): ProductPaginationResult
     product(id: ID!): Product
     readMessages(userId: ID!): [Message]
@@ -75,7 +76,9 @@ export const typeDefs = gql`
       price: Float!
       productId: String!
       cartId: String!
-      components: [String!]!
+      flowerComponents: [String!]!
+      wrapperComponent: String!
+      otherProducts: [String]
       note: String
       wrapperColor: String
       bill: Int
@@ -119,7 +122,9 @@ export const typeDefs = gql`
       description: String
       serviceFee: Float
       otherFee: Float
-      components: [String]
+      flowerComponents: [String]
+      wrapperComponent: String
+      otherProducts: [String]
       price: Float!
       images: [String]
       stock: Int!
@@ -224,7 +229,9 @@ export const typeDefs = gql`
     productId: String!
     note: String
     totalPrice: Float!
-    components: [String!]!
+    flowerComponents: [String!]!
+    wrapperComponent: String!
+    otherProducts: [String]
     wrapperColor: String
     bill: Int
     billQuantity: Int
@@ -519,7 +526,9 @@ export const typeDefs = gql`
     # Fees
     otherFee: Float
     serviceFee: Float
-    components: [Component]
+    flowerComponents: [Component]
+    wrapperComponent: Component
+    otherProducts: [Product]
     price: Float!
 
     flowerVariant: FlowerVariant
@@ -544,7 +553,9 @@ export const typeDefs = gql`
     tags: [FlowerTag]
     serviceFee: Float
     otherFee: Float
-    components: [String]
+    flowerComponents: [String]
+    wrapperComponent: String
+    otherProducts: [String]
     flowerVariant: FlowerVariant
     handMadeFlowerVariant: String
   }
@@ -569,7 +580,9 @@ export const typeDefs = gql`
     note: String
     totalPrice: Float
 
-    components: [Component]
+    flowerComponents: [Component]
+    wrapperComponent: Component
+    otherProducts: [Product]
     wrapperColor: String
     product: Product
     productId: String

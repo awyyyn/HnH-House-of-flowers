@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Customize, Prisma } from "@prisma/client";
 import {
   endOfMonth,
   formatDate,
@@ -16,7 +16,7 @@ import {
   OrderFilter,
 } from "../types/index.js";
 import { PaymentStatus } from "../types/payment.js";
-import { createCustomizeBouquet, getStore, readProduct } from "./index.js";
+import { createCustomizeBouquet, getStore } from "./index.js";
 import { environment } from ".././environments/environment.js";
 
 export const createOrder = async ({
@@ -250,7 +250,6 @@ export const readOrders = async ({
           customize: {
             include: {
               product: true,
-              components: true,
             },
           },
         },
@@ -261,7 +260,7 @@ export const readOrders = async ({
         include: {
           product: true,
 
-          components: true,
+          // components: true,
         },
       },
     },
@@ -269,10 +268,31 @@ export const readOrders = async ({
 
   const total = await prisma.order.count({ where });
 
+  const data = await Promise.all(
+    orders.map(async (order) => {
+      const customize = await readComponentsToGQL(order.customize as Customize);
+
+      const orderItems = await Promise.all(
+        order.orderItems.map(async (item) => {
+          return {
+            ...item,
+            customize: await readComponentsToGQL(item.customize as Customize),
+          };
+        }),
+      );
+
+      return {
+        ...order,
+        customize: customize,
+        orderItems,
+      };
+    }),
+  );
+
   return {
     hasNextPage: orders.length === pagination?.limit,
     total,
-    data: orders,
+    data,
   };
 };
 
@@ -289,13 +309,12 @@ export const readOrdersByUser = async (userId: string) => {
           product: {
             include: {
               reviews: true,
+              customize: true, // qqqq
             },
           },
-
           customize: {
             include: {
               product: true,
-              components: true,
             },
           },
         },
@@ -303,16 +322,35 @@ export const readOrdersByUser = async (userId: string) => {
       customize: {
         include: {
           product: true,
-
-          components: true,
         },
       },
+
       payment: true,
       customer: true,
     },
   });
 
-  return orders;
+  const data = (
+    await Promise.all(
+      (orders || []).map(async (order) => {
+        console.log(order, "order, customize");
+
+        const t = {
+          ...order,
+          customize: order.customize
+            ? await readComponentsToGQL(order.customize as Customize)
+            : null,
+        };
+        return t;
+      }),
+    )
+  ).filter((c) => c !== null);
+
+  // console.log(data, "qqq data");
+
+  console.log(JSON.stringify(data, null, 2));
+
+  return data;
 };
 
 export const getMonthlyRevenue = async (year?: number) => {
@@ -656,16 +694,16 @@ export const createOrderWithCustomization = async ({
     productId: string;
     note?: string;
     totalPrice: number;
-    components: string[];
+    flowerComponents: string[];
+    wrapperComponent: string;
+    otherProducts?: string[];
     wrapperColor?: string;
-    bill?: number;
-    billQuantity?: number;
   };
   deliveryType?: OrderDeliveryType;
   customerId: string;
 }) => {
   return await prisma.$transaction(async (prsm) => {
-    const product = await readProduct(customData.productId);
+    const product = await readProductWithComponents(customData.productId);
     const name = `${product.name} | Customize #${formatDate(new Date(), "yyyyMMdd")}`;
     const unixTimestamp = getUnixTime(new Date()); // Get current Unix timestamp
     const formattedId = `ORD${unixTimestamp.toString().padStart(10, "0")}`;
@@ -742,11 +780,11 @@ export const createOrderWithCustomization = async ({
         note: customData.note || "",
         totalPrice: customData.totalPrice,
         wrapperColor: customData.wrapperColor || "",
-        components: {
-          connect: customData.components.map((id) => ({ id })),
+        wrapperComponent: customData.wrapperComponent,
+        otherProducts: customData.otherProducts,
+        flowerComponents: {
+          set: customData.flowerComponents,
         },
-        bill: customData.bill,
-        billQuantity: customData.billQuantity,
         product: {
           connect: { id: customData.productId },
         },
@@ -775,9 +813,7 @@ export const createOrderWithCustomization = async ({
         },
       },
       include: {
-        components: true,
         product: true,
-
         order: {
           include: {
             payment: true,
@@ -791,6 +827,146 @@ export const createOrderWithCustomization = async ({
       throw new Error("Failed to create customize bouquet");
     }
 
+    const flowerComponents = await Promise.all(
+      customizedBouquet.flowerComponents.map(async (fl) => {
+        return await prisma.component.findFirst({ where: { id: fl } });
+      }),
+    );
+
+    const wrapperComponent = await prisma.component.findFirst({
+      where: { id: customizedBouquet.wrapperComponent },
+    });
+
+    const otherProducts = await Promise.all(
+      customizedBouquet.otherProducts.map(async (op) => {
+        return await prisma.product.findFirst({ where: { id: op } });
+      }),
+    );
+
+    flowerComponents
+      .filter((fl) => !!fl)
+      .map((fl) => ({
+        ...fl,
+        createdAt: fl?.createdAt.toISOString(),
+        updatedAt: fl?.updatedAt.toISOString(),
+      }));
+
+    otherProducts
+      .filter((fl) => !!fl)
+      .map((fl) => ({
+        ...fl,
+        createdAt: fl?.createdAt.toISOString(),
+        updatedAt: fl?.updatedAt.toISOString(),
+      }));
+
     return customizedBouquet.order.pop();
   });
+};
+
+const readWrapperComponent = async (id?: string) => {
+  const wrapperComponent = await prisma.component.findFirst({
+    where: { id },
+  });
+  return wrapperComponent
+    ? {
+        ...wrapperComponent,
+        createdAt: wrapperComponent?.createdAt.toISOString(),
+        updatedAt: wrapperComponent?.updatedAt.toISOString(),
+      }
+    : null;
+};
+
+const readFlowerComponents = async (ids: string[]) => {
+  console.log(ids, "ids");
+  return (
+    await Promise.all(
+      ids.map(async (flower) => {
+        const flwr = await prisma.component.findFirst({
+          where: { id: flower },
+        });
+        return {
+          ...flwr,
+
+          createdAt: flwr?.createdAt.toISOString(),
+          updatedAt: flwr?.updatedAt.toISOString(),
+        };
+      }),
+    )
+  )
+    .filter((fl) => fl !== undefined)
+    .filter((fl) => fl !== null);
+};
+
+const readProductWithComponents = async (id: string) => {
+  const product = await prisma.product.findFirst({
+    where: { id },
+  });
+  return {
+    ...product,
+    flowerComponents: await readFlowerComponents(
+      product?.flowerComponents || [],
+    ),
+    wrapperComponent: await readWrapperComponent(
+      product?.wrapperComponent || undefined,
+    ),
+    otherProducts: await Promise.all(
+      (product?.otherProducts || []).map(async (prd) => {
+        const prdct = await prisma.product.findFirst({
+          where: { id: prd },
+        });
+        return {
+          ...prdct,
+          flowerComponents: await readFlowerComponents(
+            prdct?.flowerComponents || [],
+          ),
+          wrapperComponent: await readWrapperComponent(
+            prdct?.wrapperComponent || undefined,
+          ),
+
+          createdAt: prdct?.createdAt.toISOString(),
+          updatedAt: prdct?.updatedAt.toISOString(),
+        };
+      }),
+    ),
+    createdAt: product?.createdAt.toISOString(),
+    updatedAt: product?.updatedAt.toISOString(),
+  };
+};
+
+export const readComponentsToGQL = async (customize: any) => {
+  console.log(customize, "customize qqq");
+
+  const flowerComponents = await readFlowerComponents(
+    customize.flowerComponents || [],
+  );
+  console.log(flowerComponents, "qqqqq");
+
+  const wrapperComponent = await prisma.component.findFirst({
+    where: { id: customize.wrapperComponent },
+  });
+
+  const otherProducts = (
+    await Promise.all(
+      (customize.otherProducts || []).map(async (prdct) => {
+        return await readProductWithComponents(prdct);
+      }),
+    )
+  )
+    .filter((product) => product !== undefined)
+    .filter((product) => product !== null);
+
+  const product = await readProductWithComponents(customize.productId);
+
+  const t = {
+    ...customize,
+    flowerComponents,
+    wrapperComponent,
+    otherProducts,
+    product,
+    createdAt: customize.createdAt.toISOString(),
+    updatedAt: customize.updatedAt.toISOString(),
+  };
+
+  console.log(t, "qtqqwews");
+  return t;
 };

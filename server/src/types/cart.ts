@@ -28,7 +28,9 @@ export interface AddCustomizeBouquetToCartInput {
   price: number;
   productId: string;
   cartId: string;
-  components: string[];
+  flowerComponents: string[];
+  wrapperComponent: string;
+  otherProducts?: string[];
   note?: string;
   wrapperColor?: string;
   bill?: number;

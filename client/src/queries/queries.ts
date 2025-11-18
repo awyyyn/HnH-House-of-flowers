@@ -47,13 +47,15 @@ export const GET_PRODUCTS_QUERY = gql`
     $filter: String
     $status: [ProductStatus]
     $tags: [FlowerTag]
+    $flowerVariants: [FlowerVariant]
   ) {
     products(
-      pagination: $pagination
       category: $category
+      pagination: $pagination
       filter: $filter
       status: $status
       tags: $tags
+      flowerVariants: $flowerVariants
     ) {
       data {
         ...ProductFragment
@@ -70,7 +72,10 @@ export const GET_PRODUCT_QUERY = gql`
   query Product($id: ID!) {
     product(id: $id) {
       ...ProductFragment
-      components {
+      flowerComponents {
+        ...ComponentFragment
+      }
+      wrapperComponent {
         ...ComponentFragment
       }
     }
@@ -151,6 +156,7 @@ export const GET_ALL_BOUQUET_ITEMS_QUERY = gql`
 
 export const READ_ORDERS_BY_USER_QUERY = gql`
   ${customizeFragment}
+  ${productFragment}
   ${componentFragment}
   query {
     orders: readOrdersByUser {
@@ -165,8 +171,14 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
       customizeId
       customize {
         ...CustomizeFragment
-        components {
+        flowerComponents {
           ...ComponentFragment
+        }
+        wrapperComponent {
+          ...ComponentFragment
+        }
+        otherProducts {
+          ...ProductFragment
         }
       }
       # customize {
@@ -218,6 +230,7 @@ export const READ_ORDERS_BY_USER_QUERY = gql`
 export const READ_ORDERS_QUERY = gql`
   ${customizeFragment}
   ${componentFragment}
+  ${productFragment}
   query Orders(
     $filter: String
     $pagination: PaginationInput
@@ -252,8 +265,14 @@ export const READ_ORDERS_QUERY = gql`
         shippingFee
         customize {
           ...CustomizeFragment
-          components {
+          flowerComponents {
             ...ComponentFragment
+          }
+          wrapperComponent {
+            ...ComponentFragment
+          }
+          otherProducts {
+            ...ProductFragment
           }
         }
         status
@@ -451,8 +470,14 @@ export const READ_PRODUCT_WITH_REVIEWS = gql`
 
     product(id: $id) {
       ...ProductFragment
-      components {
+      flowerComponents {
         ...ComponentFragment
+      }
+      wrapperComponent {
+        ...ComponentFragment
+      }
+      otherProducts {
+        ...ProductFragment
       }
     }
   }
@@ -508,6 +533,56 @@ export const READ_STORE_IMAGE_QUERY = gql`
   query ($id: ID!) {
     storeImage(id: $id) {
       ...StoreImageFragment
+    }
+  }
+`;
+
+export const GET_CUSTOMIZE_OPTIONS_QUERY = gql`
+  ${productFragment}
+  ${componentFragment}
+  query (
+    $id: ID!
+    $componentType: ComponentType
+    $filter: String
+    $pagination: PaginationInput
+    $isAvailable: Boolean
+    $giftsCategory: ProductCategory
+    $chocolatesCategory: ProductCategory
+  ) {
+    product(id: $id) {
+      ...ProductFragment
+      flowerComponents {
+        ...ComponentFragment
+      }
+      wrapperComponent {
+        ...ComponentFragment
+      }
+    }
+    components(
+      componentType: $componentType
+      filter: $filter
+      pagination: $pagination
+      isAvailable: $isAvailable
+    ) {
+      total
+      data {
+        ...ComponentFragment
+      }
+      hasNextPage
+    }
+    gifts: products(category: $giftsCategory) {
+      data {
+        ...ProductFragment
+      }
+      hasNextPage
+      total
+    }
+    chocolates: products(category: $chocolatesCategory) {
+      data {
+        ...ProductFragment
+      }
+      hasNextPage
+      total
     }
   }
 `;

@@ -32,7 +32,7 @@ export const readOrdersResolver = async (
   }: OrderFilter,
 ) => {
   try {
-    return await readOrders({
+    const t = await readOrders({
       filter,
       pagination,
       status,
@@ -40,6 +40,9 @@ export const readOrdersResolver = async (
       typeOfPayment,
       isPreOrder,
     });
+    console.log(JSON.stringify(t, null, 2));
+
+    return t;
   } catch (error) {
     throw new GraphQLError((error as GraphQLError).message);
   }
@@ -53,6 +56,7 @@ export const readOrdersByUserResolver = async (
   try {
     return await readOrdersByUser(app.id);
   } catch (error) {
+    console.log(error);
     throw new GraphQLError((error as GraphQLError).message);
   }
 };
@@ -195,10 +199,10 @@ export const createCustomizeOrderResolver = async (
       productId: string;
       note?: string;
       totalPrice: number;
-      components: string[];
+      flowerComponents: string[];
+      wrapperComponent: string;
+      otherProducts?: string[];
       wrapperColor?: string;
-      bill?: number;
-      billQuantity?: number;
     };
     deliveryType?: OrderDeliveryType;
   },

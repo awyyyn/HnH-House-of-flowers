@@ -82,7 +82,9 @@ export const CREATE_PRODUCT_MUTATION = gql`
     $category: ProductCategory!
     $serviceFee: Float
     $otherFee: Float
-    $components: [String]
+    $flowerComponents: [String]
+    $wrapperComponent: String
+    $otherProducts: [String]
     $images: [String]
     $description: String
     $tags: [FlowerTag]
@@ -97,7 +99,9 @@ export const CREATE_PRODUCT_MUTATION = gql`
       category: $category
       serviceFee: $serviceFee
       otherFee: $otherFee
-      components: $components
+      flowerComponents: $flowerComponents
+      wrapperComponent: $wrapperComponent
+      otherProducts: $otherProducts
       images: $images
       description: $description
       tags: $tags
@@ -513,7 +517,9 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
     $price: Float!
     $productId: String!
     $cartId: String!
-    $components: [String!]!
+    $flowerComponents: [String!]!
+    $wrapperComponent: String!
+    $otherProducts: [String!]!
     $note: String
     $wrapperColor: String
     $bill: Int
@@ -524,7 +530,9 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       price: $price
       productId: $productId
       cartId: $cartId
-      components: $components
+      flowerComponents: $flowerComponents
+      wrapperComponent: $wrapperComponent
+      otherProducts: $otherProducts
       note: $note
       wrapperColor: $wrapperColor
       bill: $bill
@@ -535,8 +543,14 @@ export const ADD_CUSTOMIZE_BOUQUET_TO_CART_MUTATOIN = gql`
       customizeId
       customize {
         ...CustomizeFragment
-        components {
+        flowerComponents {
           ...ComponentFragment
+        }
+        wrapperComponent {
+          ...ComponentFragment
+        }
+        otherProducts {
+          ...ProductFragment
         }
       }
       product {

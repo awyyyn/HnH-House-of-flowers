@@ -3,13 +3,15 @@ import { PaginationResult, Product } from "@/types";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import PaginationComponent from "./components/pagination";
-import ProductCard from "./components/product-card";
-import { EmptyState, Helmet } from "@/components";
-import { PackageSearch } from "lucide-react";
+
 import { CardSkeleton } from "../skeletons";
 
-export default function Chocolates() {
+import { PackageSearch } from "lucide-react";
+import { EmptyState, Helmet } from "@/components";
+import ProductCard from "./components/product-card";
+import PaginationComponent from "./components/pagination";
+
+export default function MoneyBouquets() {
   const [params] = useSearchParams();
   const [page, setPage] = useState(Number(params.get("page") ?? 1));
   const navigate = useNavigate();
@@ -18,12 +20,13 @@ export default function Chocolates() {
     GET_PRODUCTS_QUERY,
     {
       variables: {
-        category: "CHOCOLATE",
+        category: "BOUQUET",
         status: ["IN_STOCK", "PRE_ORDER"],
         pagination: {
           page: page - 1,
           limit: 10,
         },
+        flowerVariants: ["MONEY_BOUQUET"],
       },
     },
   );
@@ -32,7 +35,7 @@ export default function Chocolates() {
 
   return (
     <>
-      <Helmet title="Chocolates" />
+      <Helmet title="Bouquets" />
       {data?.products.data.length === 0 ? (
         <EmptyState
           description="We're currently updating our inventory. Please check back soon for new products."
@@ -51,7 +54,7 @@ export default function Chocolates() {
               currentPage={page}
               onPageChange={(pg) => {
                 setPage(pg);
-                navigate(`/chocolates?page=${pg}`);
+                navigate(`/bouquets?page=${pg}`);
               }}
               pageSize={10}
               totalItems={data?.products.total ?? 0}
