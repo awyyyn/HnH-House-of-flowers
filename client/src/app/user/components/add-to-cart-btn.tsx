@@ -92,76 +92,81 @@ export default function AddToCartInline(product: Product) {
 
   return (
     <div className="flex items-center flex-wrap gap-2">
-      {product.status === "IN_STOCK" && (
-        <>
-          <div className="flex border  rounded-md">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={decrementQuantity}
-              disabled={quantity == 1 || loading}
-              className="h-8 w-8 rounded-r-none"
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            <Input
-              type="number"
-              min="1"
-              readOnly
-              value={quantity}
-              onChange={handleQuantityChange}
-              className="h-8 w-12 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-none"
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              disabled={product.stock <= quantity || loading}
-              onClick={incrementQuantity}
-              className="h-8 w-8 rounded-l-none"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
-          <div className="flex gap-2 ">
-            <Button
-              variant="secondary"
-              onClick={handleAddToCart}
-              size="sm"
-              className="h-8"
-              disabled={loading || product.stock === 0}
-            >
-              <ShoppingCart className="mr-2 h-3 w-3" />
-              Add to Cart
-            </Button>
-          </div>
-        </>
+      {product.category !== "MONEY_BOUQUET" &&
+        product.status === "IN_STOCK" && (
+          <>
+            <div className="flex border  rounded-md">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={decrementQuantity}
+                disabled={quantity == 1 || loading}
+                className="h-8 w-8 rounded-r-none"
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <Input
+                type="number"
+                min="1"
+                readOnly
+                value={quantity}
+                onChange={handleQuantityChange}
+                className="h-8 w-12 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-none"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={product.stock <= quantity || loading}
+                onClick={incrementQuantity}
+                className="h-8 w-8 rounded-l-none"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="flex gap-2 ">
+              <Button
+                variant="secondary"
+                onClick={handleAddToCart}
+                size="sm"
+                className="h-8"
+                disabled={loading || product.stock === 0}
+              >
+                <ShoppingCart className="mr-2 h-3 w-3" />
+                Add to Cart
+              </Button>
+            </div>
+          </>
+        )}
+
+      {product.category !== "MONEY_BOUQUET" && (
+        <CheckoutModal
+          product={product}
+          isPreOrder={product.status === "PRE_ORDER"}
+          quantity={quantity}
+        />
       )}
 
-      <CheckoutModal
-        product={product}
-        isPreOrder={product.status === "PRE_ORDER"}
-        quantity={quantity}
-      />
+      {(product.category === "BOUQUET" ||
+        product.category === "MONEY_BOUQUET") &&
+        product.status === "IN_STOCK" && (
+          <Button
+            onClick={() => {
+              if (!isAuthenticated) {
+                return navigate("/auth/login", {
+                  state: {
+                    from: `/bouquets/${product.id}/customize`,
+                  },
+                });
+              }
 
-      {product.category === "BOUQUET" && product.status === "IN_STOCK" && (
-        <Button
-          onClick={() => {
-            if (!isAuthenticated) {
-              return navigate("/auth/login", {
-                state: {
-                  from: `/bouquets/${product.id}/customize`,
-                },
-              });
-            }
-
-            navigate(`/bouquets/${product.id}/customize`);
-          }}
-          size="sm"
-          variant="outline"
-        >
-          Customize
-        </Button>
-      )}
+              navigate(`/bouquets/${product.id}/customize`);
+            }}
+            size="sm"
+            variant="outline"
+          >
+            Customize
+          </Button>
+        )}
     </div>
   );
 }

@@ -91,7 +91,7 @@ const ProductDetails = () => {
             <div className="flex gap-1">
               <p className="dark:text-white/90">Category:</p>
               <p className="font-medium capitalize">
-                {product.category.toLowerCase()}
+                {product.category.toLowerCase().replace(/_/g, " ")}
               </p>
             </div>
             <div className="flex gap-1">
