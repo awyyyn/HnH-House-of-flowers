@@ -276,6 +276,7 @@ export const readOrders = async ({
         order.orderItems.map(async (item) => {
           return {
             ...item,
+
             customize: await readComponentsToGQL(item.customize as Customize),
           };
         }),
@@ -283,7 +284,7 @@ export const readOrders = async ({
 
       return {
         ...order,
-        customize: customize,
+        customize,
         orderItems,
       };
     }),
@@ -947,7 +948,7 @@ export const readComponentsToGQL = async (customize: any) => {
 
   const otherProducts = (
     await Promise.all(
-      (customize.otherProducts || []).map(async (prdct) => {
+      (customize.otherProducts || []).map(async (prdct: string) => {
         return await readProductWithComponents(prdct);
       }),
     )
