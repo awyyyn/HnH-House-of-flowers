@@ -570,6 +570,7 @@ export const typeDefs = gql`
   enum ProductCategory {
     FLOWER
     BOUQUET
+    MONEY_BOUQUET
     CHOCOLATE
     GIFT
   }

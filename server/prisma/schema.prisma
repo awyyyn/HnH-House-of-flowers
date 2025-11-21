@@ -295,6 +295,7 @@ enum ProductStatus {
 enum ProductCategory {
   FLOWER
   BOUQUET
+  MONEY_BOUQUET
   CHOCOLATE
   GIFT
 }
