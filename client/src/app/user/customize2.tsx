@@ -821,7 +821,7 @@ const Customize2 = () => {
                                         value={field.value?.toString() || ""}
                                       >
                                         <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
-                                          <SelectValue placeholder="Select a flower" />
+                                          <SelectValue placeholder="Select a bill" />
                                         </SelectTrigger>
                                         <SelectContent>
                                           <SelectGroup>

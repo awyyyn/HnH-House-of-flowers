@@ -220,7 +220,8 @@ export default function ProductForm({
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const isBuoquet = values.category === "BOUQUET";
+      const isBuoquet =
+        values.category === "BOUQUET" || values.category === "MONEY_BOUQUET";
 
       // eslint-disable-next-line
       const data: any = {
@@ -302,8 +303,11 @@ export default function ProductForm({
   };
 
   const watchedCategory = form.watch("category");
-  const shouldShowTags = ["FLOWER", "BOUQUET"].includes(watchedCategory);
-  const shouldShowComponents = watchedCategory === "BOUQUET";
+  const shouldShowTags = ["FLOWER", "BOUQUET", "MONEY_BOUQUET"].includes(
+    watchedCategory,
+  );
+  const shouldShowComponents =
+    watchedCategory === "BOUQUET" || watchedCategory === "MONEY_BOUQUET";
   const flowerOptions = (
     componentsState.filter((comp) => comp.type === "FLOWER") || []
   ).filter((f) => f.isAvailable && f.quantity > 0);
@@ -318,7 +322,7 @@ export default function ProductForm({
 
   // Auto-update price when any of the watched values change
   useEffect(() => {
-    if (category === "BOUQUET") {
+    if (category === "BOUQUET" || category === "MONEY_BOUQUET") {
       const flowerPrice = (flowers || []).reduce((acc, flowerId) => {
         const flower = flowerOptions.find((f) => f.id === flowerId);
         return acc + (flower?.price || 0);
