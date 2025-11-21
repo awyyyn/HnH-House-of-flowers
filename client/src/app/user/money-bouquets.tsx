@@ -20,13 +20,12 @@ export default function MoneyBouquets() {
     GET_PRODUCTS_QUERY,
     {
       variables: {
-        category: "BOUQUET",
+        category: "MONEY_BOUQUET",
         status: ["IN_STOCK", "PRE_ORDER"],
         pagination: {
           page: page - 1,
           limit: 10,
         },
-        flowerVariants: ["MONEY_BOUQUET"],
       },
     },
   );
@@ -35,7 +34,7 @@ export default function MoneyBouquets() {
 
   return (
     <>
-      <Helmet title="Bouquets" />
+      <Helmet title="Money Bouquets" />
       {data?.products.data.length === 0 ? (
         <EmptyState
           description="We're currently updating our inventory. Please check back soon for new products."
