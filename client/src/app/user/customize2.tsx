@@ -6,6 +6,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input,
   RichTextEditor,
   Select,
   SelectContent,
@@ -178,6 +179,15 @@ const Customize2 = () => {
     setAdditionalPrdctsFees(totalProducts);
     form.setValue("totalPrice", total);
   }, [additionalProducts, data, totalPrice, flwrsNum]);
+
+  const watchedBill = form.watch("bill");
+  const watchedBillQuantity = form.watch("billQuantity");
+
+  useEffect(() => {
+    if (watchedBill) {
+      form.setValue("billQuantity", "5");
+    }
+  }, [watchedBill]);
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -776,10 +786,10 @@ const Customize2 = () => {
                         </FormItem>
                       )}
                     />
-                    {/*<div className=" ">
+                    <div className=" ">
                       <div className="col-span-4">
                         <h1 className="text-black dark:text-white ">
-                          Money Bouquey
+                          Money Bouquet
                         </h1>
                       </div>
                       <div className="flex w-full  gap-5    items-start">
@@ -873,7 +883,7 @@ const Customize2 = () => {
                           </p>
                         </div>
                       </div>
-                    </div>*/}
+                    </div>
                     <FormField
                       control={form.control}
                       name="note"
