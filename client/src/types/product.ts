@@ -43,4 +43,9 @@ export type ProductStatus =
   | "IN_STOCK"
   | "OUT_OF_STOCK";
 
-export type ProductCategory = "FLOWER" | "BOUQUET" | "CHOCOLATE" | "GIFT";
+export type ProductCategory =
+  | "FLOWER"
+  | "BOUQUET"
+  | "MONEY_BOUQUET"
+  | "CHOCOLATE"
+  | "GIFT";
