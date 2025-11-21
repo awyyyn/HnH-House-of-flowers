@@ -40,10 +40,10 @@ export const readOrdersResolver = async (
       typeOfPayment,
       isPreOrder,
     });
-    console.log(JSON.stringify(t, null, 2));
 
     return t;
   } catch (error) {
+    console.error(error);
     throw new GraphQLError((error as GraphQLError).message);
   }
 };
