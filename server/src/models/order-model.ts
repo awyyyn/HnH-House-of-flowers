@@ -834,9 +834,9 @@ export const createOrderWithCustomization = async ({
       }),
     );
 
-    const wrapperComponent = await prisma.component.findFirst({
-      where: { id: customizedBouquet.wrapperComponent },
-    });
+    // const wrapperComponent = await prisma.component.findFirst({
+    //   where: { id: customizedBouquet.wrapperComponent },
+    // });
 
     const otherProducts = await Promise.all(
       customizedBouquet.otherProducts.map(async (op) => {

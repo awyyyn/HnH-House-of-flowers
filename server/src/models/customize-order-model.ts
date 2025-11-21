@@ -22,7 +22,7 @@ export const createCustomizeBouquet = async ({
       totalPrice,
       note,
       wrapperColor,
-      components: {},
+      wrapperComponent: "",
       product: {},
     },
   });
