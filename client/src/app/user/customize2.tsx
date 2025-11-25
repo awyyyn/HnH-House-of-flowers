@@ -296,11 +296,11 @@ const Customize2 = () => {
           cartId: user.cart.id,
           flowerComponents: values.flowers,
           wrapperComponent: values.wrapper,
-          otherProducts: values.otherProducts,
+          otherProducts: values.otherProducts || [],
           note: values.note || "",
           wrapperColor: values.wrapperColor || "",
           bill: values.bill || 0,
-          billQuantity: values.billQuantity || 0,
+          billQuantity: Number(values.billQuantity) || 0,
         },
       });
 
