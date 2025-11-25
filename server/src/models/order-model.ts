@@ -769,6 +769,7 @@ export const createOrderWithCustomization = async ({
     const data = await response.json();
 
     if (response.status !== 200) {
+      console.log(data, "response");
       throw new Error("Failed to order");
     }
 
