@@ -24,7 +24,7 @@ import {
   GET_CUSTOMIZE_OPTIONS_QUERY,
 } from "@/queries";
 import { componentsAtom } from "@/states/components";
-import { Component, Product } from "@/types";
+import { Component, FlowerComponentsQuantity, Product } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useSetAtom } from "jotai";
@@ -128,6 +128,17 @@ const Customize2 = () => {
           (item) => item.stock > 1 && item.status === "IN_STOCK",
         ),
       );
+      if (
+        data.product.flowerComponents &&
+        data.product.flowerComponents?.length > 0
+      ) {
+        setFlowerComponentsQuantity(
+          data.product.flowerComponents.map((item) => ({
+            id: item.id,
+            quantity: 10,
+          })),
+        );
+      }
     },
   });
   const [totalPrice, setTotalPrice] = useState<number>(
@@ -136,6 +147,9 @@ const Customize2 = () => {
   const [additionalPrdctsFees, setAdditionalPrdctsFees] = useState<number>(0);
   const [flowerFees, setFlowerFees] = useState<number>(0);
   const { pathname } = useLocation();
+  const [flowerComponentsQuantity, setFlowerComponentsQuantity] = useState<
+    FlowerComponentsQuantity[]
+  >([]);
 
   const flowerOptions =
     componentsState.filter((comp) => comp.type === "FLOWER") || [];
@@ -542,7 +556,7 @@ const Customize2 = () => {
                               (_, index: number) => (
                                 <div key={index} className="w-full">
                                   <div className="flex items-center w-full  gap-5  ">
-                                    <div className="w-[70%] md:w-[85%]">
+                                    <div className="w-[70%] md:w-[85%] flex gap-x-2 items-center">
                                       <Select
                                         defaultValue={
                                           product?.flowerComponents?.[index]
@@ -602,6 +616,11 @@ const Customize2 = () => {
                                           </SelectGroup>
                                         </SelectContent>
                                       </Select>
+                                      <Input
+                                        type="number"
+                                        className="max-w-[20%] mt-1"
+                                        defaultValue={10}
+                                      />
                                     </div>
                                     <div className="flex gap-2 items-end justify-start">
                                       <div>
