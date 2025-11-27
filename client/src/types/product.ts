@@ -24,6 +24,7 @@ export interface Product {
   price: number;
   flowerComponents?: Component[];
   wrapperComponent?: Component;
+  flowerComponentsQuantity?: FlowerComponentsQuantity[];
 
   flowerVariant?: FlowerVariant;
   handMadeFlowerVariant?: string;
@@ -36,6 +37,11 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type FlowerComponentsQuantity = {
+  id: string;
+  quantity: number;
+};
 
 export type ProductStatus =
   | "PRE_ORDER"
