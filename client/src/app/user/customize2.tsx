@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Form,
   FormControl,
@@ -28,7 +31,7 @@ import { Component, FlowerComponentsQuantity, Product } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useSetAtom } from "jotai";
-import { Info, Loader } from "lucide-react";
+import { Info, Loader, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -911,6 +914,22 @@ const Customize2 = () => {
                             </div>
                           </div>
                         </div>
+                        <Alert>
+                          <TriangleAlert />
+                          <AlertTitle>Money Bouquet Note!</AlertTitle>
+                          <AlertDescription>
+                            Money bouquet bill amount is{" "}
+                            {Intl.NumberFormat("en-PH", {
+                              currency: "PHP",
+                              style: "currency",
+                            }).format(
+                              (watchedBill || 0) *
+                                (Number(watchedBillQuantity) || 0),
+                            )}
+                            . Please note that this amount is not included in
+                            the total bill amount.
+                          </AlertDescription>
+                        </Alert>
                       </>
                     )}
                     <FormField
