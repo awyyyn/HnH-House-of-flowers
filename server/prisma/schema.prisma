@@ -110,14 +110,15 @@ model Customize {
   totalPrice Float
 
   //#OLD bouquetItems BouquetItems
-  flowerComponents String[]
-  wrapperComponent String
-  otherProducts    String[]
-  wrapperColor     String?
-  product          Product  @relation(fields: [productId], references: [id])
-  productId        String   @db.ObjectId
-  bill             Int?
-  billQuantity     Int?
+  flowerComponents         String[]
+  flowerComponentsQuantity FlowerQuantity[]
+  wrapperComponent         String
+  otherProducts            String[]
+  wrapperColor             String?
+  product                  Product          @relation(fields: [productId], references: [id])
+  productId                String           @db.ObjectId
+  bill                     Int?
+  billQuantity             Int?
 
   order Order[]
 
@@ -129,6 +130,11 @@ model Customize {
   Component Component[]
 
   @@map("customizes")
+}
+
+type FlowerQuantity {
+  id       String
+  quantity Int
 }
 
 model OrderItem {
