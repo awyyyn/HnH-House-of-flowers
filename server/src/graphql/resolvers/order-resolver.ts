@@ -1,3 +1,4 @@
+import { FlowerQuantity } from "@prisma/client";
 import {
   createNotification,
   createOrder,
@@ -203,6 +204,7 @@ export const createCustomizeOrderResolver = async (
       wrapperComponent: string;
       otherProducts?: string[];
       wrapperColor?: string;
+      flowerComponentsQuantity: FlowerQuantity[];
     };
     deliveryType?: OrderDeliveryType;
   },
