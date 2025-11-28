@@ -582,6 +582,7 @@ export const typeDefs = gql`
     totalPrice: Float
 
     flowerComponents: [Component]
+    flowerComponentsQuantity: FlowerQuantity
     wrapperComponent: Component
     otherProducts: [Product]
     wrapperColor: String
@@ -594,6 +595,11 @@ export const typeDefs = gql`
 
     createdAt: String!
     updatedAt: String!
+  }
+
+  type FlowerQuantity {
+    id: ID!
+    quantity: Int!
   }
 
   type Message {
