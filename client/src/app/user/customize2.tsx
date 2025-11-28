@@ -623,6 +623,22 @@ const Customize2 = () => {
                                         type="number"
                                         className="max-w-[20%] mt-1"
                                         defaultValue={10}
+                                        onChange={(e) => {
+                                          setFlowerComponentsQuantity((fls) =>
+                                            fls.map((fl) =>
+                                              fl.id ===
+                                              product?.flowerComponents?.[index]
+                                                ?.id
+                                                ? {
+                                                    ...fl,
+                                                    quantity: Number(
+                                                      e.target.value,
+                                                    ),
+                                                  }
+                                                : fl,
+                                            ),
+                                          );
+                                        }}
                                       />
                                     </div>
                                     <div className="flex gap-2 items-end justify-start">
