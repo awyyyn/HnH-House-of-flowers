@@ -1,4 +1,4 @@
-import { Customize, Prisma } from "@prisma/client";
+import { Customize, FlowerQuantity, Prisma } from "@prisma/client";
 import {
   endOfMonth,
   formatDate,
@@ -703,6 +703,7 @@ export const createOrderWithCustomization = async ({
     wrapperComponent: string;
     otherProducts?: string[];
     wrapperColor?: string;
+    flowerComponentsQuantity: FlowerQuantity[];
   };
   deliveryType?: OrderDeliveryType;
   customerId: string;
