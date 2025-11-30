@@ -54,13 +54,13 @@ export function Navbar({ className }: { className?: string }) {
           )}
           <Link to="/" className="lg:block hidden">
             <TextGenerateEffect
-              className="text-lg  "
-              words="House of Flowers"
+              className="text-2xl "
+              words="H&N - House of Flowers"
             />
           </Link>
         </div>
         <div className="flex gap-2  md:hidden">
-          <ThemeSwitcher />
+          {/*<ThemeSwitcher />*/}
           {!isAuthenticated ? (
             <div className="flex  items-center gap-1">
               <Link to="/auth/login">
@@ -216,7 +216,7 @@ export function Navbar({ className }: { className?: string }) {
             <NotificationDropdown />
           </>
         )}
-        <ThemeSwitcher />
+        {/*<ThemeSwitcher />*/}
         {!isAuthenticated ? (
           <div className="md:flex gap-2 px-4 items-center hidden ">
             <Link to="/auth/login">
