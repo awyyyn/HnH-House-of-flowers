@@ -14,10 +14,11 @@ import {
 import { useAuth } from "@/contexts";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Flower, Loader } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Logo from "@/assets/logo.png";
 
 import { z } from "zod";
 
@@ -105,7 +106,12 @@ export default function Login() {
   return (
     <>
       <Helmet title="Login" />
-      <Flower className="text-primary mx-auto " size={50} />
+      {/*<Flower className="text-primary mx-auto " size={50} />*/}
+      <img
+        src={Logo}
+        className="mx-auto rounded-full h-[60px] w-[60px]"
+        alt="Shop logo"
+      />
       <h1 className="text-black dark:text-white text-2xl">Log in</h1>
       <p className="text-black/60 dark:text-white/60 text-sm">
         Enter your email and password to access your account
