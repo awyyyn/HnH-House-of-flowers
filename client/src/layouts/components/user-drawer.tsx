@@ -13,13 +13,20 @@ import {
   SheetTrigger,
 } from "@/components";
 import { useAuth } from "@/contexts";
-import { Flower, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import Logo from "@/assets/logo.png";
 
 export function UserDrawer() {
   const { logout, user } = useAuth();
 
-  const products = ["bouquets", "flowers", "chocolates", "gifts"];
+  const products = [
+    "bouquets",
+    "flowers",
+    "chocolates",
+    "gifts",
+    "money-bouquets",
+  ];
 
   const otherLinks = ["customize", "about", "contact"];
 
@@ -28,8 +35,8 @@ export function UserDrawer() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="block text-3xl md:hidden group">
-          <Flower className="group-hover:scale-125 group-active:scale-100 transition-transform duration-300" />
+        <Button className="block   md:hidden group">
+          <img className="h-5 w-5 rounded-full" src={Logo} alt="Shop Logo" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="  ">
@@ -68,7 +75,7 @@ export function UserDrawer() {
                     className="w-full justify-start capitalize"
                   >
                     <Link to={product} key={`link-${product}`}>
-                      {product}
+                      {product.replace(/-/g, " ")}
                     </Link>
                   </Button>
                 </SheetClose>
@@ -104,7 +111,7 @@ export function UserDrawer() {
             <SheetClose asChild className="">
               <Button className="justify-start   my-2 px-0 " variant="ghost">
                 <Avatar className="border h-8 w-8">
-                  <AvatarImage src={user?.photo} />
+                  <AvatarImage className="object-cover" src={user?.photo} />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start justify-center">
