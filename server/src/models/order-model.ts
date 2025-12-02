@@ -338,8 +338,6 @@ export const readOrdersByUser = async (userId: string) => {
   const data = (
     await Promise.all(
       (orders || []).map(async (order) => {
-        console.log(order, "order, customize");
-
         const t = {
           ...order,
           customize: order.customize
@@ -350,10 +348,6 @@ export const readOrdersByUser = async (userId: string) => {
       }),
     )
   ).filter((c) => c !== null);
-
-  // console.log(data, "qqq data");
-
-  console.log(JSON.stringify(data, null, 2));
 
   return data;
 };
@@ -913,6 +907,7 @@ const readProductWithComponents = async (id: string) => {
     flowerComponents: await readFlowerComponents(
       product?.flowerComponents || [],
     ),
+
     wrapperComponent: await readWrapperComponent(
       product?.wrapperComponent || undefined,
     ),
@@ -941,12 +936,9 @@ const readProductWithComponents = async (id: string) => {
 };
 
 export const readComponentsToGQL = async (customize: any) => {
-  console.log(customize, "customize qqq");
-
   const flowerComponents = await readFlowerComponents(
     customize.flowerComponents || [],
   );
-  console.log(flowerComponents, "qqqqq");
 
   const wrapperComponent = await prisma.component.findFirst({
     where: { id: customize.wrapperComponent },
@@ -966,6 +958,7 @@ export const readComponentsToGQL = async (customize: any) => {
 
   const t = {
     ...customize,
+    flowerComponentsQuantity: customize.flowerComponentsQuantity || [],
     flowerComponents,
     wrapperComponent,
     otherProducts,
@@ -974,6 +967,5 @@ export const readComponentsToGQL = async (customize: any) => {
     updatedAt: customize.updatedAt.toISOString(),
   };
 
-  console.log(t, "qtqqwews");
   return t;
 };
