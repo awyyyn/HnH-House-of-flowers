@@ -226,7 +226,7 @@ export const typeDefs = gql`
   }
 
   input FlowerQuantityInput {
-    flowerId: ID!
+    id: ID!
     quantity: Int!
   }
 
