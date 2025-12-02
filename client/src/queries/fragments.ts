@@ -81,6 +81,10 @@ export const customizeFragment = gql`
     totalPrice
     note
     name
+    flowerComponentsQuantity {
+      id
+      quantity
+    }
     id
     createdAt
     wrapperColor
