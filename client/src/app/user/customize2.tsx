@@ -256,6 +256,7 @@ const Customize2 = () => {
             note: values.note || "",
             totalPrice: values.totalPrice,
             // components: [values.flower, values.wrapper],
+            flowerComponentsQuantity: flowerComponentsQuantity,
             wrapperColor: values.wrapperColor || "",
             flowerComponents: values.flowers || [],
             wrapperComponent: values.wrapper || "",
