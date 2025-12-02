@@ -225,11 +225,17 @@ export const typeDefs = gql`
     image: String!
   }
 
+  input FlowerQuantityInput {
+    flowerId: ID!
+    quantity: Int!
+  }
+
   input CustomData {
     productId: String!
     note: String
     totalPrice: Float!
     flowerComponents: [String!]!
+    flowerComponentsQuantity: [FlowerQuantityInput]
     wrapperComponent: String!
     otherProducts: [String]
     wrapperColor: String
