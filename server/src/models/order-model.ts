@@ -343,6 +343,16 @@ export const readOrdersByUser = async (userId: string) => {
           customize: order.customize
             ? await readComponentsToGQL(order.customize as Customize)
             : null,
+          orderItems: await Promise.all(
+            order.orderItems.map(async (item) => {
+              return {
+                ...item,
+                customize: item.customize
+                  ? await readComponentsToGQL(item.customize as Customize)
+                  : null,
+              };
+            }),
+          ),
         };
         return t;
       }),
@@ -783,6 +793,7 @@ export const createOrderWithCustomization = async ({
         wrapperColor: customData.wrapperColor || "",
         wrapperComponent: customData.wrapperComponent,
         otherProducts: customData.otherProducts,
+        flowerComponentsQuantity: customData.flowerComponentsQuantity,
         flowerComponents: {
           set: customData.flowerComponents,
         },
@@ -878,7 +889,6 @@ const readWrapperComponent = async (id?: string) => {
 };
 
 const readFlowerComponents = async (ids: string[]) => {
-  console.log(ids, "ids");
   return (
     await Promise.all(
       ids.map(async (flower) => {
@@ -955,10 +965,12 @@ export const readComponentsToGQL = async (customize: any) => {
     .filter((product) => product !== null);
 
   const product = await readProductWithComponents(customize.productId);
-
+  console.log(customize.flowerComponentsQuantity, "qqq");
   const t = {
     ...customize,
-    flowerComponentsQuantity: customize.flowerComponentsQuantity || [],
+    flowerComponentsQuantity: !!customize.flowerComponentsQuantity
+      ? customize.flowerComponentsQuantity
+      : [],
     flowerComponents,
     wrapperComponent,
     otherProducts,
