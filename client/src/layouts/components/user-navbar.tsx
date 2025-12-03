@@ -11,7 +11,6 @@ import {
   DropdownMenuItem,
   Badge,
   NotificationDropdown,
-  ThemeSwitcher,
 } from "@/components";
 import { cn } from "@/lib/utils";
 import {

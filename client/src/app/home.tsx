@@ -1,18 +1,16 @@
 import { Button, Helmet, Marquee } from "@/components";
-import heroImg from "../assets/hero-img.png";
 import {
   IconBrandFacebook,
   IconBrandInstagram,
   IconBrandTwitter,
 } from "@tabler/icons-react";
-import { ChevronRight, Flower } from "lucide-react";
+import { Flower } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { Product, Review, StoreImage } from "@/types";
 
 import { useEffect, useState } from "react";
 import { HomeSkeleton } from "./skeletons";
-import { formatCurrency } from "@/lib";
 import ReviewCard from "@/components/custom/review-card";
 import HeroCarousel from "./user/components/carousel";
 
