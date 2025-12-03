@@ -278,7 +278,11 @@ export function CustomizeDetailsModal({
                               }).format(flwr.price || 0)}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              Qty: {flwr.quantity}
+                              Pcs:{" "}
+                              {(customize?.flowerComponentsQuantity || []).find(
+                                (flr) => flr.id === flwr.id,
+                              )?.quantity || 0}{" "}
+                              pcs
                             </p>
                           </div>
                         </div>
