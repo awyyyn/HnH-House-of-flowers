@@ -1,4 +1,5 @@
 import { Button, Helmet, Marquee } from "@/components";
+import shopImage from "@/assets/img1.png";
 import {
   IconBrandFacebook,
   IconBrandInstagram,
@@ -215,7 +216,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-center">
                     <img
-                      src="https://images.stockcake.com/public/3/c/8/3c83e6c8-1ba7-4f55-bdf5-e4d45dce2f47_large/florist-arranging-flowers-stockcake.jpg"
+                      src={shopImage}
                       alt="Florist arranging flowers"
                       width={550}
                       height={550}
