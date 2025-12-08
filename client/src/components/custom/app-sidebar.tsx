@@ -11,6 +11,7 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 import { NavMain } from "@/components/custom/nav-main";
 
@@ -163,11 +164,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="flex bg-primary aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg   text-sidebar-primary-foreground">
-                  <Flower className="size-4 " />
-                </div>
+                {/*<div className="flex bg-primary aspect-square size-8 items-center dark:bg-primary justify-center rounded-lg   text-sidebar-primary-foreground">
+                </div>*/}
+                {/*<Flower className="size-4 " />*/}
+                <img src={logo} alt="Logo" className="h-10 rounded-full" />
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">HnH</span>
+                  <span className="truncate font-semibold">HnN</span>
                   <span className="truncate text-xs">House of Flowers</span>
                 </div>
               </Link>
