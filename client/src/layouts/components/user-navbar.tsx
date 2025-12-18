@@ -1,4 +1,5 @@
 import { useState } from "react";
+import logo from "@/assets/logo.png";
 import {
   Button,
   Menu,
@@ -51,7 +52,8 @@ export function Navbar({ className }: { className?: string }) {
               <UserDrawer />
             </div>
           )}
-          <Link to="/" className="lg:block hidden">
+          <Link to="/" className="lg:flex lg:gap-2 hidden items-center">
+            <img src={logo} alt="Logo" className="h-10 rounded-full" />
             <TextGenerateEffect
               className="text-2xl "
               words="H&N - House of Flowers"
