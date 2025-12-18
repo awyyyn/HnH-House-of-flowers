@@ -1,3 +1,4 @@
+import { FlowerQuantity } from "@prisma/client";
 import {
   createNotification,
   createOrder,
@@ -40,10 +41,10 @@ export const readOrdersResolver = async (
       typeOfPayment,
       isPreOrder,
     });
-    console.log(JSON.stringify(t, null, 2));
 
     return t;
   } catch (error) {
+    console.error(error);
     throw new GraphQLError((error as GraphQLError).message);
   }
 };
@@ -54,9 +55,10 @@ export const readOrdersByUserResolver = async (
   app: AppContext,
 ) => {
   try {
-    return await readOrdersByUser(app.id);
+    const t = await readOrdersByUser(app.id);
+    return t;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new GraphQLError((error as GraphQLError).message);
   }
 };
@@ -203,6 +205,7 @@ export const createCustomizeOrderResolver = async (
       wrapperComponent: string;
       otherProducts?: string[];
       wrapperColor?: string;
+      flowerComponentsQuantity: FlowerQuantity[];
     };
     deliveryType?: OrderDeliveryType;
   },

@@ -14,7 +14,17 @@ export const createCart = async ({ userId }: { userId: string }) => {
       },
     },
     include: {
-      items: true,
+      items: {
+        include: {
+          product: true,
+          customize: {
+            include: {
+              // components: true,
+              product: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -22,7 +32,7 @@ export const createCart = async ({ userId }: { userId: string }) => {
 };
 
 export const readCart = async (userId: string) => {
-  const cart = await prisma.cart.findFirst({
+  let cart = await prisma.cart.findFirst({
     where: {
       user: {
         id: userId,
@@ -42,6 +52,10 @@ export const readCart = async (userId: string) => {
       },
     },
   });
+
+  if (!cart) {
+    cart = await createCart({ userId });
+  }
 
   return cart;
 };

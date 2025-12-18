@@ -156,7 +156,12 @@ export default function Dashboard() {
                   {(data?.topProducts || []).map((product) => (
                     <div key={product.id} className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
-                        <Flower className="h-6 w-6 text-primary" />
+                        {/*<Flower className="h-6 w-6 text-primary" />*/}
+                        <img
+                          src={product.images[0]}
+                          alt={product.name}
+                          className="h-11 w-11"
+                        />
                       </div>
                       <div className="flex-1 space-y-1">
                         <p className="text-sm font-medium leading-none">

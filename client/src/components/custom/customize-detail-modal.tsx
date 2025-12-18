@@ -220,80 +220,83 @@ export function CustomizeDetailsModal({
           )}
 
           {/* Components */}
-          {customize.components && customize.components.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <PaletteIcon className="w-4 h-4" />
-                  Components ({customize.components.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {customize.components.map((component) => (
-                    <div
-                      key={component.id}
-                      className="border rounded-lg p-4 space-y-3"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex gap-3">
-                          <img
-                            src={
-                              component.image ||
-                              "https://blocks.astratic.com/img/general-img-landscape.png"
-                            }
-                            alt={component.name}
-                            className="w-12 h-12 object-cover rounded-md  "
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src =
-                                "https://blocks.astratic.com/img/general-img-landscape.png";
-                            }}
-                          />
+          {customize.flowerComponents &&
+            customize.flowerComponents.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <PaletteIcon className="w-4 h-4" />
+                    Flower Components ({customize.flowerComponents.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    {customize.flowerComponents.map((flwr) => (
+                      <div
+                        key={flwr.id}
+                        className="border rounded-lg p-4 space-y-3"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex gap-3">
+                            <img
+                              src={
+                                flwr.image ||
+                                "https://blocks.astratic.com/img/general-img-landscape.png"
+                              }
+                              alt={flwr.name}
+                              className="w-12 h-12 object-cover rounded-md  "
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src =
+                                  "https://blocks.astratic.com/img/general-img-landscape.png";
+                              }}
+                            />
 
-                          <div className="space-y-1">
-                            <h4 className="font-semibold text-sm">
-                              {component.name}
-                            </h4>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant={
-                                  component.isAvailable
-                                    ? "default"
-                                    : "destructive"
-                                }
-                              >
-                                {component.isAvailable
-                                  ? "Available"
-                                  : "Out of Stock"}
-                              </Badge>
-                              <Badge variant="outline">{component.type}</Badge>
+                            <div className="space-y-1">
+                              <h4 className="font-semibold text-sm">
+                                {flwr.name}
+                              </h4>
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant={
+                                    flwr.isAvailable ? "default" : "destructive"
+                                  }
+                                >
+                                  {flwr.isAvailable
+                                    ? "Available"
+                                    : "Out of Stock"}
+                                </Badge>
+                                <Badge variant="outline">{flwr.type}</Badge>
+                              </div>
                             </div>
                           </div>
+                          <div className="text-right space-y-1">
+                            <p className="text-sm font-semibold">
+                              {Intl.NumberFormat("en-PH", {
+                                style: "currency",
+                                currency: "PHP",
+                              }).format(flwr.price || 0)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Pcs:{" "}
+                              {(customize?.flowerComponentsQuantity || []).find(
+                                (flr) => flr.id === flwr.id,
+                              )?.quantity || 0}{" "}
+                              pcs
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right space-y-1">
-                          <p className="text-sm font-semibold">
-                            {Intl.NumberFormat("en-PH", {
-                              style: "currency",
-                              currency: "PHP",
-                            }).format(component.price || 0)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Qty: {component.quantity}
-                          </p>
-                        </div>
-                      </div>
 
-                      {component.description && (
-                        <RichTextEditor
-                          content={component.description}
-                          editable={false}
-                          isEditing={false}
-                          handleValue={() => {}}
-                        />
-                      )}
+                        {flwr.description && (
+                          <RichTextEditor
+                            content={flwr.description}
+                            editable={false}
+                            isEditing={false}
+                            handleValue={() => {}}
+                          />
+                        )}
 
-                      {/*{component.type === "WRAPPER" &&
+                        {/*{component.type === "WRAPPER" &&
                         component.availableColors &&
                         component.availableColors.length > 0 && (
                           <div>
@@ -315,8 +318,107 @@ export function CustomizeDetailsModal({
                             </div>
                           </div>
                         )}*/}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {customize.wrapperComponent && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <PaletteIcon className="w-4 h-4" />
+                  Wrapper Component
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  <div
+                    key={customize.wrapperComponent.id}
+                    className="border rounded-lg p-4 space-y-3"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex gap-3">
+                        <img
+                          src={
+                            customize.wrapperComponent.image ||
+                            "https://blocks.astratic.com/img/general-img-landscape.png"
+                          }
+                          alt={customize.wrapperComponent.name}
+                          className="w-12 h-12 object-cover rounded-md  "
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src =
+                              "https://blocks.astratic.com/img/general-img-landscape.png";
+                          }}
+                        />
+
+                        <div className="space-y-1">
+                          <h4 className="font-semibold text-sm">
+                            {customize.wrapperComponent.name}
+                          </h4>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={
+                                customize.wrapperComponent.isAvailable
+                                  ? "default"
+                                  : "destructive"
+                              }
+                            >
+                              {customize.wrapperComponent.isAvailable
+                                ? "Available"
+                                : "Out of Stock"}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="text-sm font-semibold">
+                          {Intl.NumberFormat("en-PH", {
+                            style: "currency",
+                            currency: "PHP",
+                          }).format(customize.wrapperComponent.price || 0)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Qty: {customize.wrapperComponent.quantity}
+                        </p>
+                      </div>
                     </div>
-                  ))}
+
+                    {customize.wrapperComponent.description && (
+                      <RichTextEditor
+                        content={customize.wrapperComponent.description}
+                        editable={false}
+                        isEditing={false}
+                        handleValue={() => {}}
+                      />
+                    )}
+
+                    {/*{component.type === "WRAPPER" &&
+                        component.availableColors &&
+                        component.availableColors.length > 0 && (
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Available Colors:
+                            </label>ss
+                            <div className="flex gap-1 mt-1">
+                              {component.availableColors.map((color, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-1"
+                                >
+                                  {getColorPreview(color)}
+                                  <span className="text-xs capitalize">
+                                    {color}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}*/}
+                  </div>
                 </div>
               </CardContent>
             </Card>

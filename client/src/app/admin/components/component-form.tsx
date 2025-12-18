@@ -88,7 +88,7 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
     defaultValues: {
       availableColors: value?.availableColors || [],
       description: value?.description || "",
-      image: value?.image || "",
+      image: value?.image?.trim() || "",
       isAvailable: value?.isAvailable || true,
       name: value?.name || "",
       price: value?.price || 1,
@@ -104,7 +104,8 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
       form.setValue("description", value.description || "");
       form.setValue("stock", value.quantity || 1);
       form.setValue("price", value.price || 1);
-      form.setValue("image", value.image || "");
+      form.setValue("image", value.image?.trim() || "");
+      setImg(value.image?.trim() || "");
       form.setValue("type", value.type || "FLOWER");
       form.setValue("isAvailable", value.isAvailable || true);
       form.setValue("availableColors", value.availableColors || []);
@@ -437,7 +438,7 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                   </FormLabel>
                   <FormControl>
                     <div
-                      className={`w-full relative h-96  dark:bg-zinc-900 border-2 group rounded-lg border-gray-200 dark:border-zinc-800`}
+                      className={`w-full relative h-96  overflow-hidden dark:bg-zinc-900 border-2 group rounded-lg border-gray-200 dark:border-zinc-800`}
                     >
                       {img.length > 0 ? (
                         <>
@@ -453,12 +454,11 @@ const ComponentForm = ({ value, isEditing = false }: AddComponentProps) => {
                             </Button>
                           </div>
                           <img
-                            src={img[0]}
+                            src={img}
                             alt="product img"
                             className="absolute w-full h-full object-contain group rounded-lg"
                           />
                           <br />
-                          {img}
                         </>
                       ) : (
                         <>

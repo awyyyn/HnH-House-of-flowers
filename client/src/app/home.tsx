@@ -1,18 +1,17 @@
 import { Button, Helmet, Marquee } from "@/components";
-import heroImg from "../assets/hero-img.png";
+import shopImage from "@/assets/img1.png";
 import {
   IconBrandFacebook,
   IconBrandInstagram,
   IconBrandTwitter,
 } from "@tabler/icons-react";
-import { ChevronRight, Flower } from "lucide-react";
+import { Flower } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { Product, Review, StoreImage } from "@/types";
 
 import { useEffect, useState } from "react";
 import { HomeSkeleton } from "./skeletons";
-import { formatCurrency } from "@/lib";
 import ReviewCard from "@/components/custom/review-card";
 import HeroCarousel from "./user/components/carousel";
 
@@ -68,7 +67,7 @@ export default function Home() {
           <main className="flex-1">
             {data.storeImage && <HeroCarousel images={data.storeImage.image} />}
 
-            <section className="relative">
+            {/*<section className="relative">
               <div className="container px-4 py-16 md:py-24 lg:py-32">
                 <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-[1fr_500px]">
                   <div className="flex flex-col justify-center space-y-4">
@@ -102,9 +101,9 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </section>
+            </section>*/}
 
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+            {/*<section className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
               <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center">
                   <div className="space-y-2">
@@ -161,78 +160,9 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-            </section>
-            {data.topProducts && data.topProducts.length > 0 && (
-              <section className="w-full py-12 md:py-24 lg:py-32">
-                <div className="container px-4 md:px-6">
-                  <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                      <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-                        Bestselling Products
-                      </h2>
-                      <p className="max-w-[900px] text-muted-foreground md:text-xl">
-                        Our most popular products, loved by customers
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 pt-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {data.topProducts.map((product) => (
-                      <div
-                        key={product.name}
-                        className="group relative overflow-hidden rounded-lg border bg-background shadow-sm"
-                      >
-                        <Link
-                          to={`/${product.category.toLowerCase()}s/${
-                            product.id
-                          }`}
-                          className="relative block overflow-hidden"
-                        >
-                          <img
-                            src={product.images[0]}
-                            alt={product.name}
-                            width={300}
-                            height={400}
-                            className="aspect-[3/4] w-full object-cover transition-transform group-hover:scale-105"
-                          />
-                          {/* <Button
-														size="icon"
-														variant="ghost"
-														className="absolute right-2 top-2 h-8 w-8 rounded-full bg-white/80 text-rose-500 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100">
-														<Heart className="h-4 w-4" />
-														<span className="sr-only">Add to wishlist</span>
-													</Button> */}
-                        </Link>
-                        <div className="p-4">
-                          <h3 className="font-medium">{product.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {formatCurrency(product.price)}
-                          </p>
-                          {/* <div className="mt-4 flex items-center justify-between">
-														<Button
-															size="sm"
-															variant="outline"
-															className="w-full">
-															Add to Cart
-														</Button>
-													</div> */}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-12 flex justify-center">
-                    <Link
-                      to="/flowers"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    >
-                      View All Products
-                      <ChevronRight className="ml-1 h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              </section>
-            )}
+            </section>*/}
 
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+            <section className="w-full mt-10 py-12 md:py-24 lg:py-32 bg-muted/50">
               <div className="container px-4 md:px-6">
                 <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
                   <div className="flex flex-col justify-center space-y-4">
@@ -286,7 +216,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-center">
                     <img
-                      src="https://images.stockcake.com/public/3/c/8/3c83e6c8-1ba7-4f55-bdf5-e4d45dce2f47_large/florist-arranging-flowers-stockcake.jpg"
+                      src={shopImage}
                       alt="Florist arranging flowers"
                       width={550}
                       height={550}

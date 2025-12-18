@@ -87,24 +87,24 @@ export default function SystemSettings() {
   const generalForm = useForm<GeneralFormValues>({
     resolver: zodResolver(generalFormSchema),
     values: {
-      storeName: data.storeName || "",
-      storeEmail: data.storeEmail || "",
-      storePhone: data.storePhone || "",
-      storeAddress: data.storeAddress || "",
-      storeDescription: data.storeDescription || "",
-      deliveryFee: String(data.deliveryFee),
-      facebook: data.socialMedia.facebook || "",
-      instagram: data.socialMedia.instagram || "",
+      storeName: data?.storeName || "",
+      storeEmail: data?.storeEmail || "",
+      storePhone: data?.storePhone || "",
+      storeAddress: data?.storeAddress || "",
+      storeDescription: data?.storeDescription || "",
+      deliveryFee: String(data?.deliveryFee),
+      facebook: data?.socialMedia.facebook || "",
+      instagram: data?.socialMedia.instagram || "",
     },
   });
 
   const policyForm = useForm<PolicyFormValues>({
     resolver: zodResolver(policyFormSchema),
     values: {
-      privacyPolicy: data.policies.privacyPolicy || "",
-      termsOfService: data.policies.termsOfService || "",
-      returnPolicy: data.policies.returnPolicy || "",
-      shippingPolicy: data.policies.shippingPolicy || "",
+      privacyPolicy: data?.policies.privacyPolicy || "",
+      termsOfService: data?.policies.termsOfService || "",
+      returnPolicy: data?.policies.returnPolicy || "",
+      shippingPolicy: data?.policies.shippingPolicy || "",
     },
   });
 

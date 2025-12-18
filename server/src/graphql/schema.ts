@@ -225,11 +225,17 @@ export const typeDefs = gql`
     image: String!
   }
 
+  input FlowerQuantityInput {
+    id: ID!
+    quantity: Int!
+  }
+
   input CustomData {
     productId: String!
     note: String
     totalPrice: Float!
     flowerComponents: [String!]!
+    flowerComponentsQuantity: [FlowerQuantityInput]
     wrapperComponent: String!
     otherProducts: [String]
     wrapperColor: String
@@ -570,6 +576,7 @@ export const typeDefs = gql`
   enum ProductCategory {
     FLOWER
     BOUQUET
+    MONEY_BOUQUET
     CHOCOLATE
     GIFT
   }
@@ -581,6 +588,7 @@ export const typeDefs = gql`
     totalPrice: Float
 
     flowerComponents: [Component]
+    flowerComponentsQuantity: [FlowerQuantity]
     wrapperComponent: Component
     otherProducts: [Product]
     wrapperColor: String
@@ -593,6 +601,11 @@ export const typeDefs = gql`
 
     createdAt: String!
     updatedAt: String!
+  }
+
+  type FlowerQuantity {
+    id: ID!
+    quantity: Int!
   }
 
   type Message {

@@ -289,7 +289,11 @@ export default function OrderDetailDialog({
               <ul className="ml-5 list-disc pl-2">
                 {order.customize.flowerComponents.map((cstm) => (
                   <li className="text-sm" key={cstm.id}>
-                    {cstm.name}
+                    {cstm.name}{" "}
+                    {(order.customize?.flowerComponentsQuantity || []).find(
+                      (flr) => flr.id === cstm.id,
+                    )?.quantity || 0}{" "}
+                    pcs
                   </li>
                 ))}
               </ul>

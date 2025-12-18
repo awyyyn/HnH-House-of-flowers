@@ -88,7 +88,10 @@ export default function ProductsPage() {
         return (
           <p className="capitalize">
             {row.original.category[0]}
-            {row.original.category.slice(1).toLocaleLowerCase()}
+            {row.original.category
+              .slice(1)
+              .toLocaleLowerCase()
+              .replace(/_/g, " ")}
           </p>
         );
       },

@@ -28,7 +28,13 @@ export const productStatus = [
   "OUT_OF_STOCK",
 ];
 
-export const productCategory = ["FLOWER", "BOUQUET", "CHOCOLATE", "GIFT"];
+export const productCategory = [
+  "FLOWER",
+  "BOUQUET",
+  "CHOCOLATE",
+  "MONEY_BOUQUET",
+  "GIFT",
+];
 
 export const flowerVariantOptions = Object.values(FlowerVariant).map(
   (variant) => ({

@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Form,
   FormControl,
@@ -6,6 +9,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input,
   RichTextEditor,
   Select,
   SelectContent,
@@ -23,14 +27,14 @@ import {
   GET_CUSTOMIZE_OPTIONS_QUERY,
 } from "@/queries";
 import { componentsAtom } from "@/states/components";
-import { Component, Product } from "@/types";
+import { Component, FlowerComponentsQuantity, Product } from "@/types";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useSetAtom } from "jotai";
-import { Info, Loader } from "lucide-react";
+import { Info, Loader, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { ComponentDetailsModal } from "../admin/components/component-modal";
 import { useToast } from "@/hooks/use-toast";
@@ -127,6 +131,17 @@ const Customize2 = () => {
           (item) => item.stock > 1 && item.status === "IN_STOCK",
         ),
       );
+      if (
+        data.product.flowerComponents &&
+        data.product.flowerComponents?.length > 0
+      ) {
+        setFlowerComponentsQuantity(
+          data.product.flowerComponents.map((item) => ({
+            id: item.id,
+            quantity: 10,
+          })),
+        );
+      }
     },
   });
   const [totalPrice, setTotalPrice] = useState<number>(
@@ -134,6 +149,10 @@ const Customize2 = () => {
   );
   const [additionalPrdctsFees, setAdditionalPrdctsFees] = useState<number>(0);
   const [flowerFees, setFlowerFees] = useState<number>(0);
+  const { pathname } = useLocation();
+  const [flowerComponentsQuantity, setFlowerComponentsQuantity] = useState<
+    FlowerComponentsQuantity[]
+  >([]);
 
   const flowerOptions =
     componentsState.filter((comp) => comp.type === "FLOWER") || [];
@@ -178,6 +197,15 @@ const Customize2 = () => {
     setAdditionalPrdctsFees(totalProducts);
     form.setValue("totalPrice", total);
   }, [additionalProducts, data, totalPrice, flwrsNum]);
+
+  const watchedBill = form.watch("bill");
+  const watchedBillQuantity = form.watch("billQuantity");
+
+  useEffect(() => {
+    if (watchedBill) {
+      form.setValue("billQuantity", "5");
+    }
+  }, [watchedBill]);
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -228,6 +256,7 @@ const Customize2 = () => {
             note: values.note || "",
             totalPrice: values.totalPrice,
             // components: [values.flower, values.wrapper],
+            flowerComponentsQuantity: flowerComponentsQuantity,
             wrapperColor: values.wrapperColor || "",
             flowerComponents: values.flowers || [],
             wrapperComponent: values.wrapper || "",
@@ -285,11 +314,11 @@ const Customize2 = () => {
           cartId: user.cart.id,
           flowerComponents: values.flowers,
           wrapperComponent: values.wrapper,
-          otherProducts: values.otherProducts,
+          otherProducts: values.otherProducts || [],
           note: values.note || "",
           wrapperColor: values.wrapperColor || "",
           bill: values.bill || 0,
-          billQuantity: values.billQuantity || 0,
+          billQuantity: Number(values.billQuantity) || 0,
         },
       });
 
@@ -317,6 +346,10 @@ const Customize2 = () => {
   const availableColors =
     wrapperOptions.find((wrpr) => wrpr.id === form.watch("wrapper"))
       ?.availableColors || [];
+
+  const showBillCustomization = pathname.includes("money-bouquet");
+
+  console.log(showBillCustomization, "qqqq");
 
   return (
     <>
@@ -527,7 +560,7 @@ const Customize2 = () => {
                               (_, index: number) => (
                                 <div key={index} className="w-full">
                                   <div className="flex items-center w-full  gap-5  ">
-                                    <div className="w-[70%] md:w-[85%]">
+                                    <div className="w-[70%] md:w-[85%] flex gap-x-2 items-center">
                                       <Select
                                         defaultValue={
                                           product?.flowerComponents?.[index]
@@ -587,6 +620,27 @@ const Customize2 = () => {
                                           </SelectGroup>
                                         </SelectContent>
                                       </Select>
+                                      <Input
+                                        type="number"
+                                        className="max-w-[20%] mt-1"
+                                        defaultValue={10}
+                                        onChange={(e) => {
+                                          setFlowerComponentsQuantity((fls) =>
+                                            fls.map((fl) =>
+                                              fl.id ===
+                                              product?.flowerComponents?.[index]
+                                                ?.id
+                                                ? {
+                                                    ...fl,
+                                                    quantity: Number(
+                                                      e.target.value,
+                                                    ),
+                                                  }
+                                                : fl,
+                                            ),
+                                          );
+                                        }}
+                                      />
                                     </div>
                                     <div className="flex gap-2 items-end justify-start">
                                       <div>
@@ -776,93 +830,112 @@ const Customize2 = () => {
                         </FormItem>
                       )}
                     />
-                    {/*<div className=" ">
-                      <div className="col-span-4">
-                        <h1 className="text-black dark:text-white ">
-                          Money Bouquey
-                        </h1>
-                      </div>
-                      <div className="flex w-full  gap-5    items-start">
-                        <div className="  w-[70%] md:w-[85%]   ">
-                          <div className="grid grid-cols-3 gap-5 mr-4">
-                            <FormField
-                              control={form.control}
-                              name="bill"
-                              render={({ field }) => (
-                                <FormItem className="  col-span-2 w-full   t">
-                                  <FormLabel className="text-sm">
-                                    Bill
-                                  </FormLabel>
-                                  <Select
-                                    disabled={creatingOrder || addingToCart}
-                                    onValueChange={(v) => {
-                                      field.onChange(parseInt(v));
-                                      return v;
-                                    }}
-                                    {...field}
-                                    value={field.value?.toString() || ""}
-                                  >
-                                    <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
-                                      <SelectValue placeholder="Select a flower" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectGroup>
-                                        <SelectLabel>Bill</SelectLabel>
-                                        {[50, 100, 200, 500, 1000].map(
-                                          (bill) => (
-                                            <SelectItem
-                                              value={bill.toString()}
-                                              key={bill}
-                                              className="capitalize  w-full  "
-                                            >
-                                              {Intl.NumberFormat("en-PH", {
-                                                currency: "PHP",
-                                                style: "currency",
-                                              }).format(bill)}{" "}
-                                              Bill
-                                            </SelectItem>
-                                          ),
-                                        )}
-                                      </SelectGroup>
-                                    </SelectContent>
-                                  </Select>
 
-                                  <FormMessage className="dark:text-primary dark:bg-zinc-900" />
-                                </FormItem>
-                              )}
-                            />
-                            {!!watchedBill && (
-                              <FormField
-                                control={form.control}
-                                name="billQuantity"
-                                render={({ field }) => (
-                                  <FormItem className=" ">
-                                    <FormLabel className="text-sm">
-                                      Quantity
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      {...field}
-                                      value={field.value?.toString() || ""}
-                                      onInput={(e) => {
-                                        // ✅ Allow deleting all digits
-                                        e.currentTarget.value =
-                                          e.currentTarget.value.replace(
-                                            /\D/g,
-                                            "",
-                                          );
-                                      }}
-                                    />
-                                    <FormMessage className="dark:text-primary dark:bg-zinc-900" />
-                                  </FormItem>
+                    {product.category === "MONEY_BOUQUET" && (
+                      <>
+                        <div className=" ">
+                          <div className="col-span-4">
+                            <h1 className="text-black dark:text-white ">
+                              Money Bouquet
+                            </h1>
+                          </div>
+                          <div className="flex w-full  gap-5    items-start">
+                            <div className="  w-[70%] md:w-[85%]   ">
+                              <div className="grid grid-cols-3 gap-5 mr-4">
+                                <FormField
+                                  control={form.control}
+                                  name="bill"
+                                  render={({ field }) => (
+                                    <FormItem className="  col-span-2 w-full   t">
+                                      <FormLabel className="text-sm">
+                                        Bill
+                                      </FormLabel>
+                                      <Select
+                                        disabled={creatingOrder || addingToCart}
+                                        onValueChange={(v) => {
+                                          field.onChange(parseInt(v));
+                                          return v;
+                                        }}
+                                        {...field}
+                                        value={field.value?.toString() || ""}
+                                      >
+                                        <SelectTrigger className="w-full border-gray-300 dark:bg-zinc-900">
+                                          <SelectValue placeholder="Select a bill" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectGroup>
+                                            <SelectLabel>Bill</SelectLabel>
+                                            {[50, 100, 200, 500, 1000].map(
+                                              (bill) => (
+                                                <SelectItem
+                                                  value={bill.toString()}
+                                                  key={bill}
+                                                  className="capitalize  w-full  "
+                                                >
+                                                  {Intl.NumberFormat("en-PH", {
+                                                    currency: "PHP",
+                                                    style: "currency",
+                                                  }).format(bill)}{" "}
+                                                  Bill
+                                                </SelectItem>
+                                              ),
+                                            )}
+                                          </SelectGroup>
+                                        </SelectContent>
+                                      </Select>
+
+                                      <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                                    </FormItem>
+                                  )}
+                                />
+                                {!!watchedBill && (
+                                  <FormField
+                                    control={form.control}
+                                    name="billQuantity"
+                                    render={({ field }) => (
+                                      <FormItem className=" ">
+                                        <FormLabel className="text-sm">
+                                          Quantity
+                                        </FormLabel>
+                                        <Input
+                                          type="text"
+                                          {...field}
+                                          value={field.value?.toString() || ""}
+                                          onInput={(e) => {
+                                            // ✅ Allow deleting all digits
+                                            e.currentTarget.value =
+                                              e.currentTarget.value.replace(
+                                                /\D/g,
+                                                "",
+                                              );
+                                          }}
+                                        />
+                                        <FormMessage className="dark:text-primary dark:bg-zinc-900" />
+                                      </FormItem>
+                                    )}
+                                  />
                                 )}
-                              />
-                            )}
+                              </div>
+                            </div>
+                            <div className="">
+                              <h3>Price:</h3>
+                              <p>
+                                {Intl.NumberFormat("en-PH", {
+                                  currency: "PHP",
+                                  style: "currency",
+                                }).format(
+                                  (watchedBill || 0) *
+                                    (Number(watchedBillQuantity) || 0),
+                                )}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                        <div className="">
-                          <h3>Price:</h3>
-                          <p>
+                        <Alert>
+                          <TriangleAlert />
+                          <AlertTitle>Money Bouquet Note!</AlertTitle>
+                          <AlertDescription>
+                            Money bouquet bill amount is{" "}
                             {Intl.NumberFormat("en-PH", {
                               currency: "PHP",
                               style: "currency",
@@ -870,10 +943,12 @@ const Customize2 = () => {
                               (watchedBill || 0) *
                                 (Number(watchedBillQuantity) || 0),
                             )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>*/}
+                            . Please note that this amount is not included in
+                            the total bill amount.
+                          </AlertDescription>
+                        </Alert>
+                      </>
+                    )}
                     <FormField
                       control={form.control}
                       name="note"

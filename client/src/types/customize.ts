@@ -9,6 +9,10 @@ export interface Customize {
 
   flowerComponents: Component[];
   wrapperComponent: Component;
+  flowerComponentsQuantity: {
+    id: string;
+    quantity: number;
+  }[];
   otherProducts: Product[];
   wrapperColor?: string;
   product: Product;
