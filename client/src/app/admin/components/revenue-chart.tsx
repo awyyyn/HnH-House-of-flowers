@@ -38,51 +38,67 @@ export function RevenueChart({
         <CardDescription>Showing data from {yearDescription}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+        <div>
+          <div className="relative">
+            <div className="absolute bg-[#fee4ec60] px-2 top-0 text-xs font-medium bottom-0 justify-evenly flex flex-col leading-none">
+              <span>R</span>
+              <span>E</span>
+              <span>V</span>
+              <span>E</span>
+              <span>N</span>
+              <span>U</span>
+              <span>E</span>
+            </div>
+            <ChartContainer config={chartConfig}>
+              <AreaChart
+                accessibilityLayer
+                data={chartData}
+                margin={{
+                  left: 12,
+                  right: 12,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} />
 
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
-            <Area
-              dataKey="revenue"
-              type="monotone"
-              fill="hsl(342 93.9% 55.1% / 30%)"
-              fillOpacity={0.4}
-              stroke="hsl(342 93.9% 55.1%)"
-            />
-          </AreaChart>
-        </ChartContainer>
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="dashed" />}
+                />
+                <Area
+                  dataKey="revenue"
+                  type="monotone"
+                  fill="hsl(342 93.9% 55.1% / 30%)"
+                  fillOpacity={0.4}
+                  stroke="hsl(342 93.9% 55.1%)"
+                />
+
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  label={{
+                    value: "Revenue",
+                    angle: -90,
+                    position: "insideLeft",
+                    style: { textAnchor: "middle" },
+                  }}
+                />
+              </AreaChart>
+            </ChartContainer>
+          </div>
+          <h1 className="font-medium bg-[#fee4ec60] text-xs text-center tracksing-[3em]">
+            MONTHS
+          </h1>
+        </div>
       </CardContent>
-      {/* <CardFooter>
-				<div className="flex w-full items-start gap-2 text-sm">
-					<div className="grid gap-2">
-						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">
-							January - June 2024
-						</div>
-					</div>
-				</div>
-			</CardFooter> */}
     </Card>
   );
 }
